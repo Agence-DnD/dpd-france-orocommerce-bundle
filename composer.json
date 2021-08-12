@@ -1,0 +1,24 @@
+{
+  "name": "agencednd/dpdfranceorocommerce",
+  "homepage": "https://gitlab.com/agence-dnd/marketplace/orocommerce/external/dnd-dpd-france-shipping-bundle",
+  "description": "Agence Dn'D - DPD France Shipping Bundle",
+  "keywords": ["DPD", "oro", "commerce", "shipping", "france", "dpd france", "orocommerce"],
+  "require": {
+    "oro/platform": "4.2.*",
+    "oro/platform-serialised-fields": "4.2.*",
+    "oro/commerce": "4.2.*"
+  },
+  "version": "0.1.0",
+  "license": "OSL-3.0",
+  "authors": [
+    {
+      "name": "Agence Dn’D",
+      "homepage": "https://www.dnd.fr/"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "AgenceDnd\\DndDpdFranceShippingBundle\\": ""
+    }
+  }
+}
