@@ -1,0 +1,26 @@
+{
+  "name": "agencednd/dpd-france-orocommerce-bundle",
+  "type": "symfony-bundle",
+  "description": "Agence Dn'D - DPD France Shipping Bundle",
+  "keywords": ["DPD", "Oro", "commerce", "shipping", "France", "DPD France", "OroCommerce", "integration"],
+  "require": {
+    "oro/platform": "4.2.*",
+    "oro/platform-serialised-fields": "4.2.*",
+    "oro/commerce": "4.2.*"
+  },
+  "version": "0.1.0",
+  "license": "OSL-3.0",
+  "authors": [
+    {
+      "name": "Agence Dn'D",
+      "email": "contact@dnd.fr",
+      "role": "Developer",
+      "homepage": "https://www.dnd.fr/"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Dnd\\Bundle\\DpdFranceShippingBundle\\": ""
+    }
+  }
+}

@@ -1,0 +1,2 @@
+bundles:
+    - { name: \Dnd\Bundle\DpdFranceShippingBundle\DndDpdFranceShippingBundle, priority: 200 }
