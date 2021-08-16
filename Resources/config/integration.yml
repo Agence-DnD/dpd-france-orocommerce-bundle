@@ -1,0 +1,16 @@
+services:
+    dnd_dpd_france_shipping.integration.channel.type:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel
+        tags:
+            - { name: oro_integration.channel, type: dpd_france_shipping_channel }
+
+    dnd_dpd_france_shipping.integration.transport.type:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceTransport
+        arguments:
+            - '@logger'
+        tags:
+            - {
+                name: oro_integration.transport,
+                type: '@dnd_dpd_france_shipping.integration.transport.type',
+                channel_type: '@dnd_dpd_france_shipping.integration.channel.type'
+            }

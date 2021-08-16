@@ -1,0 +1,13 @@
+dnd_dpd_france_shipping.integration.transport.mapping:
+    weight:
+        label: Weight attribute
+        tooltip: code of the attribute holding your product weight
+    length:
+        label: Length attribute
+        tooltip: code of the attribute holding your product length
+    width:
+        label: Width attribute
+        tooltip: code of the attribute holding your product width
+    height:
+        label: Height attribute
+        tooltip: code of the attribute holding your product height

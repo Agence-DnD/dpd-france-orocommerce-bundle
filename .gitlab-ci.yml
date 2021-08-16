@@ -1,0 +1,4 @@
+include:
+    - project: 'agence-dnd/marketplace/magento-2/ci-cd/internal-ci-cd'
+      ref: master
+      file: '/templates/.gitlab-ci.yml'
