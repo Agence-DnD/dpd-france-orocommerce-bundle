@@ -1,0 +1,13 @@
+dnd_dpd_france_shipping.integration.transport.mapping:
+    weight:
+        label: Attribut poids
+        tooltip: Code de l'attribut représentant le poids de votre produit
+    length:
+        label: Attribut longueur
+        tooltip: Code de l'attribut représentant la longueur de votre produit
+    width:
+        label: Attribut largeur
+        tooltip: Code de l'attribut représentant la largeur de votre produit
+    height:
+        label: Attribut hauteur
+        tooltip: Code de l'attribut représentant la hauteur de votre produit

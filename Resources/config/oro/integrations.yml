@@ -1,0 +1,44 @@
+integrations:
+    form:
+        mapping_settings:
+            weight:
+                type: Symfony\Component\Form\Extension\Core\Type\TextType
+                options:
+                    label:        dnd_dpd_france_shipping.integration.transport.mapping.weight.label
+                    tooltip:      dnd_dpd_france_shipping.integration.transport.mapping.weight.tooltip
+                    required:     true
+                    constraints:
+                        - NotBlank: ~
+                priority:     10
+                applicable:   [dpd_france]
+
+            height:
+                type: Symfony\Component\Form\Extension\Core\Type\TextType
+                options:
+                    label:        dnd_dpd_france_shipping.integration.transport.mapping.height.label
+                    tooltip:      dnd_dpd_france_shipping.integration.transport.mapping.height.tooltip
+                    required:     true
+                    constraints:
+                        - NotBlank: ~
+                priority:     20
+                applicable:   [dpd_france]
+            length:
+                type: Symfony\Component\Form\Extension\Core\Type\TextType
+                options:
+                    label:        dnd_dpd_france_shipping.integration.transport.mapping.length.label
+                    tooltip:      dnd_dpd_france_shipping.integration.transport.mapping.length.tooltip
+                    required:     true
+                    constraints:
+                        - NotBlank: ~
+                priority:     30
+                applicable:   [dpd_france]
+            width:
+                type: Symfony\Component\Form\Extension\Core\Type\TextType
+                options:
+                    label:        dnd_dpd_france_shipping.integration.transport.mapping.width.label
+                    tooltip:      dnd_dpd_france_shipping.integration.transport.mapping.width.tooltip
+                    required:     true
+                    constraints:
+                        - NotBlank: ~
+                priority:     40
+                applicable:   [dpd_france]
