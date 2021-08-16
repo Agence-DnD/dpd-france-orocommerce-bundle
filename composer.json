@@ -1,9 +1,8 @@
 {
   "name": "agencednd/dpd-france-orocommerce-bundle",
   "type": "symfony-bundle",
-  "homepage": "https://gitlab.com/agence-dnd/marketplace/orocommerce/external/dnd-dpd-france-shipping-bundle",
   "description": "Agence Dn'D - DPD France Shipping Bundle",
-  "keywords": ["DPD", "Oro", "commerce", "shipping", "france", "DPD france", "orocommerce", "DPD", "Integration"],
+  "keywords": ["DPD", "Oro", "commerce", "shipping", "France", "DPD France", "OroCommerce", "integration"],
   "require": {
     "oro/platform": "4.2.*",
     "oro/platform-serialised-fields": "4.2.*",
