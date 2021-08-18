@@ -1,13 +1,37 @@
-dnd_dpd_france_shipping.integration.transport.mapping:
-    weight:
-        label: Weight attribute
-        tooltip: code of the attribute holding your product weight
-    length:
-        label: Length attribute
-        tooltip: code of the attribute holding your product length
-    width:
-        label: Width attribute
-        tooltip: code of the attribute holding your product width
-    height:
-        label: Height attribute
-        tooltip: code of the attribute holding your product height
+dnd_dpd_france_shipping:
+    form.select_attribute.label: Choose attribute...
+    integration:
+        channel:
+            label: DPD France
+        transport:
+            label: DPD France
+            mapping:
+                height:
+                    label: Height attribute
+                    tooltip: code of the attribute holding your product height
+                length:
+                    label: Length attribute
+                    tooltip: code of the attribute holding your product length
+                weight:
+                    label: Weight attribute
+                    tooltip: code of the attribute holding your product weight
+                width:
+                    label: Width attribute
+                    tooltip: code of the attribute holding your product width
+    transport:
+        agency_code:
+            label: Agency code
+        contract_number:
+            label: Contract number
+        max_qty:
+            label: Max quantity
+        order_statuses_sent_to_station:
+            label: Order statuses sent to station
+        station_ftp_host:
+            label: Station FTP Host
+        station_ftp_password:
+            label: Station FTP Password
+        station_ftp_port:
+            label: Station FTP Port
+        station_ftp_user:
+            label: Station FTP User

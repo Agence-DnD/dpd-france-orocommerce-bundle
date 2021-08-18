@@ -1,13 +1,37 @@
-dnd_dpd_france_shipping.integration.transport.mapping:
-    weight:
-        label: Attribut poids
-        tooltip: Code de l'attribut représentant le poids de votre produit
-    length:
-        label: Attribut longueur
-        tooltip: Code de l'attribut représentant la longueur de votre produit
-    width:
-        label: Attribut largeur
-        tooltip: Code de l'attribut représentant la largeur de votre produit
-    height:
-        label: Attribut hauteur
-        tooltip: Code de l'attribut représentant la hauteur de votre produit
+dnd_dpd_france_shipping:
+    form.select_attribute.label: Choisir un attribut...
+    integration:
+        channel:
+            label: DPD France
+        transport:
+            label: DPD France
+            mapping:
+                height:
+                    label: Attribut hauteur
+                    tooltip: Code de l'attribut représentant la hauteur de votre produit
+                length:
+                    label: Attribut longueur
+                    tooltip: Code de l'attribut représentant la longueur de votre produit
+                weight:
+                    label: Attribut poids
+                    tooltip: Code de l'attribut représentant le poids de votre produit
+                width:
+                    label: Attribut largeur
+                    tooltip: Code de l'attribut représentant la largeur de votre produit
+    transport:
+        agency_code:
+            label: Code d'agence
+        order_statuses_sent_to_station:
+            label: Statuts de commande transmis à Station
+        max_qty:
+            label: Quantité maximale
+        contract_number:
+            label: Numéro de contrat
+        station_ftp_host:
+            label: Hôte FTP de Station
+        station_ftp_password:
+            label: Mot de passe FTP de Station
+        station_ftp_port:
+            label: Port FTP de Station
+        station_ftp_user:
+            label: Utilisateur FTP de Station
