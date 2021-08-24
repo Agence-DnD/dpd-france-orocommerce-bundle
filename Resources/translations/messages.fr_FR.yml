@@ -1,4 +1,8 @@
 dnd_dpd_france_shipping:
+    method:
+        price.label: Prix
+    form:
+        options_type.label: 'Taux livraison DPD France'
     form.select_attribute.label: Choisir un attribut...
     integration:
         channel:

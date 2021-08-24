@@ -23,7 +23,7 @@ class DndDpdFranceShippingBundle implements Migration
     /**
      * {@inheritdoc}
      *
-     * @param Schema   $schema
+     * @param Schema $schema
      * @param QueryBag $queries
      *
      * @return void
@@ -48,7 +48,11 @@ class DndDpdFranceShippingBundle implements Migration
     {
         /** @var Table $transportTable the oro integration transport table */
         $transportTable = $schema->getTable('oro_integration_transport');
-        $transportTable->addColumn('dpd_fr_order_statuses_sent_to_station', Types::STRING, ['notnull' => false, 'length' => 255]);
+        $transportTable->addColumn(
+            'dpd_fr_order_statuses_sent_to_station',
+            Types::STRING,
+            ['notnull' => false, 'length' => 255]
+        );
         $transportTable->addColumn('dpd_fr_station_ftp_port', Types::INTEGER, ['notnull' => false]);
         $transportTable->addColumn('dpd_fr_station_ftp_host', Types::STRING, ['notnull' => false, 'length' => 255]);
         $transportTable->addColumn('dpd_fr_station_ftp_user', Types::STRING, ['notnull' => false, 'length' => 255]);
@@ -91,5 +95,4 @@ class DndDpdFranceShippingBundle implements Migration
         $transportTable->addColumn('dpd_fr_relay_method_name', Types::STRING, ['notnull' => false, 'length' => 255]);
         $transportTable->addColumn('dpd_fr_relay_method_desc', Types::TEXT, ['notnull' => false]);
     }
-
 }

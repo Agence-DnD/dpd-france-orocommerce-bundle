@@ -24,6 +24,7 @@ interface DpdFranceTransportInterface extends TransportInterface
 
     /**
      * Description getFile function
+     *
      * @TODO implement that later, when the library for the SFTP protocol
      *
      * @return string

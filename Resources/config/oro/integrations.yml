@@ -10,7 +10,7 @@ integrations:
                     constraints:
                         - NotBlank: ~
                 priority:     10
-                applicable:   [dpd_france]
+                applicable:   ['dpd_france_shipping']
 
             height:
                 type: Dnd\Bundle\DpdFranceShippingBundle\Form\Type\AttributeMappingType
@@ -21,7 +21,7 @@ integrations:
                     constraints:
                         - NotBlank: ~
                 priority:     20
-                applicable:   [dpd_france]
+                applicable:   ['dpd_france_shipping']
             length:
                 type: Dnd\Bundle\DpdFranceShippingBundle\Form\Type\AttributeMappingType
                 options:
@@ -31,7 +31,7 @@ integrations:
                     constraints:
                         - NotBlank: ~
                 priority:     30
-                applicable:   [dpd_france]
+                applicable:   ['dpd_france_shipping']
             width:
                 type: Dnd\Bundle\DpdFranceShippingBundle\Form\Type\AttributeMappingType
                 options:
@@ -41,4 +41,4 @@ integrations:
                     constraints:
                         - NotBlank: ~
                 priority:     40
-                applicable:   [dpd_france]
+                applicable:   ['dpd_france_shipping']

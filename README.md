@@ -13,7 +13,7 @@
 ```bin/console cache:clear```
 
 ### Run the migrations
-```bin/console migrations:load --force```
+```bin/console oro:migrations:load --force```
 
 ### Reinstall the assets to copy bundle public folder (for integration logo)
 ```bin/console assets:install```

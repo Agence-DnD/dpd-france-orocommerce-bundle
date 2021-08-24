@@ -51,9 +51,10 @@ class OrderStatusTransformer implements DataTransformerInterface
 
         $availableStatuses = $this->enumValueProvider->getEnumChoicesByCode('order_internal_status');
 
-        $statuses = array_filter($availableStatuses, static function($id) use (&$ids) {
+        $statuses = array_filter($availableStatuses, static function ($id) use (&$ids) {
             return in_array($id, $ids, true);
         });
+
         return new ArrayCollection($statuses);
     }
 
@@ -70,7 +71,7 @@ class OrderStatusTransformer implements DataTransformerInterface
         foreach ($values as $value) {
             $ids[] = $value->getId();
         }
+
         return implode(',', $ids ?? []);
     }
-
 }

@@ -22,7 +22,7 @@ class DpdFranceChannel implements ChannelInterface, IconAwareIntegrationInterfac
      *
      * @var string TYPE
      */
-    public const TYPE = 'dpd_france';
+    public const TYPE = 'dpd_france_shipping';
 
     /**
      * {@inheritdoc}

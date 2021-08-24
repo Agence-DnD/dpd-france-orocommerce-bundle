@@ -6,7 +6,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Form\DataTransformer\OrderStatusTransform
 use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceTransportInterface;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumChoiceType;
-use Oro\Bundle\FormBundle\Form\Type\OroPlaceholderPasswordType;
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -55,15 +55,15 @@ class DpdFranceTransportSettingsFormType extends AbstractType
      *
      * @param DpdFranceTransportInterface $transport
      * @param EntityManager               $em
-     * @param OrderStatusTransformer          $orderStatusTransformer
+     * @param OrderStatusTransformer      $orderStatusTransformer
      */
     public function __construct(
         DpdFranceTransportInterface $transport,
         EntityManager $em,
         OrderStatusTransformer $orderStatusTransformer
     ) {
-        $this->transport = $transport;
-        $this->em = $em;
+        $this->transport              = $transport;
+        $this->em                     = $em;
         $this->orderStatusTransformer = $orderStatusTransformer;
     }
 
@@ -73,11 +73,11 @@ class DpdFranceTransportSettingsFormType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param mixed[]              $options
      *
-     * @throws ConstraintDefinitionException
+     * @return void
      * @throws InvalidOptionsException
      * @throws MissingOptionsException
      *
-     * @return void
+     * @throws ConstraintDefinitionException
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -95,63 +95,30 @@ class DpdFranceTransportSettingsFormType extends AbstractType
      */
     private function addStationFields(FormBuilderInterface $builder, array $options): void
     {
-        //$entitiesToIdsTransformer = new Select2ArrayToStringTransformerDecorator($this->em, AbstractEnumValue::class);
-
-        $builder
-            ->add(
-                'stationFtpHost',
-                TextType::class,
-                [
+        $builder->add('stationFtpHost', TextType::class, [
                     'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_host.label',
                     'required' => true,
-                ]
-            )
-            ->add(
-                'stationFtpUser',
-                TextType::class,
-                [
+                ])->add('stationFtpUser', TextType::class, [
                     'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_user.label',
                     'required' => true,
-                ]
-            )
-            ->add(
-                'stationFtpPassword',
-                OroPlaceholderPasswordType::class,
-                [
+                ])->add('stationFtpPassword', OroEncodedPlaceholderPasswordType::class, [
                     'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_password.label',
                     'required' => true,
-                ]
-            )
-            ->add(
-                'stationFtpPort',
-                IntegerType::class,
-                [
+                ])->add('stationFtpPort', IntegerType::class, [
                     'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_port.label',
                     'required' => true,
-                ]
-            )
-            ->add(
-                'orderStatusesSentToStation',
-                EnumChoiceType::class,
-                [
+                ])->add('orderStatusesSentToStation', EnumChoiceType::class, [
                     'enum_code' => 'order_internal_status',
                     'multiple'  => true,
                     'expanded'  => false,
-                    'required' => true,
-                    'label' => 'dnd_dpd_france_shipping.transport.order_statuses_sent_to_station.label',
-                    'attr' => [
+                    'required'  => true,
+                    'label'     => 'dnd_dpd_france_shipping.transport.order_statuses_sent_to_station.label',
+                    'attr'      => [
                         'class' => 'order_internal_status',
-                    ]
-                ]
-        );
+                    ],
+                ]);
 
-        $builder->get('orderStatusesSentToStation')
-            ->addModelTransformer($this->orderStatusTransformer);
-
-        /*$orderStatusesField->addModelTransformer(new ReversedTransformer($entitiesToIdsTransformer))
-            ->addViewTransformer(new ReversedTransformer($entitiesToIdsTransformer));*/
-
-        //$builder->add($orderStatusesField);
+        $builder->get('orderStatusesSentToStation')->addModelTransformer($this->orderStatusTransformer);
     }
 
     /**
@@ -164,32 +131,18 @@ class DpdFranceTransportSettingsFormType extends AbstractType
      */
     private function addGeneralFields(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add(
-                'agencyCode',
-                TextType::class,
-                [
+        $builder->add('agencyCode', TextType::class, [
                     'label'    => 'dnd_dpd_france_shipping.transport.agency_code.label',
                     'required' => true,
-                ]
-            )
-            ->add(
-                'contractNumber',
-                TextType::class,
-                [
+                ])->add('contractNumber', TextType::class, [
                     'label'    => 'dnd_dpd_france_shipping.transport.contract_number.label',
                     'required' => true,
-                ]
-            )
-            ->add(
-                'maxQty',
-                IntegerType::class,
-                [
+                ])->add('maxQty', IntegerType::class, [
                     'label'    => 'dnd_dpd_france_shipping.transport.max_qty.label',
                     'required' => true,
-                ]
-            );
+                ]);
     }
+
     /**
      * {@inheritdoc}
      *

@@ -1,4 +1,8 @@
 dnd_dpd_france_shipping:
+    method:
+        price.label: Price
+    form:
+        options_type.label: 'DPD France Shipping Rate'
     form.select_attribute.label: Choose attribute...
     integration:
         channel:

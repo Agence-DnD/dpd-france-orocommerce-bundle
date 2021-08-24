@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Entity;
 
+use Dnd\Bundle\DpdFranceShippingBundle\Method\Type\DpdClassicShippingMethodType;
+use Dnd\Bundle\DpdFranceShippingBundle\Method\Type\DpdPredictShippingMethodType;
+use Dnd\Bundle\DpdFranceShippingBundle\Method\Type\DpdRelayShippingMethodType;
+use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Doctrine\ORM\Mapping as ORM;
+
 /**
  * Class DpdFranceTransportSettings
  *
@@ -26,84 +30,72 @@ class DpdFranceTransportSettings extends Transport
      * @var int DEFAULT_FTP_PORT
      */
     public const DEFAULT_STATION_FTP_PORT = 21;
-
     /**
      * The default value for station FTP host
      *
      * @var string DEFAULT_STATION_FTP_HOST
      */
     public const DEFAULT_STATION_FTP_HOST = '127.0.0.1';
-
     /**
      * The default value for station FTP user
      *
      * @var string DEFAULT_STATION_FTP_USER
      */
     public const DEFAULT_STATION_FTP_USER = 'user';
-
     /**
      * The default value for station FTP password
      *
      * @var string DEFAULT_STATION_FTP_PASSWORD
      */
     public const DEFAULT_STATION_FTP_PASSWORD = 'password';
-
     /**
      * The default value allowed for DPD France shipping
      *
      * @var int DEFAULT_MAX_QTY
      */
     public const DEFAULT_MAX_QTY = 5;
-
     /**
      * The default name for DPD Classic method
      *
      * @var string DEFAULT_CLASSIC_METHOD_NAME
      */
     public const DEFAULT_CLASSIC_METHOD_NAME = 'DPD Classic';
-
     /**
      * The default description for DPD Classic method
      *
      * @var string DEFAULT_CLASSIC_METHOD_DESC
      */
     public const DEFAULT_CLASSIC_METHOD_DESC = 'Description de la méthode DPD Classic';
-
     /**
      * The default name for DPD Predict method
      *
      * @var string DEFAULT_PREDICT_METHOD_NAME
      */
     public const DEFAULT_PREDICT_METHOD_NAME = 'DPD Predict';
-
     /**
      * The default description for DPD Predict method
      *
      * @var string DEFAULT_PREDICT_METHOD_DESC
      */
     public const DEFAULT_PREDICT_METHOD_DESC = 'Description de la méthode DPD Predict';
-
     /**
      * The default name for DPD Relay method
      *
      * @var string DEFAULT_RELAY_METHOD_NAME
      */
     public const DEFAULT_RELAY_METHOD_NAME = 'DPD Relais';
-
     /**
      * The default description for DPD Relay method
      *
      * @var string DEFAULT_RELAY_METHOD_DESC
      */
     public const DEFAULT_RELAY_METHOD_DESC = 'Description de la méthode DPD Relais';
-
     /**
      * The settings for the DPD France transport
      *
      * @var ParameterBag $settings
      */
     protected ParameterBag $settings;
-
     /**
      * Description $stationFtpPort field
      *
@@ -112,7 +104,6 @@ class DpdFranceTransportSettings extends Transport
      * @var int $stationFtpPort
      */
     protected int $stationFtpPort;
-
     /**
      * Description $stationFtpHost field
      *
@@ -121,7 +112,6 @@ class DpdFranceTransportSettings extends Transport
      * @var string $stationFtpPort
      */
     protected string $stationFtpHost;
-
     /**
      * Description $stationFtpUser field
      *
@@ -130,7 +120,6 @@ class DpdFranceTransportSettings extends Transport
      * @var string $stationFtpUser
      */
     protected string $stationFtpUser;
-
     /**
      * Description $stationFtpPassword field
      *
@@ -139,7 +128,6 @@ class DpdFranceTransportSettings extends Transport
      * @var string|null stationFtpPassword
      */
     protected ?string $stationFtpPassword = null;
-
     /**
      * Description $orderStatusesSentToStation field
      *
@@ -148,7 +136,6 @@ class DpdFranceTransportSettings extends Transport
      * @var string|null orderStatusesSentToStation
      */
     protected ?string $orderStatusesSentToStation = null;
-
     /**
      * Description $agencyCode field
      *
@@ -157,7 +144,6 @@ class DpdFranceTransportSettings extends Transport
      * @var string $agencyCode
      */
     protected string $agencyCode;
-
     /**
      * Description $contractNumber field
      *
@@ -166,7 +152,6 @@ class DpdFranceTransportSettings extends Transport
      * @var string $contractNumber
      */
     protected string $contractNumber;
-
     /**
      * Description $maxQty field
      *
@@ -175,7 +160,6 @@ class DpdFranceTransportSettings extends Transport
      * @var int $maxQty
      */
     protected int $maxQty;
-
     /**
      * Name of DpdFrance classic method
      *
@@ -184,7 +168,6 @@ class DpdFranceTransportSettings extends Transport
      * @var string $classicMethodName
      */
     protected string $classicMethodName;
-
     /**
      * Description of DpdFrance classic method
      *
@@ -193,7 +176,6 @@ class DpdFranceTransportSettings extends Transport
      * @var string $classicMethodDesc
      */
     protected string $classicMethodDesc;
-
     /**
      * Name of DpdFrance predict method
      *
@@ -202,7 +184,6 @@ class DpdFranceTransportSettings extends Transport
      * @var string $predictMethodName
      */
     protected string $predictMethodName;
-
     /**
      * Description of DpdFrance predict method
      *
@@ -211,7 +192,6 @@ class DpdFranceTransportSettings extends Transport
      * @var string $predictMethodDesc
      */
     protected string $predictMethodDesc;
-
     /**
      * Name of DpdFrance relay method
      *
@@ -220,7 +200,6 @@ class DpdFranceTransportSettings extends Transport
      * @var string $relayMethodName
      */
     protected string $relayMethodName;
-
     /**
      * Description of DpdFrance relay method
      *
@@ -257,30 +236,29 @@ class DpdFranceTransportSettings extends Transport
     public function getSettingsBag(): ParameterBag
     {
         if (null === $this->settings) {
-            $this->settings = new ParameterBag(
-                [
-                    //STATION SETTINGS
-                    'dpd_fr_order_statuses_sent_to_station' => $this->getOrderStatusesSentToStation(),
-                    'dpd_fr_station_ftp_port' => $this->getStationFtpPort(),
-                    'dpd_fr_station_ftp_host' => $this->getStationFtpHost(),
-                    'dpd_fr_station_ftp_user' => $this->getStationFtpUser(),
-                    'dpd_fr_station_ftp_password' => $this->getStationFtpPassword(),
+            $this->settings = new ParameterBag([
+                //STATION SETTINGS
+                'dpd_fr_order_statuses_sent_to_station' => $this->getOrderStatusesSentToStation(),
+                'dpd_fr_station_ftp_port'               => $this->getStationFtpPort(),
+                'dpd_fr_station_ftp_host'               => $this->getStationFtpHost(),
+                'dpd_fr_station_ftp_user'               => $this->getStationFtpUser(),
+                'dpd_fr_station_ftp_password'           => $this->getStationFtpPassword(),
 
-                    //GENERAL SETTINGS
-                    'dpd_fr_agency_code' => $this->getAgencyCode(),
-                    'dpd_fr_contract_number' => $this->getContractNumber(),
-                    'dpd_fr_max_qty' => $this->getMaxQty(),
+                //GENERAL SETTINGS
+                'dpd_fr_agency_code'                    => $this->getAgencyCode(),
+                'dpd_fr_contract_number'                => $this->getContractNumber(),
+                'dpd_fr_max_qty'                        => $this->getMaxQty(),
 
-                    //METHODS NAME & DESCRIPTION SETTINGS
-                    'dpd_fr_classic_method_name' => $this->getClassicMethodName(),
-                    'dpd_fr_classic_method_desc' => $this->getClassicMethodDesc(),
-                    'dpd_fr_predict_method_name' => $this->getPredictMethodName(),
-                    'dpd_fr_predict_method_desc' => $this->getPredictMethodDesc(),
-                    'dpd_fr_relay_method_name' => $this->getRelayMethodName(),
-                    'dpd_fr_relay_method_desc' => $this->getRelayMethodDesc(),
-                ]
-            );
+                //METHODS NAME & DESCRIPTION SETTINGS
+                'dpd_fr_classic_method_name'            => $this->getClassicMethodName(),
+                'dpd_fr_classic_method_desc'            => $this->getClassicMethodDesc(),
+                'dpd_fr_predict_method_name'            => $this->getPredictMethodName(),
+                'dpd_fr_predict_method_desc'            => $this->getPredictMethodDesc(),
+                'dpd_fr_relay_method_name'              => $this->getRelayMethodName(),
+                'dpd_fr_relay_method_desc'              => $this->getRelayMethodDesc(),
+            ]);
         }
+
         return $this->settings;
     }
 
@@ -612,5 +590,63 @@ class DpdFranceTransportSettings extends Transport
     public function setRelayMethodDesc(string $relayMethodDesc): void
     {
         $this->relayMethodDesc = $relayMethodDesc;
+    }
+
+    /**
+     * Description getLabels function
+     *
+     * @return string[]
+     */
+    public function getLabels(): array
+    {
+        $labels                                           = [];
+        $labels[DpdClassicShippingMethodType::IDENTIFIER] = $this->getClassicMethodName();
+        $labels[DpdPredictShippingMethodType::IDENTIFIER] = $this->getPredictMethodName();
+        $labels[DpdRelayShippingMethodType::IDENTIFIER]   = $this->getRelayMethodName();
+
+        return $labels;
+    }
+
+    /**
+     * Description getLabel function
+     *
+     * @param string $identifier
+     *
+     * @return string|null
+     */
+    public function getLabel(string $identifier): ?string
+    {
+        $labels = $this->getLabels();
+
+        return $labels[$identifier] ?? null;
+    }
+
+    /**
+     * Description getDescriptions function
+     *
+     * @return string[]
+     */
+    public function getDescriptions(): array
+    {
+        $descriptions                                           = [];
+        $descriptions[DpdClassicShippingMethodType::IDENTIFIER] = $this->getClassicMethodDesc();
+        $descriptions[DpdPredictShippingMethodType::IDENTIFIER] = $this->getPredictMethodDesc();
+        $descriptions[DpdRelayShippingMethodType::IDENTIFIER]   = $this->getRelayMethodDesc();
+
+        return $descriptions;
+    }
+
+    /**
+     * Description getDescription function
+     *
+     * @param string $identifier
+     *
+     * @return string|null
+     */
+    public function getDescription(string $identifier): ?string
+    {
+        $descriptions = $this->getDescriptions();
+
+        return $descriptions[$identifier] ?? null;
     }
 }

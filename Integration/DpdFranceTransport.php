@@ -15,7 +15,6 @@ class DpdFranceTransport implements DpdFranceTransportInterface
      * @var DpdFranceTransportSettings $transportEntity
      */
     protected DpdFranceTransportSettings $transportEntity;
-
     /**
      * Description $settings field
      *

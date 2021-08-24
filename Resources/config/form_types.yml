@@ -22,3 +22,10 @@ services:
             $attributeManager: '@oro_entity_config.manager.attribute_manager'
         tags:
             - { name: form.type, alias: dnd_dpd_france_shipping_attribute_mapping }
+
+    dnd_dpd_france_shipping.form.type.dpd_france_shipping_options:
+        class: 'Dnd\Bundle\DpdFranceShippingBundle\Form\Type\DpdFranceShippingMethodOptionsType'
+        arguments:
+            - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }

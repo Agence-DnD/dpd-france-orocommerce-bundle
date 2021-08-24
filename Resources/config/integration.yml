@@ -2,10 +2,10 @@ services:
     dnd_dpd_france_shipping.integration.channel.type:
         class: Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel
         tags:
-            - { name: oro_integration.channel, type: !php/const Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel::TYPE }
+            - { name: oro_integration.channel, type: !php/const  Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel::TYPE }
 
     dnd_dpd_france_shipping.integration.transport.type:
         class: Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceTransport
         autowire: true
         tags:
-            - {name: oro_integration.transport, type: 'dpd_france_shipping', channel_type: !php/const  Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel::TYPE}
+            - {name: oro_integration.transport, type: !php/const  Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel::TYPE, channel_type: !php/const  Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel::TYPE}
