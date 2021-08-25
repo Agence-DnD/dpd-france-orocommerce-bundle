@@ -9,6 +9,15 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Class AttributeMappingType
+ *
+ * @package   Dnd\Bundle\DpdFranceShippingBundle\Form\Type
+ * @author    Agence Dn'D <contact@dnd.fr>
+ * @copyright 2004-present Agence Dn'D
+ * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      https://www.dnd.fr/
+ */
 class AttributeMappingType extends AbstractType
 {
     /**
@@ -66,17 +75,17 @@ class AttributeMappingType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-                'label'                => 'oro.entity_config.attribute.entity_label',
-                'class'                => self::CLASS_NAME,
-                'choice_label'         => 'field_name',
-                'random_id'            => true,
-                'choices'              => $this->attributeManager->getAttributesByClass(Product::class),
-                'configs'              => [
-                    'allowClear'  => true,
-                    'placeholder' => 'dnd_dpd_france_shipping.form.select_attribute.label',
-                ],
-                'entities'             => [],
-                'translatable_options' => false,
-            ]);
+            'label'                => 'oro.entity_config.attribute.entity_label',
+            'class'                => self::CLASS_NAME,
+            'choice_label'         => 'field_name',
+            'random_id'            => true,
+            'choices'              => $this->attributeManager->getAttributesByClass(Product::class),
+            'configs'              => [
+                'allowClear'  => true,
+                'placeholder' => 'dnd_dpd_france_shipping.form.select_attribute.label',
+            ],
+            'entities'             => [],
+            'translatable_options' => false,
+        ]);
     }
 }

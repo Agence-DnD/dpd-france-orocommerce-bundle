@@ -73,8 +73,8 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
         $this->label      = $label;
         $this->icon       = $icon;
         //$this->type       = new FlatRateMethodType($label);
-        $this->enabled    = $enabled;
-        $this->types      = $types;
+        $this->enabled = $enabled;
+        $this->types   = $types;
     }
 
     /**
@@ -133,7 +133,7 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
         $methodTypes = $this->getTypes();
         if ($methodTypes !== null) {
             foreach ($methodTypes as $methodType) {
-                if ($methodType->getIdentifier() === (string) $identifier) {
+                if ($methodType->getIdentifier() === (string)$identifier) {
                     return $methodType;
                 }
             }

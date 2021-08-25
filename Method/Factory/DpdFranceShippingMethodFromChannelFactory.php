@@ -109,6 +109,13 @@ class DpdFranceShippingMethodFromChannelFactory implements IntegrationShippingMe
         return $this->integrationIconProvider->getIcon($channel);
     }
 
+    /**
+     * Description createTypes function
+     *
+     * @param Channel $channel
+     *
+     * @return array
+     */
     private function createTypes(Channel $channel): array
     {
         /* @var DpdFranceTransportSettings $settings */

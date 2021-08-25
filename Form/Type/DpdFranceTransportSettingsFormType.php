@@ -17,6 +17,15 @@ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
+/**
+ * Class DpdFranceTransportSettingsFormType
+ *
+ * @package   Dnd\Bundle\DpdFranceShippingBundle\Form\Type
+ * @author    Agence Dn'D <contact@dnd.fr>
+ * @copyright 2004-present Agence Dn'D
+ * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      https://www.dnd.fr/
+ */
 class DpdFranceTransportSettingsFormType extends AbstractType
 {
     /**
@@ -96,27 +105,27 @@ class DpdFranceTransportSettingsFormType extends AbstractType
     private function addStationFields(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('stationFtpHost', TextType::class, [
-                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_host.label',
-                    'required' => true,
-                ])->add('stationFtpUser', TextType::class, [
-                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_user.label',
-                    'required' => true,
-                ])->add('stationFtpPassword', OroEncodedPlaceholderPasswordType::class, [
-                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_password.label',
-                    'required' => true,
-                ])->add('stationFtpPort', IntegerType::class, [
-                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_port.label',
-                    'required' => true,
-                ])->add('orderStatusesSentToStation', EnumChoiceType::class, [
-                    'enum_code' => 'order_internal_status',
-                    'multiple'  => true,
-                    'expanded'  => false,
-                    'required'  => true,
-                    'label'     => 'dnd_dpd_france_shipping.transport.order_statuses_sent_to_station.label',
-                    'attr'      => [
-                        'class' => 'order_internal_status',
-                    ],
-                ]);
+            'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_host.label',
+            'required' => true,
+        ])->add('stationFtpUser', TextType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_user.label',
+            'required' => true,
+        ])->add('stationFtpPassword', OroEncodedPlaceholderPasswordType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_password.label',
+            'required' => true,
+        ])->add('stationFtpPort', IntegerType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_port.label',
+            'required' => true,
+        ])->add('orderStatusesSentToStation', EnumChoiceType::class, [
+            'enum_code' => 'order_internal_status',
+            'multiple'  => true,
+            'expanded'  => false,
+            'required'  => true,
+            'label'     => 'dnd_dpd_france_shipping.transport.order_statuses_sent_to_station.label',
+            'attr'      => [
+                'class' => 'order_internal_status',
+            ],
+        ]);
 
         $builder->get('orderStatusesSentToStation')->addModelTransformer($this->orderStatusTransformer);
     }
@@ -132,15 +141,15 @@ class DpdFranceTransportSettingsFormType extends AbstractType
     private function addGeneralFields(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('agencyCode', TextType::class, [
-                    'label'    => 'dnd_dpd_france_shipping.transport.agency_code.label',
-                    'required' => true,
-                ])->add('contractNumber', TextType::class, [
-                    'label'    => 'dnd_dpd_france_shipping.transport.contract_number.label',
-                    'required' => true,
-                ])->add('maxQty', IntegerType::class, [
-                    'label'    => 'dnd_dpd_france_shipping.transport.max_qty.label',
-                    'required' => true,
-                ]);
+            'label'    => 'dnd_dpd_france_shipping.transport.agency_code.label',
+            'required' => true,
+        ])->add('contractNumber', TextType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.contract_number.label',
+            'required' => true,
+        ])->add('maxQty', IntegerType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.max_qty.label',
+            'required' => true,
+        ]);
     }
 
     /**
