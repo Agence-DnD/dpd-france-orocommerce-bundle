@@ -4,6 +4,7 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_0\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_O;
 use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_1\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_1;
+use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_2\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_2;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -24,7 +25,7 @@ class DndDpdFranceShippingBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -36,5 +37,8 @@ class DndDpdFranceShippingBundleInstaller implements Installation
         DndDpdFranceShippingBundle_v1_O::addGeneralDpdTransportColumns($schema);
         DndDpdFranceShippingBundle_v1_O::addDpdMethodsTransportColumns($schema);
         DndDpdFranceShippingBundle_v1_1::addProductMaxQtyForDpdFranceAttribute($schema);
+        DndDpdFranceShippingBundle_v1_2::createDndDpdFrShippingServiceTable($schema);
+        DndDpdFranceShippingBundle_v1_2::createDndDpdFrTransportShipServiceTable($schema);
+        DndDpdFranceShippingBundle_v1_2::addDndDpdFrTransportShipServiceForeignKeys($schema);
     }
 }

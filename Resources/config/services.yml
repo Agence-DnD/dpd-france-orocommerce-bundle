@@ -6,13 +6,23 @@ services:
         public: true
         arguments:
             - !php/const Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel::TYPE
+            -
+    dnd_dpd_france_shipping.method.identifier_generator.type:
+        class: 'Dnd\Bundle\DpdFranceShippingBundle\Method\Identifier\DpdFranceMethodTypeIdentifierGenerator'
+        public: false
+
+    dnd_dpd_france_shipping.factory.type:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Method\Factory\DpdFranceShippingMethodTypeFactory
+        arguments:
+            - '@dnd_dpd_france_shipping.method.identifier_generator.type'
+            - '@dnd_dpd_france_shipping.identifier_generator.method'
 
     dnd_dpd_france_shipping.factory.method:
-        class: Dnd\Bundle\DpdFranceShippingBundle\Method\Factory\DpdFranceShippingMethodFromChannelFactory
+        class: Dnd\Bundle\DpdFranceShippingBundle\Method\Factory\DpdFranceShippingMethodFactory
         arguments:
-            - '@dnd_dpd_france_shipping.identifier_generator.method'
-            - '@translator'
             - '@oro_integration.provider.integration_icon'
+            - '@dnd_dpd_france_shipping.identifier_generator.method'
+            - '@dnd_dpd_france_shipping.factory.type'
 
     dnd_dpd_france_shipping.method.provider:
         class: 'Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider'
@@ -31,21 +41,3 @@ services:
             - '@dnd_dpd_france_shipping.method.provider'
         tags:
             - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
-
-    #dnd_dpd_france_shipping.remove_integration_listener:
-    #    parent: oro_shipping.remove_integration_listener
-    #    arguments:
-    #        - !php/const  Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel::TYPE
-    #        - '@dnd_dpd_france_shipping.identifier_generator.method'
-    #        - '@oro_shipping.method.event.dispatcher.method_removal'
-    #    tags:
-    #        - { name: kernel.event_listener, event: oro_integration.channel_delete, method: onRemove }
-    #
-    #dnd_dpd_france_shipping.disable_integration_listener:
-    #    parent: oro_shipping.disable_integration_listener
-    #    arguments:
-    #        - !php/const  Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel::TYPE
-    #        - '@dnd_dpd_france_shipping.identifier_generator.method'
-    #        - '@oro_shipping.method_disable_handler.decorator'
-    #    tags:
-    #        - { name: kernel.event_listener, event: oro_integration.channel_disable, method: onIntegrationDisable }

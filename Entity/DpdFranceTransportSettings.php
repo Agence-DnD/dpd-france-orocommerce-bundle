@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Entity;
 
-use Dnd\Bundle\DpdFranceShippingBundle\Method\Type\DpdClassicShippingMethodType;
-use Dnd\Bundle\DpdFranceShippingBundle\Method\Type\DpdPredictShippingMethodType;
-use Dnd\Bundle\DpdFranceShippingBundle\Method\Type\DpdRelayShippingMethodType;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
+use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -24,6 +24,24 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class DpdFranceTransportSettings extends Transport
 {
+    /**
+     * The DPD Classic method's identifier
+     *
+     * @var string IDENTIFIER_CLASSIC
+     */
+    public const IDENTIFIER_CLASSIC = 'dpd_fr_classic';
+    /**
+     * The DPD Predict method's identifier
+     *
+     * @var string IDENTIFIER_PREDICT
+     */
+    public const IDENTIFIER_PREDICT = 'dpd_fr_predict';
+    /**
+     * The DPD Pickup method's identifier
+     *
+     * @var string IDENTIFIER_PICKUP
+     */
+    public const IDENTIFIER_PICKUP = 'dpd_fr_pickup';
     /**
      * The default value for station FTP port
      *
@@ -79,23 +97,23 @@ class DpdFranceTransportSettings extends Transport
      */
     public const DEFAULT_PREDICT_METHOD_DESC = 'Description de la méthode DPD Predict';
     /**
-     * The default name for DPD Relay method
+     * The default name for DPD Pickup method
      *
-     * @var string DEFAULT_RELAY_METHOD_NAME
+     * @var string DEFAULT_PICKUP_METHOD_NAME
      */
-    public const DEFAULT_RELAY_METHOD_NAME = 'DPD Relais';
+    public const DEFAULT_PICKUP_METHOD_NAME = 'DPD Relais';
     /**
-     * The default description for DPD Relay method
+     * The default description for DPD Pickup method
      *
-     * @var string DEFAULT_RELAY_METHOD_DESC
+     * @var string DEFAULT_PICKUP_METHOD_DESC
      */
-    public const DEFAULT_RELAY_METHOD_DESC = 'Description de la méthode DPD Relais';
+    public const DEFAULT_PICKUP_METHOD_DESC = 'Description de la méthode DPD Relais';
     /**
      * The settings for the DPD France transport
      *
      * @var ParameterBag $settings
      */
-    protected ParameterBag $settings;
+    protected ?ParameterBag $settings = null;
     /**
      * Description $stationFtpPort field
      *
@@ -193,21 +211,39 @@ class DpdFranceTransportSettings extends Transport
      */
     protected string $predictMethodDesc;
     /**
-     * Name of DpdFrance relay method
+     * Name of DpdFrance pickup method
      *
-     * @ORM\Column(name="dpd_fr_relay_method_name", type="string", length=255)
+     * @ORM\Column(name="dpd_fr_pickup_method_name", type="string", length=255)
      *
-     * @var string $relayMethodName
+     * @var string $pickupMethodName
      */
-    protected string $relayMethodName;
+    protected string $pickupMethodName;
     /**
-     * Description of DpdFrance relay method
+     * Description of DpdFrance pickup method
      *
-     * @ORM\Column(name="dpd_fr_relay_method_desc", type="text")
+     * @ORM\Column(name="dpd_fr_pickup_method_desc", type="text")
      *
-     * @var string $relayMethodDesc
+     * @var string $pickupMethodDesc
      */
-    protected string $relayMethodDesc;
+    protected string $pickupMethodDesc;
+    /**
+     * @var Collection|ShippingService[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="ShippingService",
+     *     fetch="EAGER"
+     * )
+     * @ORM\JoinTable(
+     *      name="dnd_dpd_fr_transport_ship_service",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="ship_service_code", referencedColumnName="code", onDelete="CASCADE")
+     *      }
+     * )
+     */
+    protected $shippingServices;
 
     /**
      * DpdFranceTransportSettings constructor
@@ -224,8 +260,9 @@ class DpdFranceTransportSettings extends Transport
         $this->classicMethodDesc  = self::DEFAULT_CLASSIC_METHOD_DESC;
         $this->predictMethodName  = self::DEFAULT_PREDICT_METHOD_NAME;
         $this->predictMethodDesc  = self::DEFAULT_PREDICT_METHOD_DESC;
-        $this->relayMethodName    = self::DEFAULT_RELAY_METHOD_NAME;
-        $this->relayMethodDesc    = self::DEFAULT_RELAY_METHOD_DESC;
+        $this->pickupMethodName   = self::DEFAULT_PICKUP_METHOD_NAME;
+        $this->pickupMethodDesc   = self::DEFAULT_PICKUP_METHOD_DESC;
+        $this->shippingServices   = new ArrayCollection();
     }
 
     /**
@@ -254,8 +291,10 @@ class DpdFranceTransportSettings extends Transport
                 'dpd_fr_classic_method_desc'            => $this->getClassicMethodDesc(),
                 'dpd_fr_predict_method_name'            => $this->getPredictMethodName(),
                 'dpd_fr_predict_method_desc'            => $this->getPredictMethodDesc(),
-                'dpd_fr_relay_method_name'              => $this->getRelayMethodName(),
-                'dpd_fr_relay_method_desc'              => $this->getRelayMethodDesc(),
+                'dpd_fr_pickup_method_name'             => $this->getPickupMethodName(),
+                'dpd_fr_pickup_method_desc'             => $this->getPickupMethodDesc(),
+
+                'applicable_shipping_services' => $this->getShippingServices()->toArray(),
             ]);
         }
 
@@ -549,47 +588,47 @@ class DpdFranceTransportSettings extends Transport
     }
 
     /**
-     * Description getRelayMethodName function
+     * Description getPickupMethodName function
      *
      * @return string
      */
-    public function getRelayMethodName(): string
+    public function getPickupMethodName(): string
     {
-        return $this->relayMethodName;
+        return $this->pickupMethodName;
     }
 
     /**
-     * Description setRelayMethodName function
+     * Description setPickupMethodName function
      *
-     * @param string $relayMethodName
+     * @param string $pickupMethodName
      *
      * @return void
      */
-    public function setRelayMethodName(string $relayMethodName): void
+    public function setPickupMethodName(string $pickupMethodName): void
     {
-        $this->relayMethodName = $relayMethodName;
+        $this->pickupMethodName = $pickupMethodName;
     }
 
     /**
-     * Description getRelayMethodDesc function
+     * Description getPickupMethodDesc function
      *
      * @return string
      */
-    public function getRelayMethodDesc(): string
+    public function getPickupMethodDesc(): string
     {
-        return $this->relayMethodDesc;
+        return $this->pickupMethodDesc;
     }
 
     /**
-     * Description setRelayMethodDesc function
+     * Description setPickupMethodDesc function
      *
-     * @param string $relayMethodDesc
+     * @param string $pickupMethodDesc
      *
      * @return void
      */
-    public function setRelayMethodDesc(string $relayMethodDesc): void
+    public function setPickupMethodDesc(string $pickupMethodDesc): void
     {
-        $this->relayMethodDesc = $relayMethodDesc;
+        $this->pickupMethodDesc = $pickupMethodDesc;
     }
 
     /**
@@ -599,10 +638,10 @@ class DpdFranceTransportSettings extends Transport
      */
     public function getLabels(): array
     {
-        $labels                                           = [];
-        $labels[DpdClassicShippingMethodType::IDENTIFIER] = $this->getClassicMethodName();
-        $labels[DpdPredictShippingMethodType::IDENTIFIER] = $this->getPredictMethodName();
-        $labels[DpdRelayShippingMethodType::IDENTIFIER]   = $this->getRelayMethodName();
+        $labels                           = [];
+        $labels[self::IDENTIFIER_CLASSIC] = $this->getClassicMethodName();
+        $labels[self::IDENTIFIER_PREDICT] = $this->getPredictMethodName();
+        $labels[self::IDENTIFIER_PICKUP]  = $this->getPickupMethodName();
 
         return $labels;
     }
@@ -628,10 +667,10 @@ class DpdFranceTransportSettings extends Transport
      */
     public function getDescriptions(): array
     {
-        $descriptions                                           = [];
-        $descriptions[DpdClassicShippingMethodType::IDENTIFIER] = $this->getClassicMethodDesc();
-        $descriptions[DpdPredictShippingMethodType::IDENTIFIER] = $this->getPredictMethodDesc();
-        $descriptions[DpdRelayShippingMethodType::IDENTIFIER]   = $this->getRelayMethodDesc();
+        $descriptions                           = [];
+        $descriptions[self::IDENTIFIER_CLASSIC] = $this->getClassicMethodDesc();
+        $descriptions[self::IDENTIFIER_PREDICT] = $this->getPredictMethodDesc();
+        $descriptions[self::IDENTIFIER_PICKUP]  = $this->getPickupMethodDesc();
 
         return $descriptions;
     }
@@ -648,5 +687,60 @@ class DpdFranceTransportSettings extends Transport
         $descriptions = $this->getDescriptions();
 
         return $descriptions[$identifier] ?? null;
+    }
+
+    /**
+     * @return Collection|ShippingService[]
+     */
+    public function getShippingServices()
+    {
+        return $this->shippingServices;
+    }
+
+    /**
+     * @param string $code
+     *
+     * @return ShippingService|null
+     */
+    public function getApplicableShippingService($code)
+    {
+        $result = null;
+
+        foreach ($this->shippingServices as $service) {
+            if ($service->getCode() === $code) {
+                $result = $service;
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param ShippingService $service
+     *
+     * @return $this
+     */
+    public function addApplicableShippingService(ShippingService $service)
+    {
+        if (!$this->shippingServices->contains($service)) {
+            $this->shippingServices->add($service);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ShippingService $service
+     *
+     * @return $this
+     */
+    public function removeApplicableShippingService(ShippingService $service)
+    {
+        if ($this->shippingServices->contains($service)) {
+            $this->shippingServices->removeElement($service);
+        }
+
+        return $this;
     }
 }

@@ -1,0 +1,12 @@
+dpd.shipping_service.1:
+    code: 'dpd_fr_classic'
+    label: 'DPD Classic'
+    icon: 'bundles/dnddpdfranceshipping/img/livraison-dpd-classic.png'
+dpd.shipping_service.2:
+    code: 'dpd_fr_predict'
+    label: 'DPD Predict'
+    icon: 'bundles/dnddpdfranceshipping/img/livraison-dpd-predict.png'
+dpd.shipping_service.3:
+    code: 'dpd_fr_pickup'
+    label: 'DPD Pickup'
+    icon: 'bundles/dnddpdfranceshipping/img/livraison-dpd-pickup.png'

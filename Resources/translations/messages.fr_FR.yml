@@ -2,9 +2,14 @@ dnd_dpd_france_shipping:
     method:
         price.label: Prix
     form:
-        options_type.label: 'Taux livraison DPD France'
-    form.select_attribute.label: Choisir un attribut...
+        shipping_method_config_options:
+            surcharge:
+                tooltip: Surcoût pour le service
+                label: Prix
+        options_type.label: Taux livraison DPD France
+        select_attribute.label: Choisir un attribut...
     integration:
+        settings.shipping_services.label: Services d'expédition
         channel:
             label: DPD France
         transport:

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Method;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider;
 

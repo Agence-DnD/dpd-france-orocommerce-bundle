@@ -2,9 +2,14 @@ dnd_dpd_france_shipping:
     method:
         price.label: Price
     form:
-        options_type.label: 'DPD France Shipping Rate'
-    form.select_attribute.label: Choose attribute...
+        shipping_method_config_options:
+            surcharge:
+                tooltip: Additional cost for the service
+                label: Price
+        options_type.label: DPD France Shipping Rate
+        select_attribute.label: Choose attribute...
     integration:
+        settings.shipping_services.label: 'Shipping Services'
         channel:
             label: DPD France
         transport:

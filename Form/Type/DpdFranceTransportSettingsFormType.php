@@ -2,11 +2,13 @@
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Form\Type;
 
+use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Form\DataTransformer\OrderStatusTransformer;
 use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceTransportInterface;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumChoiceType;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -149,7 +151,13 @@ class DpdFranceTransportSettingsFormType extends AbstractType
         ])->add('maxQty', IntegerType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.max_qty.label',
             'required' => true,
-        ]);
+        ])->add('shippingServices', EntityType::class, [
+                    'class'        => ShippingService::class,
+                    'choice_label' => 'label',
+                    'label'        => 'dnd_dpd_france_shipping.integration.settings.shipping_services.label',
+                    'required'     => true,
+                    'multiple'     => true,
+                ]);
     }
 
     /**

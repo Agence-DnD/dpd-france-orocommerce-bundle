@@ -13,7 +13,10 @@
 ```bin/console cache:clear```
 
 ### Run the migrations
-```bin/console oro:migrations:load --force```
+```
+bin/console oro:migration:load --force
+bin/console oro:migration:data:load --bundles=DndDpdFranceShippingBundle
+```
 
 ### Reinstall the assets to copy bundle public folder (for integration logo)
 ```bin/console assets:install```

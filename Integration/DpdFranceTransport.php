@@ -27,9 +27,9 @@ class DpdFranceTransport implements DpdFranceTransportInterface
     /**
      * Description $settings field
      *
-     * @var ParameterBag $settings
+     * @var ParameterBag|null $settings
      */
-    protected ParameterBag $settings;
+    protected ?ParameterBag $settings;
 
     /**
      * {@inheritdoc}

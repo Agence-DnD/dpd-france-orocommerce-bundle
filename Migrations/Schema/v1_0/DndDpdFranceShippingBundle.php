@@ -92,7 +92,7 @@ class DndDpdFranceShippingBundle implements Migration
         $transportTable->addColumn('dpd_fr_classic_method_desc', Types::TEXT, ['notnull' => false]);
         $transportTable->addColumn('dpd_fr_predict_method_name', Types::STRING, ['notnull' => false, 'length' => 255]);
         $transportTable->addColumn('dpd_fr_predict_method_desc', Types::TEXT, ['notnull' => false]);
-        $transportTable->addColumn('dpd_fr_relay_method_name', Types::STRING, ['notnull' => false, 'length' => 255]);
-        $transportTable->addColumn('dpd_fr_relay_method_desc', Types::TEXT, ['notnull' => false]);
+        $transportTable->addColumn('dpd_fr_pickup_method_name', Types::STRING, ['notnull' => false, 'length' => 255]);
+        $transportTable->addColumn('dpd_fr_pickup_method_desc', Types::TEXT, ['notnull' => false]);
     }
 }

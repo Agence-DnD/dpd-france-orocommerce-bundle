@@ -1,14 +1,16 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Dnd\Bundle\DpdFranceShippingBundle\Method;
 
-use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodType;
+use Dnd\Bundle\DpdFranceShippingBundle\Entity\DpdFranceTransportSettings;
+use Dnd\Bundle\DpdFranceShippingBundle\Form\Type\DpdFranceShippingMethodOptionsType;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodIconAwareInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
 
 /**
  * Class DpdFranceShippingMethod
@@ -19,14 +21,47 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
  * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
-class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethodIconAwareInterface
+class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethodIconAwareInterface, ShippingTrackingAwareInterface, PricesAwareShippingMethodInterface
 {
     /**
-     * Description $types field
+     * Defines the order in which shipping methods appear on the user interface
      *
-     * @var array $types
+     * @var int SORT_ORDER
      */
-    private array $types;
+    public const SORT_ORDER = 30;
+    /**
+     * additionnal cost method type option key
+     *
+     * @var string OPTION_SURCHARGE
+     */
+    public const OPTION_SURCHARGE = 'surcharge';
+    /**
+     * The label for the method
+     *
+     * @var string LABEL
+     */
+    public const LABEL = 'DPD France';
+    /**
+     * The pattern for tracking URL.
+     * First number is Expedition ref
+     * Second number is agency code
+     * Third number is contract number
+     *
+     * @var string TRACKING_URL_PATTERN
+     */
+    public const TRACKING_URL_PATTERN = 'http://www.dpd.fr/tracer_%d_%d%d';
+    /**
+     * Description $icon field
+     *
+     * @var mixed $icon
+     */
+    protected $icon;
+    /**
+     * Description $transportSettings field
+     *
+     * @var DpdFranceTransportSettings $transportSettings
+     */
+    protected DpdFranceTransportSettings $transportSettings;
     /**
      * Description $identifier field
      *
@@ -40,45 +75,46 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
      */
     private string $label;
     /**
-     * Description $icon field
+     * Description $isEnabled field
      *
-     * @var string|null $icon
+     * @var bool $isEnabled
      */
-    private ?string $icon;
+    private bool $isEnabled;
     /**
-     * Description $type field
-     *
-     * @var FlatRateMethodType $type
+     * @var ShippingMethodTypeInterface[] $types
      */
-    private FlatRateMethodType $type;
-    /**
-     * Description $enabled field
-     *
-     * @var bool $enabled
-     */
-    private bool $enabled;
+    private array $types;
 
     /**
      * DpdFranceShippingMethod constructor
      *
-     * @param string      $identifier
-     * @param string      $label
-     * @param string|null $icon
-     * @param bool        $enabled
-     * @param array       $types
+     * @param                            $identifier
+     * @param                            $label
+     * @param                            $icon
+     * @param array                      $types
+     * @param DpdFranceTransportSettings $transportSettings
+     * @param bool                       $isEnabled
      */
-    public function __construct(string $identifier, string $label, ?string $icon, bool $enabled, array $types)
-    {
-        $this->identifier = $identifier;
-        $this->label      = $label;
-        $this->icon       = $icon;
-        //$this->type       = new FlatRateMethodType($label);
-        $this->enabled = $enabled;
-        $this->types   = $types;
+    public function __construct(
+        $identifier,
+        $label,
+        $icon,
+        array $types,
+        DpdFranceTransportSettings $transportSettings,
+        bool $isEnabled
+    ) {
+        $this->identifier        = $identifier;
+        $this->label             = $label;
+        $this->isEnabled         = $isEnabled;
+        $this->transportSettings = $transportSettings;
+        $this->types             = $types;
+        $this->icon              = $icon;
     }
 
     /**
-     * {@inheritDoc}
+     * Description getIdentifier function
+     *
+     * @return string
      */
     public function getIdentifier(): string
     {
@@ -86,23 +122,9 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
     }
 
     /**
-     * {@inheritDoc}
-     */
-    public function isGrouped(): bool
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isEnabled(): bool
-    {
-        return $this->enabled;
-    }
-
-    /**
-     * {@inheritDoc}
+     * Description getLabel function
+     *
+     * @return string
      */
     public function getLabel(): string
     {
@@ -110,15 +132,19 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
     }
 
     /**
-     * {@inheritDoc}
+     * Description isEnabled function
+     *
+     * @return bool
      */
-    public function getIcon(): ?string
+    public function isEnabled(): bool
     {
-        return $this->icon;
+        return $this->isEnabled;
     }
 
     /**
-     * {@inheritDoc}
+     * Description getTypes function
+     *
+     * @return ShippingMethodTypeInterface[]
      */
     public function getTypes(): array
     {
@@ -128,7 +154,44 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
     /**
      * {@inheritDoc}
      */
-    public function getType($identifier): ?ShippingMethodTypeInterface
+    public function isGrouped()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getOptionsConfigurationFormType()
+    {
+        return DpdFranceShippingMethodOptionsType::class;
+    }
+
+    /**
+     * Description getSortOrder function
+     *
+     * @return int
+     */
+    public function getSortOrder(): int
+    {
+        return static::SORT_ORDER;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIcon()
+    {
+        // @TODO fetch icon from service ??
+        $services = $this->transportSettings->getShippingServices();
+
+        return $this->icon;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getType($identifier)
     {
         $methodTypes = $this->getTypes();
         if ($methodTypes !== null) {
@@ -145,16 +208,39 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
     /**
      * {@inheritDoc}
      */
-    public function getOptionsConfigurationFormType(): string
+    public function getTrackingLink($number)
     {
-        return HiddenType::class;
+        // @TODO Implement getTrackingLink() method.
+        // put the three digits in $nulmber, explode them and sprintf into the self::TRACKING_URL_PATTERN
+        return $number;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function getSortOrder(): int
+    public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
     {
-        return 150;
+        $methodSurcharge = $this->getSurchargeFromOptions($methodOptions);
+        $result          = [];
+        foreach ($optionsByTypes as $typeId => $option) {
+            $result[$typeId] = Price::create(
+                $methodSurcharge + $this->getSurchargeFromOptions($option),
+                $context->getCurrency()
+            );
+        }
+
+        return $result;
+    }
+
+    /**
+     * Gets the price surcharge for the given type option
+     *
+     * @param array $option
+     *
+     * @return float
+     */
+    private function getSurchargeFromOptions(array $option): float
+    {
+        return (float)$option[static::OPTION_SURCHARGE];
     }
 }

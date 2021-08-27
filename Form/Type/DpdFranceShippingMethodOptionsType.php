@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Form\Type;
 
+use Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethod;
 use Oro\Bundle\FlatRateShippingBundle\Form\Type\FlatRateOptionsType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\FormBuilderInterface;
 
 /**
  * Class DpdFranceShippingMethodOptionsType
@@ -23,15 +25,22 @@ class DpdFranceShippingMethodOptionsType extends FlatRateOptionsType
      *
      * @var string BLOCK_PREFIX
      */
-    public const BLOCK_PREFIX = 'dpd_france_shipping_options_type';
+    public const BLOCK_PREFIX = 'dpd_france_shipping_config_options';
 
     /**
-     * @throws AccessException
+     * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $resolver->setDefaults([
-            'label' => 'dnd_dpd_france_shipping.form.options_type.label',
+        $builder->add(DpdFranceShippingMethod::OPTION_SURCHARGE, NumberType::class, [
+            'required'      => true,
+            'label'         => 'dnd_dpd_france_shipping.form.shipping_method_config_options.surcharge.label',
+            'scale'         => $this->roundingService->getPrecision(),
+            'rounding_mode' => $this->roundingService->getRoundType(),
+            'attr'          => [
+                'data-scale' => $this->roundingService->getPrecision(),
+                'class'      => 'method-options-additional-cost',
+            ],
         ]);
     }
 
