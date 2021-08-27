@@ -4,7 +4,7 @@
     {% set methodLabel = get_shipping_method_label(methodData.identifier)|trans %}
     {% if methodLabel|length > 0 %}
         <li>{{ methodLabel }} {{ ShipRuleMacro.renderShippingMethodDisabledFlag(methodData.identifier) }}
-        {%- if methodData.options.surcharge is not empty -%}
+        {%- if methodData.options is not empty and methodData.options.surcharge is not empty -%}
             &nbsp;({{ 'dnd_dpd_france_shipping.form.shipping_method_config_options.surcharge.label'|trans}}: {{ methodData.options.surcharge|oro_format_currency({'currency': currency}) }})
         {%- endif -%}
         <ul>
