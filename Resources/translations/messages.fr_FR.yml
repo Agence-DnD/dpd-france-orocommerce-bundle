@@ -1,3 +1,7 @@
+oro:
+    product:
+        max_qty_for_dpd_fr.label: Qté max DPD France
+        max_qty_for_dpd_fr.description: Quantité maximale possible en expédition DPDFrance pour ce produit
 dnd_dpd_france_shipping:
     method:
         price.label: Prix
@@ -14,19 +18,6 @@ dnd_dpd_france_shipping:
             label: DPD France
         transport:
             label: DPD France
-            mapping:
-                height:
-                    label: Attribut hauteur
-                    tooltip: Code de l'attribut représentant la hauteur de votre produit
-                length:
-                    label: Attribut longueur
-                    tooltip: Code de l'attribut représentant la longueur de votre produit
-                weight:
-                    label: Attribut poids
-                    tooltip: Code de l'attribut représentant le poids de votre produit
-                width:
-                    label: Attribut largeur
-                    tooltip: Code de l'attribut représentant la largeur de votre produit
     transport:
         agency_code:
             label: Code d'agence

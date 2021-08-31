@@ -2,8 +2,8 @@
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 
 /**
@@ -17,6 +17,31 @@ use Doctrine\Persistence\ObjectManager;
  */
 abstract class AbstractShippingServiceFixture extends AbstractFixture
 {
+    /**
+     * Default value for the parcel max perimeter setting
+     *
+     * @var float DEFAULT_PARCEL_MAX_PERIMETER
+     */
+    public const DEFAULT_PARCEL_MAX_PERIMETER = 3;
+    /**
+     * Default value for the parcel max perimeter setting
+     *
+     * @var float DEFAULT_PARCEL_MAX_LENGTH
+     */
+    public const DEFAULT_PARCEL_MAX_LENGTH = 2;
+    /**
+     * Default value for the parcel max perimeter setting
+     *
+     * @var float DEFAULT_PARCEL_MAX_WEIGHT
+     */
+    public const DEFAULT_PARCEL_MAX_WEIGHT = 30;
+    /**
+     * Default value for the parcel max perimeter setting
+     *
+     * @var integer DEFAULT_PARCEL_MAX_AMOUNT
+     */
+    public const DEFAULT_PARCEL_MAX_AMOUNT = 5;
+
     /**
      * Description addUpdateShippingServices function
      *
@@ -41,6 +66,18 @@ abstract class AbstractShippingServiceFixture extends AbstractFixture
             $entity->setCode($shippingService['code']);
             $entity->setIcon($shippingService['icon']);
             $entity->setLabel($shippingService['label']);
+            $entity->setParcelMaxPerimeter(
+                $shippingService['parcel_max_perimeter'] ?? self::DEFAULT_PARCEL_MAX_PERIMETER
+            );
+            $entity->setParcelMaxLength(
+                $shippingService['parcel_max_length'] ?? self::DEFAULT_PARCEL_MAX_LENGTH
+            );
+            $entity->setParcelMaxWeight(
+                $shippingService['parcel_max_weight'] ?? self::DEFAULT_PARCEL_MAX_WEIGHT
+            );
+            $entity->setParcelMaxAmount(
+                $shippingService['parcel_max_amount'] ?? self::DEFAULT_PARCEL_MAX_AMOUNT
+            );
             $manager->persist($entity);
 
             if ($setReferences) {

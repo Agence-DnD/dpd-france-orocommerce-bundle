@@ -44,7 +44,7 @@ class DndDpdFranceShippingBundle implements Migration
      * @return void
      * @throws SchemaException
      */
-    public static function addStationFTPTransportColumns(Schema $schema)
+    public static function addStationFTPTransportColumns(Schema $schema): void
     {
         /** @var Table $transportTable the oro integration transport table */
         $transportTable = $schema->getTable('oro_integration_transport');
@@ -67,7 +67,7 @@ class DndDpdFranceShippingBundle implements Migration
      * @return void
      * @throws SchemaException
      */
-    public static function addGeneralDpdTransportColumns(Schema $schema)
+    public static function addGeneralDpdTransportColumns(Schema $schema): void
     {
         /** @var Table $transportTable the oro integration transport table */
         $transportTable = $schema->getTable('oro_integration_transport');
@@ -84,7 +84,7 @@ class DndDpdFranceShippingBundle implements Migration
      * @return void
      * @throws SchemaException
      */
-    public static function addDpdMethodsTransportColumns(Schema $schema)
+    public static function addDpdMethodsTransportColumns(Schema $schema): void
     {
         /** @var Table $transportTable the oro integration transport table */
         $transportTable = $schema->getTable('oro_integration_transport');

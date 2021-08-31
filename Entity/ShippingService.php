@@ -19,24 +19,62 @@ use Doctrine\ORM\Mapping as ORM;
 class ShippingService
 {
     /**
-     * @var string
+     * The code for the shipping service
      *
      * @ORM\Id
      * @ORM\Column(name="code", type="string", length=30, unique=true)
+     *
+     * @var string $code
      */
-    protected $code;
+    protected string $code;
     /**
-     * @var string
+     * The icon for the shipping service
      *
      * @ORM\Column(name="icon", type="string", length=255)
+     *
+     * @var string $icon
      */
-    protected $icon;
+    protected string $icon;
     /**
-     * @var string
+     * The label for the shipping service
      *
      * @ORM\Column(name="label", type="string", length=255)
+     *
+     * @var string $label
      */
-    protected $label;
+    protected string $label;
+    /**
+     * The maximum perimeter for each package
+     *
+     * @ORM\Column(name="parcel_max_perimeter", type="float")
+     *
+     * @var float $parcelMaxPerimeter
+     */
+    protected float $parcelMaxPerimeter;
+    /**
+     * The maximum length for each package
+     *
+     * @ORM\Column(name="parcel_max_length", type="float")
+     *
+     * @var float $parcelMaxLength
+     */
+    protected float $parcelMaxLength;
+    /**
+     * The maximum weight for each package
+     *
+     * @ORM\Column(name="parcel_max_weight", type="float")
+     *
+     * @var float $parcelMaxWeight
+     */
+    protected float $parcelMaxWeight;
+    /**
+     * The maximum amount of packages
+     *
+     * @ORM\Column(name="parcel_max_amount", type="float")
+     *
+     * @var float $parcelMaxAmount
+     */
+    protected $parcelMaxAmount;
 
     /**
      * @return string
@@ -98,6 +136,94 @@ class ShippingService
     public function setLabel(string $label): void
     {
         $this->label = $label;
+    }
+
+    /**
+     * Description getParcelMaxPerimeter function
+     *
+     * @return float
+     */
+    public function getParcelMaxPerimeter(): float
+    {
+        return $this->parcelMaxPerimeter;
+    }
+
+    /**
+     * Description setParcelMaxPerimeter function
+     *
+     * @param float $parcelMaxPerimeter
+     *
+     * @return void
+     */
+    public function setParcelMaxPerimeter(float $parcelMaxPerimeter): void
+    {
+        $this->parcelMaxPerimeter = $parcelMaxPerimeter;
+    }
+
+    /**
+     * Description getParcelMaxLength function
+     *
+     * @return float
+     */
+    public function getParcelMaxLength(): float
+    {
+        return $this->parcelMaxLength;
+    }
+
+    /**
+     * Description setParcelMaxLength function
+     *
+     * @param float $parcelMaxLength
+     *
+     * @return void
+     */
+    public function setParcelMaxLength(float $parcelMaxLength): void
+    {
+        $this->parcelMaxLength = $parcelMaxLength;
+    }
+
+    /**
+     * Description getParcelMaxWeight function
+     *
+     * @return float
+     */
+    public function getParcelMaxWeight(): float
+    {
+        return $this->parcelMaxWeight;
+    }
+
+    /**
+     * Description setParcelMaxWeight function
+     *
+     * @param float $parcelMaxWeight
+     *
+     * @return void
+     */
+    public function setParcelMaxWeight(float $parcelMaxWeight): void
+    {
+        $this->parcelMaxWeight = $parcelMaxWeight;
+    }
+
+    /**
+     * Description getParcelMaxAmount function
+     *
+     * @return float
+     */
+    public function getParcelMaxAmount(): float
+    {
+        return $this->parcelMaxAmount;
+    }
+
+    /**
+     * Description setParcelMaxAmount function
+     *
+     * @param float $parcelMaxAmount
+     *
+     * @return void
+     */
+    public function setParcelMaxAmount(float $parcelMaxAmount): void
+    {
+        $this->parcelMaxAmount = $parcelMaxAmount;
     }
 
     /**

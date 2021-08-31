@@ -41,3 +41,21 @@ services:
             - '@dnd_dpd_france_shipping.method.provider'
         tags:
             - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
+
+    dnd_dpd_france_shipping.condition.shippable:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Condition\ShippableWithDpdFrance
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_checkout.provider.shipping_context'
+            - '@dnd_dpd_france_shipping.factory.package'
+
+    dnd_dpd_france_shipping.builder.package:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Builder\ShippingPackagesBuilder
+        arguments:
+            - '@oro_shipping.factory.shipping_package_options'
+            - '@oro_shipping.provider.measure_units.conversion'
+
+    dnd_dpd_france_shipping.factory.package:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory
+        arguments:
+            - '@dnd_dpd_france_shipping.builder.package'

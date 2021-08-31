@@ -44,7 +44,7 @@ class DndDpdFranceShippingBundle implements Migration
      * @return void
      * @throws SchemaException
      */
-    public static function addProductMaxQtyForDpdFranceAttribute(Schema $schema)
+    public static function addProductMaxQtyForDpdFranceAttribute(Schema $schema): void
     {
         /** @var Table $productTable the oro product table */
         $productTable = $schema->getTable('oro_product');

@@ -1,3 +1,7 @@
+oro:
+    product:
+        max_qty_for_dpd_fr.label: DPD France Max qty
+        max_qty_for_dpd_fr.description: Max qty allowed of this product that can be shipped with DPDFrance
 dnd_dpd_france_shipping:
     method:
         price.label: Price
@@ -14,19 +18,6 @@ dnd_dpd_france_shipping:
             label: DPD France
         transport:
             label: DPD France
-            mapping:
-                height:
-                    label: Height attribute
-                    tooltip: code of the attribute holding your product height
-                length:
-                    label: Length attribute
-                    tooltip: code of the attribute holding your product length
-                weight:
-                    label: Weight attribute
-                    tooltip: code of the attribute holding your product weight
-                width:
-                    label: Width attribute
-                    tooltip: code of the attribute holding your product width
     transport:
         agency_code:
             label: Agency code

@@ -81,7 +81,7 @@ class DndDpdFranceShippingBundle implements Migration
      * @return void
      * @throws SchemaException
      */
-    public static function addDndDpdFrTransportShipServiceForeignKeys(Schema $schema)
+    public static function addDndDpdFrTransportShipServiceForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('dnd_dpd_fr_transport_ship_service');
         $table->addForeignKeyConstraint(

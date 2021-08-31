@@ -111,7 +111,7 @@ class DpdFranceTransportSettings extends Transport
     /**
      * The settings for the DPD France transport
      *
-     * @var ParameterBag $settings
+     * @var ParameterBag|null $settings
      */
     protected ?ParameterBag $settings = null;
     /**
