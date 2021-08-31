@@ -16,13 +16,6 @@ services:
         tags:
             - { name: form.type, alias: dnd_dpd_france_shipping_transport_settings_type }
 
-    dnd_dpd_france_shipping.form.type.attribute_mapping_type:
-        class: Dnd\Bundle\DpdFranceShippingBundle\Form\Type\AttributeMappingType
-        arguments:
-            $attributeManager: '@oro_entity_config.manager.attribute_manager'
-        tags:
-            - { name: form.type, alias: dnd_dpd_france_shipping_attribute_mapping }
-
     dnd_dpd_france_shipping.form.type.dpd_france_shipping_options:
         class: 'Dnd\Bundle\DpdFranceShippingBundle\Form\Type\DpdFranceShippingMethodOptionsType'
         arguments:
