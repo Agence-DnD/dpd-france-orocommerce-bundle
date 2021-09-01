@@ -70,6 +70,7 @@ class ShippingPackagesBuilder
      * ShippingPackagesBuilder constructor
      *
      * @param ShippingPackageOptionsFactoryInterface $packageOptionsFactory
+     * @param MeasureUnitConversion                  $measureUnitConversion
      */
     public function __construct(
         ShippingPackageOptionsFactoryInterface $packageOptionsFactory,
@@ -103,19 +104,26 @@ class ShippingPackagesBuilder
      */
     public function addLineItem(ShippingLineItemInterface $lineItem): bool
     {
+        if (!$lineItem->getWeight()) {
+            $this->badItemException($lineItem, 'Unknown weight.');
+        }
+        if (!$lineItem->getDimensions()) {
+            $this->badItemException($lineItem, 'Unknown size.');
+        }
         $weight     = $this->measureUnitConversion->convert($lineItem->getWeight(), self::WEIGHT_UNIT);
         $dimensions = $this->measureUnitConversion->convert($lineItem->getDimensions(), self::LENGTH_UNIT);
 
+        if ($weight  === null) {
+            $this->badItemException($lineItem, sprintf('Could not convert the weight into %s.', self::WEIGHT_UNIT));
+        }
+        if (!$lineItem->getDimensions()) {
+            $this->badItemException($lineItem, sprintf('Could not convert the dimensions into %s.', self::LENGTH_UNIT));
+        }
+        /** @var ShippingPackageOptionsInterface $itemOptions */
         $itemOptions = $this->packageOptionsFactory->create($dimensions, $weight);
 
         if (!$this->itemCanFit($itemOptions)) {
-            throw new PackageException(
-                sprintf(
-                    'The item %s (%s) cannot be shipped with DPD FR. Either too heavy or too big',
-                    $lineItem->getProduct()->getName(),
-                    $lineItem->getProduct()->getSku()
-                )
-            );
+            $this->badItemException($lineItem, 'Either too heavy or too big.');
         }
         for ($i = 0; $i < $lineItem->getQuantity(); $i++) {
             if (!$this->itemCanFitInCurrentPackage($itemOptions)) {
@@ -134,6 +142,27 @@ class ShippingPackagesBuilder
         }
 
         return true;
+    }
+
+    /**
+     * Helper to throw a PackageException for a given lineItem
+     *
+     * @param ShippingLineItemInterface $lineItem
+     * @param string|null               $message
+     *
+     * @return void
+     * @throws PackageException
+     */
+    private function badItemException(ShippingLineItemInterface $lineItem, ?string $message = ''): void
+    {
+        throw new PackageException(
+            sprintf(
+                'The item %s (%s) cannot be shipped with DPD FR. %s',
+                $lineItem->getProduct()->getName(),
+                $lineItem->getProduct()->getSku(),
+                $message
+            )
+        );
     }
 
     /**

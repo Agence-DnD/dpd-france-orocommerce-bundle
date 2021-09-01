@@ -31,6 +31,8 @@ class PackageFactory
 
     /**
      * PackageFactory constructor
+     *
+     * @param ShippingPackagesBuilder $packagesBuilder
      */
     public function __construct(ShippingPackagesBuilder $packagesBuilder)
     {
@@ -53,15 +55,6 @@ class PackageFactory
         $this->packagesBuilder->init($shippingService);
         /** @var ShippingLineItemInterface $item */
         foreach ($lineItemCollection as $item) {
-            if (!$item->getWeight() || !$item->getDimensions()) {
-                throw new PackageException(
-                    sprintf(
-                        'The item %s (%s) cannot be shipped with DPD FR. Unknown size and/or weight.',
-                        $item->getProduct()->getName(),
-                        $item->getProduct()->getSku()
-                    )
-                );
-            }
             $this->packagesBuilder->addLineItem($item);
         }
 

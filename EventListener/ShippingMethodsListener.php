@@ -9,6 +9,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 
 /**
  * Class ShippingMethodsListener
@@ -47,7 +48,10 @@ class ShippingMethodsListener
      */
     public function enforceDpDFranceValidations(ApplicableMethodsEvent $event): void
     {
+        /** @var ShippingMethodViewCollection $methodCollection */
         $methodCollection = $event->getMethodCollection();
+
+        /** @var Checkout|QuoteDemand $methodCollection */
         $sourceEntity     = $event->getSourceEntity();
 
         if (!$sourceEntity instanceof Checkout || $sourceEntity->getSourceEntity() instanceof QuoteDemand) {

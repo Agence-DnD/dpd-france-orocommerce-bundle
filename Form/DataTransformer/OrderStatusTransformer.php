@@ -46,11 +46,13 @@ class OrderStatusTransformer implements DataTransformerInterface
      */
     public function transform($value): ArrayCollection
     {
-        //@TODO FIXME
+        //@TODO FIXME - does not preset the order statuses correctly on edit
         $ids = explode(',', $value ?? '');
 
+        /** @var mixed[] $availableStatuses */
         $availableStatuses = $this->enumValueProvider->getEnumChoicesByCode('order_internal_status');
 
+        /** @var mixed[] $statuses */
         $statuses = array_filter($availableStatuses, static function ($id) use (&$ids) {
             return in_array($id, $ids, true);
         });
@@ -67,6 +69,7 @@ class OrderStatusTransformer implements DataTransformerInterface
      */
     public function reverseTransform($values): string
     {
+        /** @var string[] $ids */
         $ids = [];
         foreach ($values as $value) {
             $ids[] = $value->getId();

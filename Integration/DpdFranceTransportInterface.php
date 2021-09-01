@@ -30,13 +30,4 @@ interface DpdFranceTransportInterface extends TransportInterface
      * @return ParameterBag
      */
     public function getSettings(): ParameterBag;
-
-    /**
-     * Description getFile function
-     *
-     * @TODO implement that later, when the library for the SFTP protocol
-     *
-     * @return string
-     */
-    //public function getFile(): string;
 }

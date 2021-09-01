@@ -3,6 +3,7 @@
 namespace Dnd\Bundle\DpdFranceShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * Class ShippingServiceRepository
@@ -22,6 +23,7 @@ class ShippingServiceRepository extends EntityRepository
      */
     public function getAllShippingServiceCodes(): array
     {
+        /** @var QueryBuilder $qb */
         $qb = $this->createQueryBuilder('shippingService')->select('shippingService.code');
 
         return array_column($qb->getQuery()->getResult(), 'code');

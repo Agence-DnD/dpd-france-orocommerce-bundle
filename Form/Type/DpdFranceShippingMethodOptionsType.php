@@ -30,7 +30,7 @@ class DpdFranceShippingMethodOptionsType extends FlatRateOptionsType
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(DpdFranceShippingMethod::OPTION_SURCHARGE, NumberType::class, [
             'required'      => true,
@@ -47,7 +47,7 @@ class DpdFranceShippingMethodOptionsType extends FlatRateOptionsType
     /**
      * {@inheritDoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;
     }

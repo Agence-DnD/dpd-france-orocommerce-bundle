@@ -34,7 +34,7 @@ class DpdFranceTransport implements DpdFranceTransportInterface
     /**
      * {@inheritdoc}
      */
-    public function getLabel()
+    public function getLabel(): string
     {
         return 'dnd_dpd_france_shipping.integration.transport.label';
     }
@@ -42,7 +42,7 @@ class DpdFranceTransport implements DpdFranceTransportInterface
     /**
      * {@inheritdoc}
      */
-    public function getSettingsFormType()
+    public function getSettingsFormType(): string
     {
         return DpdFranceTransportSettingsFormType::class;
     }
@@ -50,7 +50,7 @@ class DpdFranceTransport implements DpdFranceTransportInterface
     /**
      * {@inheritdoc}
      */
-    public function getSettingsEntityFQCN()
+    public function getSettingsEntityFQCN(): string
     {
         return DpdFranceTransportSettings::class;
     }
@@ -82,7 +82,7 @@ class DpdFranceTransport implements DpdFranceTransportInterface
      *
      * @return void
      */
-    public function init(Transport $transportEntity)
+    public function init(Transport $transportEntity): void
     {
         $this->transportEntity = $transportEntity;
         $this->settings        = $this->transportEntity->getSettingsBag();

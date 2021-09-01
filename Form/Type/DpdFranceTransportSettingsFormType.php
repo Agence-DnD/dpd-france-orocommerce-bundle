@@ -154,12 +154,12 @@ class DpdFranceTransportSettingsFormType extends AbstractType
             'label'    => 'dnd_dpd_france_shipping.transport.max_qty.label',
             'required' => true,
         ])->add('shippingServices', EntityType::class, [
-                    'class'        => ShippingService::class,
-                    'choice_label' => 'label',
-                    'label'        => 'dnd_dpd_france_shipping.integration.settings.shipping_services.label',
-                    'required'     => true,
-                    'multiple'     => true,
-                ]);
+            'class'        => ShippingService::class,
+            'choice_label' => 'label',
+            'label'        => 'dnd_dpd_france_shipping.integration.settings.shipping_services.label',
+            'required'     => true,
+            'multiple'     => true,
+        ]);
     }
 
     /**
@@ -167,7 +167,7 @@ class DpdFranceTransportSettingsFormType extends AbstractType
      *
      * @throws AccessException
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass ?: $this->transport->getSettingsEntityFQCN(),
@@ -177,7 +177,7 @@ class DpdFranceTransportSettingsFormType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;
     }

@@ -57,9 +57,12 @@ class ShippableWithDpdFrance
     protected LoggerInterface $logger;
 
     /**
-     * ShippingMethodsListener constructor
+     * ShippableWithDpdFrance constructor
      *
-     * @param DoctrineHelper $doctrineHelper
+     * @param DoctrineHelper                  $doctrineHelper
+     * @param CheckoutShippingContextProvider $checkoutShippingContextProvider
+     * @param PackageFactory                  $packageFactory
+     * @param LoggerInterface                 $logger
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -75,7 +78,7 @@ class ShippableWithDpdFrance
     }
 
     /**
-     * Checks
+     * Checks whether the checkout is eligible for DPD France shipment
      *
      * @param mixed[]              $methodTypeView
      * @param Checkout|QuoteDemand $context
@@ -91,21 +94,17 @@ class ShippableWithDpdFrance
         /** @var ShippingLineItemInterface[] $packages */
         try {
             $packages = $this->packageFactory->create($shippingContext->getLineItems(), $shippingService);
-            return !empty($packages);
         } catch (PackageException $e) {
-            // @todo log that somewhere in the order to give some insights to customer service
+            // @TODO log that somewhere in the order to give some insights to customer service
             $this->logger->info('PACKAGE EXCEPTION');
             $this->logger->info($e->getMessage());
             return false;
-        } catch (\Exception $e) {
-            $this->logger->error('UNKNOWN EXCEPTION');
-            $this->logger->error($e->getMessage());
-            return false;
         }
+        return !empty($packages);
     }
 
     /**
-     * Description getServiceForMethodTypeView function
+     * Retrieves the corresponding dpd fr shipping service for a given methodTypeView
      *
      * @param array $methodTypeView
      *
@@ -119,7 +118,7 @@ class ShippableWithDpdFrance
     }
 
     /**
-     * Description getDpdFrShippingServices function
+     * Retrieves the dpd fr shipping services from DB
      *
      * @return array|ShippingService[]
      */
