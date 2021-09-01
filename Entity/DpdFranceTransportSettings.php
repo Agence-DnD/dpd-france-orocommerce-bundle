@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
-use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -482,7 +481,7 @@ class DpdFranceTransportSettings extends Transport
      *
      * @return int
      */
-    public function getMaxQty()
+    public function getMaxQty(): int
     {
         return $this->maxQty;
     }
@@ -690,7 +689,9 @@ class DpdFranceTransportSettings extends Transport
     }
 
     /**
-     * @return Collection|ShippingService[]
+     * Description getShippingServices function
+     *
+     * @return ShippingService[]|ArrayCollection|Collection
      */
     public function getShippingServices()
     {
@@ -698,11 +699,13 @@ class DpdFranceTransportSettings extends Transport
     }
 
     /**
-     * @param string $code
+     * Description getShippingService function
+     *
+     * @param $code
      *
      * @return ShippingService|null
      */
-    public function getApplicableShippingService($code)
+    public function getShippingService($code): ?ShippingService
     {
         $result = null;
 
@@ -717,11 +720,13 @@ class DpdFranceTransportSettings extends Transport
     }
 
     /**
+     * Description addShippingService function
+     *
      * @param ShippingService $service
      *
      * @return $this
      */
-    public function addApplicableShippingService(ShippingService $service)
+    public function addShippingService(ShippingService $service): self
     {
         if (!$this->shippingServices->contains($service)) {
             $this->shippingServices->add($service);
@@ -731,11 +736,13 @@ class DpdFranceTransportSettings extends Transport
     }
 
     /**
+     * Description removeShippingService function
+     *
      * @param ShippingService $service
      *
      * @return $this
      */
-    public function removeApplicableShippingService(ShippingService $service)
+    public function removeShippingService(ShippingService $service): self
     {
         if ($this->shippingServices->contains($service)) {
             $this->shippingServices->removeElement($service);

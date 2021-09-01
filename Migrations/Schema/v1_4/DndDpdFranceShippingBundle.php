@@ -1,6 +1,6 @@
 <?php
 
-namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_1;
+namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
@@ -14,7 +14,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 /**
  * Class DndDpdFranceShippingBundle
  *
- * @package   Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_1
+ * @package   Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_4
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
  * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
@@ -33,34 +33,32 @@ class DndDpdFranceShippingBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        self::addProductMaxQtyForDpdFranceAttribute($schema);
+        self::updateOroOrderTable($schema);
     }
 
     /**
-     * Adds a column to oro_product table to store the max qty shippable via dpd fr for the product.
+     * Add a phone number field at the order level
      *
      * @param Schema $schema
      *
      * @return void
      * @throws SchemaException
      */
-    public static function addProductMaxQtyForDpdFranceAttribute(Schema $schema): void
+    public static function updateOroOrderTable(Schema $schema): void
     {
-        /** @var Table $productTable the oro product table */
-        $productTable = $schema->getTable('oro_product');
-
-        $productTable->addColumn('max_qty_for_dpd_fr', Types::INTEGER, [
-            'notnull'     => true,
-            'default'     => -1,
+        /** @var Table $table */
+        $table = $schema->getTable('oro_order');
+        $table->addColumn('phone', Types::STRING, [
+            'notnull'     => false,
             'oro_options' => [
                 'extend' => [
                     'is_extend'     => true,
                     'owner'         => ExtendScope::OWNER_CUSTOM,
-                    'is_serialized' => false,
+                    'is_serialized' => true,
                 ],
                 'form'        => ['is_enabled' => true],
-                'datagrid'    => ['is_visible' => DatagridScope::IS_VISIBLE_FALSE],
-                'merge'       => ['display' => true]
+                'datagrid'    => ['is_visible' => DatagridScope::IS_VISIBLE_TRUE],
+                'merge'       => ['display' => true],
             ],
         ]);
     }

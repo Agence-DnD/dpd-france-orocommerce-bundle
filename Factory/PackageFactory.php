@@ -6,6 +6,7 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Factory;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Builder\ShippingPackagesBuilder;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
+use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
@@ -43,8 +44,7 @@ class PackageFactory
      * @param ShippingService                     $shippingService
      *
      * @return ShippingPackageOptionsInterface[]
-     * @todo add an exception mechanism and log them somewhere in the order to give some insights to customer service
-     *
+     * @throws PackageException
      */
     public function create(
         ShippingLineItemCollectionInterface $lineItemCollection,
@@ -54,14 +54,15 @@ class PackageFactory
         /** @var ShippingLineItemInterface $item */
         foreach ($lineItemCollection as $item) {
             if (!$item->getWeight() || !$item->getDimensions()) {
-                // Can't take the risk of shipping the order with a product with unknown dimensions or weight
-                return [];
+                throw new PackageException(
+                    sprintf(
+                        'The item %s (%s) cannot be shipped with DPD FR. Unknown size and/or weight.',
+                        $item->getProduct()->getName(),
+                        $item->getProduct()->getSku()
+                    )
+                );
             }
-
-            if (!$this->packagesBuilder->addLineItem($item)) {
-                // This product is either too big/heavy or requires more boxes than DPD can accept
-                return [];
-            }
+            $this->packagesBuilder->addLineItem($item);
         }
 
         return $this->packagesBuilder->getPackages();

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Builder;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
+use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
@@ -85,7 +86,7 @@ class ShippingPackagesBuilder
      *
      * @return void
      */
-    public function init(ShippingService $shippingService)
+    public function init(ShippingService $shippingService): void
     {
         $this->resetCurrentPackage();
         $this->packages        = [];
@@ -98,6 +99,7 @@ class ShippingPackagesBuilder
      * @param ShippingLineItemInterface $lineItem
      *
      * @return bool
+     * @throws PackageException
      */
     public function addLineItem(ShippingLineItemInterface $lineItem): bool
     {
@@ -107,14 +109,24 @@ class ShippingPackagesBuilder
         $itemOptions = $this->packageOptionsFactory->create($dimensions, $weight);
 
         if (!$this->itemCanFit($itemOptions)) {
-            // At least one item simply can't be shipped with DPD France
-            return false;
+            throw new PackageException(
+                sprintf(
+                    'The item %s (%s) cannot be shipped with DPD FR. Either too heavy or too big',
+                    $lineItem->getProduct()->getName(),
+                    $lineItem->getProduct()->getSku()
+                )
+            );
         }
         for ($i = 0; $i < $lineItem->getQuantity(); $i++) {
             if (!$this->itemCanFitInCurrentPackage($itemOptions)) {
                 if (!$this->packCurrentPackage()) {
-                    // The cart doesn't fit in the max amount of packages allowed by DPD FR
-                    return false;
+                    throw new PackageException(
+                        sprintf(
+                            'Too many packages, need more than %d packages while %d are allowed. Advise splitting order.',
+                            count($this->packages) + 1,
+                            $this->shippingService->getParcelMaxAmount()
+                        )
+                    );
                 }
                 $this->resetCurrentPackage();
             }
@@ -187,7 +199,7 @@ class ShippingPackagesBuilder
      *
      * @return void
      */
-    private function resetCurrentPackage()
+    private function resetCurrentPackage(): void
     {
         $this->currentPackage = $this->createPackageOptions(0, Dimensions::create(0, 0, 0, null));
     }
@@ -254,7 +266,7 @@ class ShippingPackagesBuilder
      *
      * @return ShippingPackageOptionsInterface[]
      */
-    public function getPackages()
+    public function getPackages(): array
     {
         if ($this->currentPackage->getWeight() > 0 && !$this->packCurrentPackage()) {
             return [];

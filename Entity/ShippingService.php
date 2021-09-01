@@ -74,12 +74,12 @@ class ShippingService
      *
      * @var float $parcelMaxAmount
      */
-    protected $parcelMaxAmount;
+    protected float $parcelMaxAmount;
 
     /**
      * @return string
      */
-    public function getCode()
+    public function getCode(): string
     {
         return $this->code;
     }
@@ -89,7 +89,7 @@ class ShippingService
      *
      * @return $this
      */
-    public function setCode($code)
+    public function setCode(string $code): self
     {
         $this->code = $code;
 
@@ -99,7 +99,7 @@ class ShippingService
     /**
      * @return string
      */
-    public function getIcon()
+    public function getIcon(): string
     {
         return $this->icon;
     }
@@ -109,7 +109,7 @@ class ShippingService
      *
      * @return $this
      */
-    public function setIcon($icon)
+    public function setIcon(string $icon): self
     {
         $this->icon = $icon;
 
@@ -227,6 +227,8 @@ class ShippingService
     }
 
     /**
+     * Description __toString function
+     *
      * @return string
      */
     public function __toString()

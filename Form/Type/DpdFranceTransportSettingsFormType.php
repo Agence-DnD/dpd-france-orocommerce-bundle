@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dnd\Bundle\DpdFranceShippingBundle\Form\Type;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;

@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Condition;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
+use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class ShippableWithDpdFrance
@@ -47,6 +49,12 @@ class ShippableWithDpdFrance
      * @var PackageFactory $packageFactory
      */
     protected PackageFactory $packageFactory;
+    /**
+     * Description $logger field
+     *
+     * @var LoggerInterface $logger
+     */
+    protected LoggerInterface $logger;
 
     /**
      * ShippingMethodsListener constructor
@@ -56,16 +64,18 @@ class ShippableWithDpdFrance
     public function __construct(
         DoctrineHelper $doctrineHelper,
         CheckoutShippingContextProvider $checkoutShippingContextProvider,
-        PackageFactory $packageFactory
+        PackageFactory $packageFactory,
+        LoggerInterface $logger
 
     ) {
         $this->doctrineHelper                  = $doctrineHelper;
         $this->checkoutShippingContextProvider = $checkoutShippingContextProvider;
         $this->packageFactory                  = $packageFactory;
+        $this->logger = $logger;
     }
 
     /**
-     * Description isValid function
+     * Checks
      *
      * @param mixed[]              $methodTypeView
      * @param Checkout|QuoteDemand $context
@@ -79,9 +89,19 @@ class ShippableWithDpdFrance
         $shippingContext = $this->checkoutShippingContextProvider->getContext($context);
 
         /** @var ShippingLineItemInterface[] $packages */
-        $packages = $this->packageFactory->create($shippingContext->getLineItems(), $shippingService);
-
-        return !empty($packages);
+        try {
+            $packages = $this->packageFactory->create($shippingContext->getLineItems(), $shippingService);
+            return !empty($packages);
+        } catch (PackageException $e) {
+            // @todo log that somewhere in the order to give some insights to customer service
+            $this->logger->info('PACKAGE EXCEPTION');
+            $this->logger->info($e->getMessage());
+            return false;
+        } catch (\Exception $e) {
+            $this->logger->error('UNKNOWN EXCEPTION');
+            $this->logger->error($e->getMessage());
+            return false;
+        }
     }
 
     /**
@@ -103,7 +123,7 @@ class ShippableWithDpdFrance
      *
      * @return array|ShippingService[]
      */
-    private function getDpdFrShippingServices()
+    private function getDpdFrShippingServices(): array
     {
         if (empty($this->dpdFrShippingServices)) {
             $dpdFrServicesRepository     = $this->doctrineHelper->getEntityRepositoryForClass(ShippingService::class);

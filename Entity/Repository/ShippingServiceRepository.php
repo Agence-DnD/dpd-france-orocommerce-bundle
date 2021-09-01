@@ -20,7 +20,7 @@ class ShippingServiceRepository extends EntityRepository
      *
      * @return string[]
      */
-    public function getAllShippingServiceCodes()
+    public function getAllShippingServiceCodes(): array
     {
         $qb = $this->createQueryBuilder('shippingService')->select('shippingService.code');
 

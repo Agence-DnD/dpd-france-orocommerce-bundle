@@ -48,6 +48,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_checkout.provider.shipping_context'
             - '@dnd_dpd_france_shipping.factory.package'
+            - '@logger'
 
     dnd_dpd_france_shipping.builder.package:
         class: Dnd\Bundle\DpdFranceShippingBundle\Builder\ShippingPackagesBuilder
