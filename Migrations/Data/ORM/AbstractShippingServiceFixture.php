@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Data\ORM;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 
 /**
  * Class AbstractShippingServiceFixture
@@ -43,7 +46,7 @@ abstract class AbstractShippingServiceFixture extends AbstractFixture
     public const DEFAULT_PARCEL_MAX_AMOUNT = 5;
 
     /**
-     * Description addUpdateShippingServices function
+     * Description loadShippingServices function
      *
      * @param ObjectManager $manager
      * @param array         $shippingServices
@@ -51,15 +54,22 @@ abstract class AbstractShippingServiceFixture extends AbstractFixture
      *
      * @return void
      */
-    protected function addUpdateShippingServices(
+    protected function loadShippingServices(
         ObjectManager $manager,
         array $shippingServices,
         bool $setReferences = false
-    ) {
+    ): void {
+        /** @var ObjectRepository $repository */
         $repository = $manager->getRepository('DndDpdFranceShippingBundle:ShippingService');
+        /**
+         * @var string $ref
+         * @var ShippingService $shippingService
+         */
         foreach ($shippingServices as $ref => $shippingService) {
+            /** @var ShippingService|false $entity */
             $entity = $repository->findOneBy(['code' => $shippingService['code']]);
             if (!$entity) {
+                /** @var ShippingService $entity */
                 $entity = new ShippingService();
             }
 

@@ -64,6 +64,7 @@ class DpdFranceShippingMethodType implements ShippingMethodTypeInterface
      *
      * @param string                     $identifier
      * @param string                     $label
+     * @param string                     $methodId
      * @param DpdFranceTransportSettings $settings
      * @param ShippingService            $shippingService
      */
@@ -90,7 +91,9 @@ class DpdFranceShippingMethodType implements ShippingMethodTypeInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Description isGrouped function
+     *
+     * @return bool
      */
     public function isGrouped(): bool
     {
@@ -124,13 +127,15 @@ class DpdFranceShippingMethodType implements ShippingMethodTypeInterface
     /**
      * {@inheritDoc}
      */
-    public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
+    public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions): ?Price
     {
         if (!$context->getShippingAddress()) {
             return null;
         }
 
+        /** @var float $methodSurcharge */
         $methodSurcharge = $this->getSurchargeFromOptions($methodOptions);
+        /** @var float $typeSurcharge */
         $typeSurcharge   = $this->getSurchargeFromOptions($typeOptions);
 
         return Price::create($methodSurcharge + $typeSurcharge, $context->getCurrency());
@@ -143,6 +148,6 @@ class DpdFranceShippingMethodType implements ShippingMethodTypeInterface
      */
     private function getSurchargeFromOptions(array $option): float
     {
-        return (float)$option[DpdFranceShippingMethod::OPTION_SURCHARGE];
+        return (float)($option[DpdFranceShippingMethod::OPTION_SURCHARGE] ?? 0);
     }
 }

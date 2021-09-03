@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Method;
 
+use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
@@ -30,5 +31,17 @@ class DpdFranceShippingMethodProvider extends ChannelShippingMethodProvider
         IntegrationShippingMethodFactoryInterface $methodFactory
     ) {
         parent::__construct($channelType, $doctrineHelper, $methodFactory);
+    }
+
+    /**
+     * Description isDpdFrShippingMethod function
+     *
+     * @param string $shippingMethodIdentifier
+     *
+     * @return bool
+     */
+    public static function isDpdFrShippingMethod(string $shippingMethodIdentifier): bool
+    {
+        return str_contains($shippingMethodIdentifier, DpdFranceChannel::TYPE);
     }
 }

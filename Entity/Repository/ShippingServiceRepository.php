@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dnd\Bundle\DpdFranceShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;

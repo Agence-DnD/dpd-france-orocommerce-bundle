@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -29,7 +31,7 @@ class DndDpdFranceShippingBundle implements Migration
      * @return void
      * @throws SchemaException
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         self::addStationFTPTransportColumns($schema);
         self::addGeneralDpdTransportColumns($schema);

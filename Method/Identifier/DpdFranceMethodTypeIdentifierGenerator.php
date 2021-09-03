@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dnd\Bundle\DpdFranceShippingBundle\Method\Identifier;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
@@ -17,9 +19,14 @@ use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 class DpdFranceMethodTypeIdentifierGenerator
 {
     /**
-     * {@inheritdoc}
+     * Description generateIdentifier function
+     *
+     * @param Channel         $channel
+     * @param ShippingService $service
+     *
+     * @return string
      */
-    public function generateIdentifier(Channel $channel, ShippingService $service)
+    public function generateIdentifier(Channel $channel, ShippingService $service): string
     {
         return $service->getCode();
     }

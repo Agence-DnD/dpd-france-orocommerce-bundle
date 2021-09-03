@@ -37,13 +37,17 @@ class DpdFranceShippingMethodFactory implements IntegrationShippingMethodFactory
      */
     protected DpdFranceShippingMethodTypeFactory $methodTypeFactory;
     /**
-     * @var IntegrationIdentifierGeneratorInterface
+     * Description $methodIdentifierGenerator field
+     *
+     * @var IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator
      */
     private IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator;
     /**
-     * @var IntegrationIconProviderInterface
+     * Description $integrationIconProvider field
+     *
+     * @var IntegrationIconProviderInterface $integrationIconProvider
      */
-    private $integrationIconProvider;
+    private IntegrationIconProviderInterface $integrationIconProvider;
 
     /**
      * DpdFranceShippingMethodFactory constructor
@@ -69,7 +73,7 @@ class DpdFranceShippingMethodFactory implements IntegrationShippingMethodFactory
      *
      * @return ShippingMethodInterface
      */
-    public function create(Channel $channel)
+    public function create(Channel $channel): ShippingMethodInterface
     {
         return new DpdFranceShippingMethod(
             $this->getIdentifier($channel),
@@ -86,7 +90,7 @@ class DpdFranceShippingMethodFactory implements IntegrationShippingMethodFactory
      *
      * @return array
      */
-    private function createTypes(Channel $channel)
+    private function createTypes(Channel $channel): array
     {
         $applicableShippingServices = $this->getSettings($channel)->getShippingServices()->toArray();
 
@@ -100,7 +104,7 @@ class DpdFranceShippingMethodFactory implements IntegrationShippingMethodFactory
      *
      * @return DpdFranceTransportSettings
      */
-    private function getSettings(Channel $channel)
+    private function getSettings(Channel $channel): DpdFranceTransportSettings
     {
         return $channel->getTransport();
     }
@@ -110,7 +114,7 @@ class DpdFranceShippingMethodFactory implements IntegrationShippingMethodFactory
      *
      * @return string
      */
-    private function getIdentifier(Channel $channel)
+    private function getIdentifier(Channel $channel): string
     {
         return $this->methodIdentifierGenerator->generateIdentifier($channel);
     }
@@ -120,7 +124,7 @@ class DpdFranceShippingMethodFactory implements IntegrationShippingMethodFactory
      *
      * @return string|null
      */
-    private function getIcon(Channel $channel)
+    private function getIcon(Channel $channel): ?string
     {
         return $this->integrationIconProvider->getIcon($channel);
     }
@@ -130,7 +134,7 @@ class DpdFranceShippingMethodFactory implements IntegrationShippingMethodFactory
      *
      * @return string
      */
-    private function getLabel(Channel $channel)
+    private function getLabel(Channel $channel): string
     {
         return DpdFranceShippingMethod::LABEL;
     }

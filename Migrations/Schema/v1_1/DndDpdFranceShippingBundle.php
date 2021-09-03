@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -31,13 +33,13 @@ class DndDpdFranceShippingBundle implements Migration
      * @return void
      * @throws SchemaException
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         self::addProductMaxQtyForDpdFranceAttribute($schema);
     }
 
     /**
-     * Adds a column to oro_product table to store the max qty shippable via dpd fr for the product.
+     * Adds a column to oro_product table to store the max qty shippable via dpd France for the product.
      *
      * @param Schema $schema
      *
@@ -48,7 +50,6 @@ class DndDpdFranceShippingBundle implements Migration
     {
         /** @var Table $productTable the oro product table */
         $productTable = $schema->getTable('oro_product');
-
         $productTable->addColumn('max_qty_for_dpd_fr', Types::INTEGER, [
             'notnull'     => true,
             'default'     => -1,

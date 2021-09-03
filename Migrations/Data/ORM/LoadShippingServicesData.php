@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Data\ORM;
 
 use Doctrine\Persistence\ObjectManager;
@@ -19,18 +21,20 @@ use Symfony\Component\Yaml\Yaml;
 class LoadShippingServicesData extends AbstractShippingServiceFixture implements ContainerAwareInterface
 {
     /**
-     * @var array
+     * Description $container field
+     *
+     * @var ContainerInterface $container
      */
-    protected $loadedCountries;
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
      * {@inheritdoc}
+     *
+     * @param ContainerInterface|null $container
+     *
+     * @return void
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
@@ -38,18 +42,22 @@ class LoadShippingServicesData extends AbstractShippingServiceFixture implements
     /**
      * {@inheritdoc}
      *
-     * @throws \InvalidArgumentException
+     * @param ObjectManager $manager
+     *
+     * @return void
      */
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        $this->addUpdateShippingServices($manager, $this->getShippingServicesData());
+        $this->loadShippingServices($manager, $this->getShippingServicesData());
         $manager->flush();
     }
 
     /**
-     * @return array
+     * Description getShippingServicesData function
+     *
+     * @return mixed[]
      */
-    protected function getShippingServicesData()
+    protected function getShippingServicesData(): array
     {
         return Yaml::parse(file_get_contents(__DIR__ . '/data/dpd_services.yml'));
     }

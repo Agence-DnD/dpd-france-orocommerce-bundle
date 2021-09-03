@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -31,13 +33,13 @@ class DndDpdFranceShippingBundle implements Migration
      * @return void
      * @throws SchemaException
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         self::updateOroOrderTable($schema);
     }
 
     /**
-     * Add a phone number field at the order level
+     * Add a phone number field and a dpd exported stamp at the order level
      *
      * @param Schema $schema
      *
@@ -48,13 +50,26 @@ class DndDpdFranceShippingBundle implements Migration
     {
         /** @var Table $table */
         $table = $schema->getTable('oro_order');
-        $table->addColumn('phone', Types::STRING, [
+        $table->addColumn('delivery_phone', Types::STRING, [
             'notnull'     => false,
             'oro_options' => [
                 'extend' => [
                     'is_extend'     => true,
                     'owner'         => ExtendScope::OWNER_CUSTOM,
                     'is_serialized' => true,
+                ],
+                'form'        => ['is_enabled' => true],
+                'datagrid'    => ['is_visible' => DatagridScope::IS_VISIBLE_TRUE],
+                'merge'       => ['display' => true],
+            ],
+        ]);
+        $table->addColumn('synchronized_dpd', Types::DATETIME_MUTABLE, [
+            'notnull'     => false,
+            'oro_options' => [
+                'extend' => [
+                    'is_extend'     => true,
+                    'owner'         => ExtendScope::OWNER_CUSTOM,
+                    'is_serialized' => false,
                 ],
                 'form'        => ['is_enabled' => true],
                 'datagrid'    => ['is_visible' => DatagridScope::IS_VISIBLE_TRUE],

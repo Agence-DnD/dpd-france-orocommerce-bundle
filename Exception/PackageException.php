@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Exception;
 
-use Oro\Bundle\ActivityBundle\Exception\Exception;
+use Oro\Bundle\ActivityBundle\Exception\Exception as BaseException;
 
 /**
  * Class PackageException
@@ -15,6 +15,6 @@ use Oro\Bundle\ActivityBundle\Exception\Exception;
  * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
-class PackageException extends \Exception implements Exception
+class PackageException extends \Exception implements BaseException
 {
 }

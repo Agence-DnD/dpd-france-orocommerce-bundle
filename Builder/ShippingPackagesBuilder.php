@@ -110,10 +110,12 @@ class ShippingPackagesBuilder
         if (!$lineItem->getDimensions()) {
             $this->badItemException($lineItem, 'Unknown size.');
         }
-        $weight     = $this->measureUnitConversion->convert($lineItem->getWeight(), self::WEIGHT_UNIT);
+        /** @var Weight $weight */
+        $weight = $this->measureUnitConversion->convert($lineItem->getWeight(), self::WEIGHT_UNIT);
+        /** @var Dimensions $dimensions */
         $dimensions = $this->measureUnitConversion->convert($lineItem->getDimensions(), self::LENGTH_UNIT);
 
-        if ($weight  === null) {
+        if ($weight === null) {
             $this->badItemException($lineItem, sprintf('Could not convert the weight into %s.', self::WEIGHT_UNIT));
         }
         if (!$lineItem->getDimensions()) {
@@ -174,22 +176,12 @@ class ShippingPackagesBuilder
      */
     private function itemCanFit(ShippingPackageOptionsInterface $itemOptions): bool
     {
-        if ($itemOptions->getLength() > $this->shippingService->getParcelMaxLength()) {
-            return false;
-        }
-        if ($itemOptions->getWidth() > $this->shippingService->getParcelMaxLength()) {
-            return false;
-        }
-
-        if ($itemOptions->getHeight() > $this->shippingService->getParcelMaxLength()) {
-            return false;
-        }
-
-        if ($itemOptions->getWeight() > $this->shippingService->getParcelMaxWeight()) {
-            return false;
-        }
-
-        return ($itemOptions->getGirth() < $this->shippingService->getParcelMaxPerimeter());
+        return (
+            $itemOptions->getLength() < $this->shippingService->getParcelMaxLength() &&
+            $itemOptions->getWidth()  < $this->shippingService->getParcelMaxLength() &&
+            $itemOptions->getWeight() < $this->shippingService->getParcelMaxWeight() &&
+            $itemOptions->getGirth()  < $this->shippingService->getParcelMaxPerimeter()
+        );
     }
 
     /**
@@ -216,7 +208,6 @@ class ShippingPackagesBuilder
     {
         if (count($this->packages) < $this->shippingService->getParcelMaxAmount()) {
             $this->packages[] = $this->currentPackage;
-
             return true;
         }
 
@@ -245,10 +236,10 @@ class ShippingPackagesBuilder
         ShippingPackageOptionsInterface $basePackage,
         ShippingPackageOptionsInterface $addedPackage
     ): ShippingPackageOptionsInterface {
+        /** @var float $weight */
         $weight = $basePackage->getWeight() + $addedPackage->getWeight();
-
+        /** @var Dimensions $dimensions */
         $dimensions = $this->getMergedPackageDimensions($basePackage, $addedPackage);
-
         return $this->createPackageOptions($weight, $dimensions);
     }
 
@@ -283,8 +274,11 @@ class ShippingPackagesBuilder
         ShippingPackageOptionsInterface $basePackage,
         ShippingPackageOptionsInterface $itemOptions
     ): Dimensions {
+        /** @var float $length */
         $length = max([$basePackage->getLength(), $itemOptions->getLength()]);
+        /** @var float $width */
         $width  = max([$basePackage->getWidth(), $itemOptions->getWidth()]);
+        /** @var float $height */
         $height = $basePackage->getHeight() + $itemOptions->getHeight();
 
         return Dimensions::create($length, $width, $height, (new LengthUnit())->setCode(self::LENGTH_UNIT));
@@ -300,7 +294,6 @@ class ShippingPackagesBuilder
         if ($this->currentPackage->getWeight() > 0 && !$this->packCurrentPackage()) {
             return [];
         }
-
         return $this->packages;
     }
 }

@@ -10,6 +10,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodType;
 use Dnd\Bundle\DpdFranceShippingBundle\Method\Identifier\DpdFranceMethodTypeIdentifierGenerator;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 /**
  * Class DpdFranceShippingMethodTypeFactory
@@ -55,9 +56,9 @@ class DpdFranceShippingMethodTypeFactory
      * @param Channel         $channel
      * @param ShippingService $service
      *
-     * @return DpdFranceShippingMethodType
+     * @return ShippingMethodTypeInterface
      */
-    public function create(Channel $channel, ShippingService $service)
+    public function create(Channel $channel, ShippingService $service): ShippingMethodTypeInterface
     {
         return new DpdFranceShippingMethodType(
             $this->getIdentifier($channel, $service),

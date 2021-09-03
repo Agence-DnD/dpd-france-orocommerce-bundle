@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types\Types;
-use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
-use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -25,13 +24,13 @@ class DndDpdFranceShippingBundle implements Migration
     /**
      * {@inheritdoc}
      *
-     * @param Schema   $schema
+     * @param Schema $schema
      * @param QueryBag $queries
      *
      * @return void
      * @throws SchemaException
      */
-    public function up(Schema $schema, QueryBag $queries)
+    public function up(Schema $schema, QueryBag $queries): void
     {
         self::createDndDpdFrShippingServiceTable($schema);
         self::createDndDpdFrTransportShipServiceTable($schema);
@@ -45,11 +44,10 @@ class DndDpdFranceShippingBundle implements Migration
      *
      * @return void
      */
-    public static function createDndDpdFrShippingServiceTable(Schema $schema)
+    public static function createDndDpdFrShippingServiceTable(Schema $schema): void
     {
+        /** @var Table $table */
         $table = $schema->createTable('dnd_dpd_fr_shipping_service');
-
-
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['notnull' => true, 'length' => 30]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
@@ -65,8 +63,9 @@ class DndDpdFranceShippingBundle implements Migration
      *
      * @return void
      */
-    public static function createDndDpdFrTransportShipServiceTable(Schema $schema)
+    public static function createDndDpdFrTransportShipServiceTable(Schema $schema): void
     {
+        /** @var Table $table */
         $table = $schema->createTable('dnd_dpd_fr_transport_ship_service');
         $table->addColumn('transport_id', 'integer', []);
         $table->addColumn('ship_service_code', 'string', ['length' => 30]);
@@ -83,18 +82,15 @@ class DndDpdFranceShippingBundle implements Migration
      */
     public static function addDndDpdFrTransportShipServiceForeignKeys(Schema $schema): void
     {
+        /** @var Table $table */
         $table = $schema->getTable('dnd_dpd_fr_transport_ship_service');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('dnd_dpd_fr_shipping_service'),
+        $table->addForeignKeyConstraint($schema->getTable('dnd_dpd_fr_shipping_service'),
             ['ship_service_code'],
             ['code'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_integration_transport'),
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]);
+        $table->addForeignKeyConstraint($schema->getTable('oro_integration_transport'),
             ['transport_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]);
     }
 }

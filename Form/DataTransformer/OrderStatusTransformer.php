@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Symfony\Component\Form\DataTransformerInterface;
 
@@ -47,6 +48,7 @@ class OrderStatusTransformer implements DataTransformerInterface
     public function transform($value): ArrayCollection
     {
         //@TODO FIXME - does not preset the order statuses correctly on edit
+        /** @var string[] $ids */
         $ids = explode(',', $value ?? '');
 
         /** @var mixed[] $availableStatuses */
@@ -71,6 +73,7 @@ class OrderStatusTransformer implements DataTransformerInterface
     {
         /** @var string[] $ids */
         $ids = [];
+        /** @var AbstractEnumValue $value */
         foreach ($values as $value) {
             $ids[] = $value->getId();
         }

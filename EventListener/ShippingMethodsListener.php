@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\EventListener;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Condition\ShippableWithDpdFrance;
-use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel;
+use Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
@@ -52,13 +52,21 @@ class ShippingMethodsListener
         $methodCollection = $event->getMethodCollection();
 
         /** @var Checkout|QuoteDemand $methodCollection */
-        $sourceEntity     = $event->getSourceEntity();
+        $sourceEntity = $event->getSourceEntity();
 
         if (!$sourceEntity instanceof Checkout || $sourceEntity->getSourceEntity() instanceof QuoteDemand) {
             return;
         }
+        /**
+         * @var string  $shippingMethodName
+         * @var mixed[] $methodTypes
+         */
         foreach ($methodCollection->getAllMethodsTypesViews() as $shippingMethodName => $methodTypes) {
-            if (str_contains($shippingMethodName, DpdFranceChannel::TYPE)) {
+            if (DpdFranceShippingMethodProvider::isDpdFrShippingMethod($shippingMethodName)) {
+                /**
+                 * @var string  $methodTypeId
+                 * @var mixed[] $methodTypesView
+                 */
                 foreach ($methodTypes as $methodTypeId => $methodTypesView) {
                     if ($this->shippableWithDpdFranceCondition->isValid($methodTypesView, $sourceEntity) !== true) {
                         $methodCollection->removeMethodTypeView($shippingMethodName, $methodTypeId);

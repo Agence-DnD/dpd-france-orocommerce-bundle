@@ -637,6 +637,7 @@ class DpdFranceTransportSettings extends Transport
      */
     public function getLabels(): array
     {
+        /** @var string[] $labels */
         $labels                           = [];
         $labels[self::IDENTIFIER_CLASSIC] = $this->getClassicMethodName();
         $labels[self::IDENTIFIER_PREDICT] = $this->getPredictMethodName();
@@ -654,6 +655,7 @@ class DpdFranceTransportSettings extends Transport
      */
     public function getLabel(string $identifier): ?string
     {
+        /** @var string[] $labels */
         $labels = $this->getLabels();
 
         return $labels[$identifier] ?? null;
@@ -666,6 +668,7 @@ class DpdFranceTransportSettings extends Transport
      */
     public function getDescriptions(): array
     {
+        /** @var string[] $descriptions */
         $descriptions                           = [];
         $descriptions[self::IDENTIFIER_CLASSIC] = $this->getClassicMethodDesc();
         $descriptions[self::IDENTIFIER_PREDICT] = $this->getPredictMethodDesc();
@@ -683,6 +686,7 @@ class DpdFranceTransportSettings extends Transport
      */
     public function getDescription(string $identifier): ?string
     {
+        /** @var string[] $descriptions */
         $descriptions = $this->getDescriptions();
 
         return $descriptions[$identifier] ?? null;
@@ -709,13 +713,14 @@ class DpdFranceTransportSettings extends Transport
     {
         $result = null;
 
+        /** @var ShippingService $service */
         foreach ($this->shippingServices as $service) {
             if ($service->getCode() === $code) {
+                /** @var ShippingService $result */
                 $result = $service;
                 break;
             }
         }
-
         return $result;
     }
 
@@ -731,7 +736,6 @@ class DpdFranceTransportSettings extends Transport
         if (!$this->shippingServices->contains($service)) {
             $this->shippingServices->add($service);
         }
-
         return $this;
     }
 
@@ -747,7 +751,6 @@ class DpdFranceTransportSettings extends Transport
         if ($this->shippingServices->contains($service)) {
             $this->shippingServices->removeElement($service);
         }
-
         return $this;
     }
 }
