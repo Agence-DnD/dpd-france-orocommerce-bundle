@@ -7,6 +7,7 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\DependencyInjection;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 /**
@@ -18,7 +19,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
  * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
-class DndDpdFranceShippingExtension extends Extension
+class DndDpdFranceShippingExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * ALIAS constant for the extension
@@ -44,5 +45,27 @@ class DndDpdFranceShippingExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('integration.yml');
         $loader->load('services.yml');
+    }
+
+    /**
+     * Adds a monolog channel for the module
+     *
+     * @param ContainerBuilder $container
+     *
+     * @return void
+     */
+    public function prepend(ContainerBuilder $container): void
+    {
+        $container->prependExtensionConfig('monolog', [
+            'channels' => [self::ALIAS],
+            'handlers' => [
+                self::ALIAS => [
+                    'type' => 'rotating_file',
+                    'max_files' => 5,
+                    'path' => "%kernel.logs_dir%/dpd-fr_%kernel.environment%.log",
+                    'channels' => [ self::ALIAS ],
+                ],
+            ],
+        ]);
     }
 }

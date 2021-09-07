@@ -7,7 +7,8 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Condition;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory;
-use Doctrine\ORM\EntityRepository;
+use Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider;
+use Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -56,6 +57,18 @@ class ShippableWithDpdFrance
      * @var LoggerInterface $logger
      */
     protected LoggerInterface $logger;
+    /**
+     * Description $shippingMethodProvider field
+     *
+     * @var DpdFranceShippingMethodProvider $shippingMethodProvider
+     */
+    protected DpdFranceShippingMethodProvider $shippingMethodProvider;
+    /**
+     * Description $shippingServiceProvider field
+     *
+     * @var ShippingServiceProvider $shippingServiceProvider
+     */
+    protected ShippingServiceProvider $shippingServiceProvider;
 
     /**
      * ShippableWithDpdFrance constructor
@@ -64,18 +77,21 @@ class ShippableWithDpdFrance
      * @param CheckoutShippingContextProvider $checkoutShippingContextProvider
      * @param PackageFactory                  $packageFactory
      * @param LoggerInterface                 $logger
+     * @param ShippingServiceProvider         $shippingServiceProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         CheckoutShippingContextProvider $checkoutShippingContextProvider,
         PackageFactory $packageFactory,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        ShippingServiceProvider $shippingServiceProvider
 
     ) {
         $this->doctrineHelper                  = $doctrineHelper;
         $this->checkoutShippingContextProvider = $checkoutShippingContextProvider;
         $this->packageFactory                  = $packageFactory;
         $this->logger                          = $logger;
+        $this->shippingServiceProvider         = $shippingServiceProvider;
     }
 
     /**
@@ -90,58 +106,31 @@ class ShippableWithDpdFrance
     public function isValid(array $methodTypeView, $context): bool
     {
         /** @var ShippingService $shippingService */
-        $shippingService = $this->getServiceForMethodTypeView($methodTypeView);
+        $shippingService = $this->shippingServiceProvider->getServiceForMethodTypeIdentifier(
+            $methodTypeView['identifier']
+        );
         $shippingContext = $this->checkoutShippingContextProvider->getContext($context);
+
+        if ($shippingContext === null) {
+            return false;
+        }
 
         /** @var ShippingLineItemInterface[] $packages */
         try {
             $packages = $this->packageFactory->create($shippingContext->getLineItems(), $shippingService);
         } catch (PackageException $e) {
-            // @TODO log that somewhere in the order to give some insights to customer service
-            $this->logger->info('PACKAGE EXCEPTION');
+            $this->logger->info(
+                sprintf(
+                    'Package exception for %s with ID: %s.',
+                    get_class($shippingContext->getSourceEntity()),
+                    $shippingContext->getSourceEntityIdentifier()
+                )
+            );
             $this->logger->info($e->getMessage());
 
             return false;
         }
 
         return !empty($packages);
-    }
-
-    /**
-     * Retrieves the corresponding dpd France shipping service for a given methodTypeView
-     *
-     * @param mixed[] $methodTypeView
-     *
-     * @return ShippingService|null
-     */
-    private function getServiceForMethodTypeView(array $methodTypeView): ?ShippingService
-    {
-        /** @var  ShippingService[] $services */
-        $services = $this->getDpdFrShippingServices();
-
-        return $services[$methodTypeView['identifier']] ?? null;
-    }
-
-    /**
-     * Retrieves the dpd France shipping services from DB
-     *
-     * @return array|ShippingService[]
-     */
-    private function getDpdFrShippingServices(): array
-    {
-        if (empty($this->dpdFrShippingServices)) {
-            /** @var EntityRepository $dpdFrServicesRepository */
-            $dpdFrServicesRepository     = $this->doctrineHelper->getEntityRepositoryForClass(ShippingService::class);
-            $this->dpdFrShippingServices = $dpdFrServicesRepository->findAll();
-
-            /** @var ShippingService[] $shippingServices */
-            $shippingServices = $dpdFrServicesRepository->findAll();
-            /** @var ShippingService $shippingService */
-            foreach ($shippingServices as $shippingService) {
-                $this->dpdFrShippingServices[$shippingService->getCode()] = $shippingService;
-            }
-        }
-
-        return $this->dpdFrShippingServices;
     }
 }
