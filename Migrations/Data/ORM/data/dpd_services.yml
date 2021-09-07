@@ -6,6 +6,7 @@ dpd.shipping_service.classic:
     parcel_max_length: 2
     parcel_max_weight: 30
     parcel_max_amount: 5
+    parcel_max_value: 22000
 dpd.shipping_service.predict:
     code: 'dpd_fr_predict'
     label: 'DPD Predict'
@@ -13,7 +14,8 @@ dpd.shipping_service.predict:
     parcel_max_perimeter: 3
     parcel_max_length: 2
     parcel_max_weight: 30
-    parcel_max_amount: 5
+    parcel_max_amount: 1
+    parcel_max_value: 22000
 dpd.shipping_service.pickup:
     code: 'dpd_fr_pickup'
     label: 'DPD Pickup'
@@ -22,3 +24,4 @@ dpd.shipping_service.pickup:
     parcel_max_length: 1
     parcel_max_weight: 20
     parcel_max_amount: 5
+    parcel_max_value: 22000

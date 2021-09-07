@@ -77,6 +77,14 @@ class ShippingService
      * @var float $parcelMaxAmount
      */
     protected float $parcelMaxAmount;
+    /**
+     * The maximum cumulated value for every package
+     *
+     * @ORM\Column(name="parcel_max_value", type="float")
+     *
+     * @var float $parcelMaxValue
+     */
+    protected float $parcelMaxValue;
 
     /**
      * @return string
@@ -229,12 +237,34 @@ class ShippingService
     }
 
     /**
+     * Description getParcelMaxValue function
+     *
+     * @return float
+     */
+    public function getParcelMaxValue(): float
+    {
+        return $this->parcelMaxValue;
+    }
+
+    /**
+     * Description setParcelMaxValue function
+     *
+     * @param float $parcelMaxValue
+     *
+     * @return void
+     */
+    public function setParcelMaxValue(float $parcelMaxValue): void
+    {
+        $this->parcelMaxValue = $parcelMaxValue;
+    }
+
+    /**
      * Description __toString function
      *
      * @return string
      */
     public function __toString()
     {
-        return (string)$this->getLabel();
+        return $this->getLabel();
     }
 }

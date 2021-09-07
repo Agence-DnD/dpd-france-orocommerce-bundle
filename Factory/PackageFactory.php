@@ -7,9 +7,9 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Factory;
 use Dnd\Bundle\DpdFranceShippingBundle\Builder\ShippingPackagesBuilder;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
+use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
 
 /**
  * Class PackageFactory
@@ -45,7 +45,7 @@ class PackageFactory
      * @param ShippingLineItemCollectionInterface $lineItemCollection
      * @param ShippingService                     $shippingService
      *
-     * @return ShippingPackageOptionsInterface[]
+     * @return DpdShippingPackageOptionsInterface[]
      * @throws PackageException
      */
     public function create(

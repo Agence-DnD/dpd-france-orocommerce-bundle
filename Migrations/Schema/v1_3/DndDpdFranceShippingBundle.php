@@ -52,5 +52,6 @@ class DndDpdFranceShippingBundle implements Migration
         $table->addColumn('parcel_max_length', Types::FLOAT, ['notnull' => false]);
         $table->addColumn('parcel_max_weight', Types::FLOAT, ['notnull' => false]);
         $table->addColumn('parcel_max_amount', Types::INTEGER, ['notnull' => false]);
+        $table->addColumn('parcel_max_value', Types::FLOAT, ['notnull' => false]);
     }
 }

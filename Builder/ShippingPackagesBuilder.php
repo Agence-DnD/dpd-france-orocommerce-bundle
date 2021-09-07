@@ -6,12 +6,14 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Builder;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
+use Dnd\Bundle\DpdFranceShippingBundle\Factory\DpdShippingPackageOptionsFactoryInterface;
+use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptions;
+use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
-use Oro\Bundle\ShippingBundle\Factory\ShippingPackageOptionsFactoryInterface;
 use Oro\Bundle\ShippingBundle\Model\Dimensions;
-use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptions;
 use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
@@ -40,23 +42,29 @@ class ShippingPackagesBuilder
      */
     public const WEIGHT_UNIT = 'kg';
     /**
+     * DPD France currency used for limitations
+     *
+     * @var string CURRENCY
+     */
+    public const CURRENCY = 'EUR';
+    /**
      * Description $measureUnitConversion field
      *
      * @var MeasureUnitConversion $measureUnitConversion
      */
     protected MeasureUnitConversion $measureUnitConversion;
     /**
-     * @var ShippingPackageOptionsFactoryInterface
+     * @var DpdShippingPackageOptionsFactoryInterface
      */
-    private ShippingPackageOptionsFactoryInterface $packageOptionsFactory;
+    private DpdShippingPackageOptionsFactoryInterface $packageOptionsFactory;
     /**
      * Description $currentPackage field
      *
-     * @var ShippingPackageOptions|null $currentPackage
+     * @var DpdShippingPackageOptions|null $currentPackage
      */
-    private ?ShippingPackageOptions $currentPackage = null;
+    private ?DpdShippingPackageOptions $currentPackage = null;
     /**
-     * @var ShippingPackageOptionsInterface[]
+     * @var DpdShippingPackageOptionsInterface[]
      */
     private array $packages = [];
     /**
@@ -69,11 +77,11 @@ class ShippingPackagesBuilder
     /**
      * ShippingPackagesBuilder constructor
      *
-     * @param ShippingPackageOptionsFactoryInterface $packageOptionsFactory
-     * @param MeasureUnitConversion                  $measureUnitConversion
+     * @param DpdShippingPackageOptionsFactoryInterface $packageOptionsFactory
+     * @param MeasureUnitConversion                     $measureUnitConversion
      */
     public function __construct(
-        ShippingPackageOptionsFactoryInterface $packageOptionsFactory,
+        DpdShippingPackageOptionsFactoryInterface $packageOptionsFactory,
         MeasureUnitConversion $measureUnitConversion
     ) {
         $this->packageOptionsFactory = $packageOptionsFactory;
@@ -121,11 +129,12 @@ class ShippingPackagesBuilder
         if (!$lineItem->getDimensions()) {
             $this->badItemException($lineItem, sprintf('Could not convert the dimensions into %s.', self::LENGTH_UNIT));
         }
-        /** @var ShippingPackageOptionsInterface $itemOptions */
-        $itemOptions = $this->packageOptionsFactory->create($dimensions, $weight);
+
+        /** @var DpdShippingPackageOptionsInterface $itemOptions */
+        $itemOptions = $this->packageOptionsFactory->create($dimensions, $weight, $lineItem->getPrice());
 
         if (!$this->itemCanFit($itemOptions)) {
-            $this->badItemException($lineItem, 'Either too heavy or too big.');
+            $this->badItemException($lineItem, 'Either too heavy, too big or too pricey.');
         }
         for ($i = 0; $i < $lineItem->getQuantity(); $i++) {
             if (!$this->itemCanFitInCurrentPackage($itemOptions)) {
@@ -170,30 +179,31 @@ class ShippingPackagesBuilder
     /**
      * Is the package light and small enough to be shipped with the specified Dpd France service ?
      *
-     * @param ShippingPackageOptionsInterface $itemOptions
+     * @param DpdShippingPackageOptionsInterface $itemOptions
      *
      * @return bool
      */
-    private function itemCanFit(ShippingPackageOptionsInterface $itemOptions): bool
+    private function itemCanFit(DpdShippingPackageOptionsInterface $itemOptions): bool
     {
         return (
-            $itemOptions->getLength() < $this->shippingService->getParcelMaxLength() &&
-            $itemOptions->getWidth()  < $this->shippingService->getParcelMaxLength() &&
-            $itemOptions->getWeight() < $this->shippingService->getParcelMaxWeight() &&
-            $itemOptions->getGirth()  < $this->shippingService->getParcelMaxPerimeter()
+            $itemOptions->getLength() < $this->shippingService->getParcelMaxLength()    &&
+            $itemOptions->getWidth()  < $this->shippingService->getParcelMaxLength()    &&
+            $itemOptions->getWeight() < $this->shippingService->getParcelMaxWeight()    &&
+            $itemOptions->getGirth()  < $this->shippingService->getParcelMaxPerimeter() &&
+            $itemOptions->getPrice()  < $this->shippingService->getParcelMaxValue()
         );
     }
 
     /**
      * Can the item be squeezed into the current package ?
      *
-     * @param ShippingPackageOptionsInterface $itemOptions
+     * @param DpdShippingPackageOptionsInterface $itemOptions
      *
      * @return bool
      */
-    private function itemCanFitInCurrentPackage(ShippingPackageOptionsInterface $itemOptions): bool
+    private function itemCanFitInCurrentPackage(DpdShippingPackageOptionsInterface $itemOptions): bool
     {
-        /** @var ShippingPackageOptionsInterface $mergedPackageProject */
+        /** @var DpdShippingPackageOptionsInterface $mergedPackageProject */
         $mergedPackageProject = $this->addItemToPackage($this->currentPackage, $itemOptions);
 
         return $this->itemCanFit($mergedPackageProject);
@@ -208,6 +218,7 @@ class ShippingPackagesBuilder
     {
         if (count($this->packages) < $this->shippingService->getParcelMaxAmount()) {
             $this->packages[] = $this->currentPackage;
+
             return true;
         }
 
@@ -221,26 +232,37 @@ class ShippingPackagesBuilder
      */
     private function resetCurrentPackage(): void
     {
-        $this->currentPackage = $this->createPackageOptions(0, Dimensions::create(0, 0, 0, null));
+        $this->currentPackage = $this->createPackageOptions(
+            0,
+            Dimensions::create(0, 0, 0, null),
+            Price::create(0, self::CURRENCY)
+        );
     }
 
     /**
      * Adds a package fragment to an existing package
      *
-     * @param ShippingPackageOptionsInterface $basePackage
-     * @param ShippingPackageOptionsInterface $addedPackage
+     * @param DpdShippingPackageOptionsInterface $basePackage
+     * @param DpdShippingPackageOptionsInterface $addedPackage
      *
-     * @return ShippingPackageOptionsInterface
+     * @return DpdShippingPackageOptionsInterface
      */
     private function addItemToPackage(
-        ShippingPackageOptionsInterface $basePackage,
-        ShippingPackageOptionsInterface $addedPackage
-    ): ShippingPackageOptionsInterface {
+        DpdShippingPackageOptionsInterface $basePackage,
+        DpdShippingPackageOptionsInterface $addedPackage
+    ): DpdShippingPackageOptionsInterface {
         /** @var float $weight */
         $weight = $basePackage->getWeight() + $addedPackage->getWeight();
         /** @var Dimensions $dimensions */
         $dimensions = $this->getMergedPackageDimensions($basePackage, $addedPackage);
-        return $this->createPackageOptions($weight, $dimensions);
+
+        /** @var Price $price */
+        $cumulatedPrice = Price::create(
+            $basePackage->getPrice()->getValue() + $addedPackage->getPrice()->getValue(),
+            $basePackage->getPrice()->getCurrency()
+        );
+
+        return $this->createPackageOptions($weight, $dimensions, $cumulatedPrice);
     }
 
     /**
@@ -248,17 +270,22 @@ class ShippingPackagesBuilder
      *
      * @param float      $weight
      * @param Dimensions $dimensions
+     * @param Price      $price
      *
-     * @return ShippingPackageOptionsInterface
+     * @return DpdShippingPackageOptionsInterface
      */
-    private function createPackageOptions(float $weight, Dimensions $dimensions): ShippingPackageOptionsInterface
-    {
+    private function createPackageOptions(
+        float $weight,
+        Dimensions $dimensions,
+        Price $price
+    ): DpdShippingPackageOptionsInterface {
         return $this->packageOptionsFactory->create(
             $dimensions,
             Weight::create(
                 $weight,
                 (new WeightUnit())->setCode(self::WEIGHT_UNIT)
-            )
+            ),
+            $price
         );
     }
 
@@ -277,7 +304,7 @@ class ShippingPackagesBuilder
         /** @var float $length */
         $length = max([$basePackage->getLength(), $itemOptions->getLength()]);
         /** @var float $width */
-        $width  = max([$basePackage->getWidth(), $itemOptions->getWidth()]);
+        $width = max([$basePackage->getWidth(), $itemOptions->getWidth()]);
         /** @var float $height */
         $height = $basePackage->getHeight() + $itemOptions->getHeight();
 
@@ -294,6 +321,7 @@ class ShippingPackagesBuilder
         if ($this->currentPackage->getWeight() > 0 && !$this->packCurrentPackage()) {
             return [];
         }
+
         return $this->packages;
     }
 }
