@@ -9,6 +9,10 @@ use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\SaleBundle\Provider\ContactInfoProviderInterface;
+use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
+use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
@@ -71,6 +75,18 @@ class OrderNormalizer implements NormalizerInterface
      */
     public const CONSOLIDATION_TYPE_DELIVERY_GROUPING = 1;
     /**
+     * Description $shippingOriginProvider field
+     *
+     * @var ShippingOriginProvider $shippingOriginProvider
+     */
+    protected ShippingOriginProvider $shippingOriginProvider;
+    /**
+     * Description $contactInfoProvider field
+     *
+     * @var ContactInfoProviderInterface $contactInfoProvider
+     */
+    protected ContactInfoProviderInterface $contactInfoProvider;
+    /**
      * Description $fillerCount field
      *
      * @var int $fillerCount
@@ -92,12 +108,18 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * OrderNormalizer constructor
      *
-     * @param PackageFactory $packagesFactory
+     * @param PackageFactory               $packagesFactory
+     * @param ShippingOriginProvider       $shippingOriginProvider
+     * @param ContactInfoProviderInterface $contactInfoProvider
      */
     public function __construct(
-        PackageFactory $packagesFactory
+        PackageFactory $packagesFactory,
+        ShippingOriginProvider $shippingOriginProvider,
+        ContactInfoProviderInterface $contactInfoProvider
     ) {
-        $this->packagesFactory = $packagesFactory;
+        $this->packagesFactory        = $packagesFactory;
+        $this->shippingOriginProvider = $shippingOriginProvider;
+        $this->contactInfoProvider    = $contactInfoProvider;
     }
 
     /**
@@ -183,6 +205,7 @@ class OrderNormalizer implements NormalizerInterface
      */
     private function getRecipientFields(Order $order, DpdShippingPackageOptionsInterface $package): array
     {
+        /** @var OrderAddress $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
         if (null === $shippingAddress) {
             throw new NormalizerException('The order has no shipping address');
@@ -293,10 +316,8 @@ class OrderNormalizer implements NormalizerInterface
      */
     private function getSenderFields(Order $order): array
     {
-        $senderAddress = $order->getShippingAddress(); //@TODO FIXME!!!!! this is NOT the sender address
-        if (null === $senderAddress) {
-            throw new NormalizerException('No sender address configured');
-        }
+        /** @var ShippingOrigin $shippingOrigin */
+        $shippingOrigin = $this->shippingOriginProvider->getSystemShippingOrigin();
 
         /** @var string[] $multiLineCustomerNotes */
         $multiLineCustomerNotes = explode("\n", wordwrap($order->getCustomerNotes(), 35));
@@ -308,7 +329,7 @@ class OrderNormalizer implements NormalizerInterface
                 419,
                 35,
                 'Nom expéditeur',
-                $senderAddress->getLastName(),
+                $shippingOrigin->getLastName(),
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -316,7 +337,7 @@ class OrderNormalizer implements NormalizerInterface
                 454,
                 35,
                 "Complément d’adresse 1",
-                $senderAddress->getFirstName(),
+                $shippingOrigin->getFirstName(),
             ),
             $this->makeFiller(489, 35),
             $this->makeFiller(524, 35),
@@ -328,7 +349,7 @@ class OrderNormalizer implements NormalizerInterface
                 629,
                 10,
                 "CP",
-                $senderAddress->getPostalCode(),
+                $shippingOrigin->getPostalCode(),
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -336,7 +357,7 @@ class OrderNormalizer implements NormalizerInterface
                 639,
                 35,
                 "Ville",
-                $senderAddress->getCity(),
+                $shippingOrigin->getCity(),
             ),
             $this->makeFiller(674, 10),
             $this->getElement(
@@ -345,7 +366,7 @@ class OrderNormalizer implements NormalizerInterface
                 684,
                 35,
                 "Rue",
-                $senderAddress->getStreet(),
+                $shippingOrigin->getStreet(),
             ),
             $this->makeFiller(719, 10),
             $this->getElement(
@@ -354,7 +375,7 @@ class OrderNormalizer implements NormalizerInterface
                 729,
                 3,
                 "Code Pays",
-                $senderAddress->getCountryIso2(),
+                $shippingOrigin->getCountryIso2(),
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -362,7 +383,7 @@ class OrderNormalizer implements NormalizerInterface
                 732,
                 20,
                 "Téléphone",
-                $senderAddress->getPhone()
+                '' //@TODO set phone  in integration settings & fetch it here
             ),
             $this->makeFiller(752, 10),
             $this->getElement(
@@ -411,10 +432,15 @@ class OrderNormalizer implements NormalizerInterface
      */
     private function getShipmentFields(Order $order, DpdShippingPackageOptionsInterface $package): array
     {
+        /** @var OrderAddress $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
+
+        $this->contactInfoProvider->getContactInfo();
+
         if (null === $shippingAddress) {
             throw new NormalizerException('The order has no shipping address');
         }
+
         return [
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -482,7 +508,7 @@ class OrderNormalizer implements NormalizerInterface
                 1117,
                 80,
                 'Email expéditeur',
-                '' //@TODO fetch the contact email
+                '' //@TODO fetch the contact email from the integration
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -490,7 +516,7 @@ class OrderNormalizer implements NormalizerInterface
                 1197,
                 35,
                 'GSM expéditeur',
-                '' //@TODO fetch the contact phone
+                '' //@TODO fetch the contact phone from the integration
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -506,7 +532,7 @@ class OrderNormalizer implements NormalizerInterface
                 1312,
                 35,
                 'GSM destinataire',
-                $shippingAddress->getPhone()
+                $order->getDeliveryPhone()
             ),
             $this->makeFiller(1347, 96),
             $this->getElement(
@@ -514,8 +540,7 @@ class OrderNormalizer implements NormalizerInterface
                 self::STATUS_OPTIONAL,
                 1443,
                 8,
-                'Identifiant du point relais',
-            //TODO store it somewhere and fetch it here !
+                $order->getDpdFrRelayId()
             ),
             $this->makeFiller(1451, 113),
             $this->getElement(
@@ -727,9 +752,10 @@ class OrderNormalizer implements NormalizerInterface
                 2,
                 "Fin d'enregistrement",
                 PHP_EOL
-            )
+            ),
         ];
     }
+
     /**
      * Description makeFiller function
      *
@@ -826,6 +852,6 @@ class OrderNormalizer implements NormalizerInterface
      */
     public function supportsNormalization($data, $format = null): bool
     {
-        return $data instanceof Order;
+        return $data instanceof Order && $format === 'dpd_fr_station';
     }
 }

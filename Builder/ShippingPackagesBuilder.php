@@ -190,7 +190,7 @@ class ShippingPackagesBuilder
             $itemOptions->getWidth()  < $this->shippingService->getParcelMaxLength()    &&
             $itemOptions->getWeight() < $this->shippingService->getParcelMaxWeight()    &&
             $itemOptions->getGirth()  < $this->shippingService->getParcelMaxPerimeter() &&
-            $itemOptions->getPrice()  < $this->shippingService->getParcelMaxValue()
+            $itemOptions->getPrice()->getValue() < $this->shippingService->getParcelMaxValue()
         );
     }
 

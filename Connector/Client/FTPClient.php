@@ -27,12 +27,6 @@ class FTPClient
      */
     protected ?SFTP $ftpConnection = null;
     /**
-     * Description $fileSystem field
-     *
-     * @var SymfonyFileSystem $fileSystem
-     */
-    protected SymfonyFileSystem $fileSystem;
-    /**
      * Description $settings field
      *
      * @var ParameterBag $settings
@@ -47,7 +41,6 @@ class FTPClient
     public function __construct(
         ParameterBag $settings
     ) {
-        $this->fileSystem = new SymfonyFileSystem();
         $this->settings   = $settings;
     }
 

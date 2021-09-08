@@ -57,22 +57,28 @@ class ShippingMethodsListener
         if (!$sourceEntity instanceof Checkout || $sourceEntity->getSourceEntity() instanceof QuoteDemand) {
             return;
         }
+
         /**
          * @var string  $shippingMethodName
          * @var mixed[] $methodTypes
          */
-        foreach ($methodCollection->getAllMethodsTypesViews() as $shippingMethodName => $methodTypes) {
+        foreach ($methodCollection->getAllMethodsTypesViews() as $shippingMethodName => &$methodTypes) {
             if (DpdFranceShippingMethodProvider::isDpdFrShippingMethod($shippingMethodName)) {
                 /**
                  * @var string  $methodTypeId
                  * @var mixed[] $methodTypesView
                  */
-                foreach ($methodTypes as $methodTypeId => $methodTypesView) {
+                foreach ($methodTypes as $methodTypeId => &$methodTypesView) {
+                    $methodTypeView =$methodCollection->getMethodTypeView($shippingMethodName, $methodTypeId);
+                    $methodTypeView['logo'] = 'logo.png'; //@TODO fetch it from shippingService
+                    $methodCollection->removeMethodTypeView($shippingMethodName, $methodTypeId);
+                    $methodCollection->addMethodTypeView($shippingMethodName, $methodTypeId, $methodTypeView);
                     if ($this->shippableWithDpdFranceCondition->isValid($methodTypesView, $sourceEntity) !== true) {
                         $methodCollection->removeMethodTypeView($shippingMethodName, $methodTypeId);
                     }
                 }
             }
         }
+
     }
 }

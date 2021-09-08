@@ -1,8 +1,7 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Factory;
+namespace Dnd\Bundle\DpdFranceShippingBundle\Factory;
 
-use Dnd\Bundle\DpdFranceShippingBundle\Factory\DpdShippingPackageOptionsFactoryInterface;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptions;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;

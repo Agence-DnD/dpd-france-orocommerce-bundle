@@ -204,7 +204,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
             $this->filesystem->dumpFile(
                 self::LOCAL_FOLDER . $fileName,
                 $this->assembleNormalizedData(
-                    $this->normalizer->normalize($order, null, ['shipping_service' => $shippingService])
+                    $this->normalizer->normalize($order, 'dpd_fr_station', ['shipping_service' => $shippingService])
                 )
             );
 

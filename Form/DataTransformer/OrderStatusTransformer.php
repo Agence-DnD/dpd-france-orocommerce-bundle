@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Symfony\Component\Form\DataTransformerInterface;
+use Extend\Entity\EV_Order_Internal_Status;
 
 /**
  * Class OrderStatusTransformer
@@ -47,19 +48,23 @@ class OrderStatusTransformer implements DataTransformerInterface
      */
     public function transform($value): ArrayCollection
     {
-        //@TODO FIXME - does not preset the order statuses correctly on edit
         /** @var string[] $ids */
         $ids = explode(',', $value ?? '');
-
         /** @var mixed[] $availableStatuses */
         $availableStatuses = $this->enumValueProvider->getEnumChoicesByCode('order_internal_status');
-
-        /** @var mixed[] $statuses */
-        $statuses = array_filter($availableStatuses, static function ($id) use (&$ids) {
-            return in_array($id, $ids, true);
-        });
-
-        return new ArrayCollection($statuses);
+        /** @var ArrayCollection $items */
+        $items = new ArrayCollection();
+        /**
+         * @var string $name
+         * @var string $id
+         */
+        foreach ($availableStatuses as $name => $id) {
+            if (!in_array($id, $ids, true)) {
+                continue;
+            }
+            $items->add(new EV_Order_Internal_Status($id, $name));
+        }
+        return $items;
     }
 
     /**
