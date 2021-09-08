@@ -1,0 +1,5 @@
+{% block dpd_france_shipping_config_options_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.tooltip('dnd_dpd_france_shipping.form.shipping_method_config_options.surcharge.tooltip', {}, 'right') }}
+    {{ form_widget(form) }}
+{% endblock %}

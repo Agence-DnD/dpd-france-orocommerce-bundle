@@ -8,7 +8,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\DependencyInjection\DndDpdFranceShippingE
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * Class DndDpdFranceShippingBundle
+ * The bundle for DPD France shipping method integration
  *
  * @package   Dnd\Bundle\DpdFranceShippingBundle
  * @author    Agence Dn'D <contact@dnd.fr>
@@ -31,5 +31,4 @@ class DndDpdFranceShippingBundle extends Bundle
 
         return $this->extension;
     }
-
 }

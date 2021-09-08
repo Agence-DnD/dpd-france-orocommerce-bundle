@@ -1,0 +1,24 @@
+dpd.shipping_service.classic:
+    code: 'dpd_fr_classic'
+    label: 'DPD Classic'
+    icon: 'bundles/dnddpdfranceshipping/img/livraison-dpd-classic.png'
+    parcel_max_perimeter: 3
+    parcel_max_length: 2
+    parcel_max_weight: 30
+    parcel_max_amount: 5
+dpd.shipping_service.predict:
+    code: 'dpd_fr_predict'
+    label: 'DPD Predict'
+    icon: 'bundles/dnddpdfranceshipping/img/livraison-dpd-predict.png'
+    parcel_max_perimeter: 3
+    parcel_max_length: 2
+    parcel_max_weight: 30
+    parcel_max_amount: 5
+dpd.shipping_service.pickup:
+    code: 'dpd_fr_pickup'
+    label: 'DPD Pickup'
+    icon: 'bundles/dnddpdfranceshipping/img/livraison-dpd-pickup.png'
+    parcel_max_perimeter: 2.5
+    parcel_max_length: 1
+    parcel_max_weight: 20
+    parcel_max_amount: 5

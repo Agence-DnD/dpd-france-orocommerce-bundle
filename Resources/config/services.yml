@@ -1,0 +1,62 @@
+parameters:
+    dnd_dpd_france_shipping.admin_view.method_template: 'DndDpdFranceShippingBundle::method/dpdFranceShippingMethodWithOptions.html.twig'
+services:
+    dnd_dpd_france_shipping.identifier_generator.method:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        public: true
+        arguments:
+            - !php/const Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel::TYPE
+            -
+    dnd_dpd_france_shipping.method.identifier_generator.type:
+        class: 'Dnd\Bundle\DpdFranceShippingBundle\Method\Identifier\DpdFranceMethodTypeIdentifierGenerator'
+        public: false
+
+    dnd_dpd_france_shipping.factory.type:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Method\Factory\DpdFranceShippingMethodTypeFactory
+        arguments:
+            - '@dnd_dpd_france_shipping.method.identifier_generator.type'
+            - '@dnd_dpd_france_shipping.identifier_generator.method'
+
+    dnd_dpd_france_shipping.factory.method:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Method\Factory\DpdFranceShippingMethodFactory
+        arguments:
+            - '@oro_integration.provider.integration_icon'
+            - '@dnd_dpd_france_shipping.identifier_generator.method'
+            - '@dnd_dpd_france_shipping.factory.type'
+
+    dnd_dpd_france_shipping.method.provider:
+        class: 'Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider'
+        arguments:
+            - !php/const Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel::TYPE
+            - '@oro_entity.doctrine_helper'
+            - '@dnd_dpd_france_shipping.factory.method'
+        tags:
+            - { name: oro_shipping_method_provider }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: postLoad }
+
+    dnd_dpd_france_shipping.event_listener.shipping_method_config_data:
+        parent: oro_shipping.admin_view.method_template.listener
+        arguments:
+            - '%dnd_dpd_france_shipping.admin_view.method_template%'
+            - '@dnd_dpd_france_shipping.method.provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
+
+    dnd_dpd_france_shipping.condition.shippable:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Condition\ShippableWithDpdFrance
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_checkout.provider.shipping_context'
+            - '@dnd_dpd_france_shipping.factory.package'
+            - '@logger'
+
+    dnd_dpd_france_shipping.builder.package:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Builder\ShippingPackagesBuilder
+        arguments:
+            - '@oro_shipping.factory.shipping_package_options'
+            - '@oro_shipping.provider.measure_units.conversion'
+
+    dnd_dpd_france_shipping.factory.package:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory
+        arguments:
+            - '@dnd_dpd_france_shipping.builder.package'

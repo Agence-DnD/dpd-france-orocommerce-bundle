@@ -6,7 +6,20 @@
 
 
 ### Installation:
+### Require the module
+```composer require agencednd/dpd-france-orocommerce-bundle```
 
+### Flush the cache
+```bin/console cache:clear```
+
+### Run the migrations
+```
+bin/console oro:migration:load --force
+bin/console oro:migration:data:load --bundles=DndDpdFranceShippingBundle
+```
+
+### Reinstall the assets to copy bundle public folder (for integration logo)
+```bin/console assets:install```
 
 ### Requirements:
 

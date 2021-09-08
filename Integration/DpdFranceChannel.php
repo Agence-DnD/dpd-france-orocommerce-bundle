@@ -22,7 +22,7 @@ class DpdFranceChannel implements ChannelInterface, IconAwareIntegrationInterfac
      *
      * @var string TYPE
      */
-    public const TYPE = 'dpd_france';
+    public const TYPE = 'dpd_france_shipping';
 
     /**
      * {@inheritdoc}
@@ -31,7 +31,7 @@ class DpdFranceChannel implements ChannelInterface, IconAwareIntegrationInterfac
      */
     public function getLabel(): string
     {
-        return 'dpd_france.channel.label';
+        return 'dnd_dpd_france_shipping.integration.channel.label';
     }
 
     /**
@@ -41,6 +41,6 @@ class DpdFranceChannel implements ChannelInterface, IconAwareIntegrationInterfac
      */
     public function getIcon(): string
     {
-        return 'bundles/dpd_france/img/DPD_logo_icon.png';
+        return 'bundles/dnddpdfranceshipping/img/DPD_logo_icon.png';
     }
 }

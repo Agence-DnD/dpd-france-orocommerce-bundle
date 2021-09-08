@@ -1,0 +1,7 @@
+services:
+    dnd_dpd_france_shipping.event_listener.shipping_methods_listener:
+        class: Dnd\Bundle\DpdFranceShippingBundle\EventListener\ShippingMethodsListener
+        arguments:
+            - '@dnd_dpd_france_shipping.condition.shippable'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping.applicable_methods, method: enforceDpDFranceValidations }
