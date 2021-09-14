@@ -34,12 +34,6 @@ class ShippableWithDpdFrance
      */
     protected DoctrineHelper $doctrineHelper;
     /**
-     * Description $dpdFrShippingServices field
-     *
-     * @var ShippingService[] $dpdFrShippingServices
-     */
-    protected array $dpdFrShippingServices = [];
-    /**
      * Description $checkoutShippingContextProvider field
      *
      * @var CheckoutShippingContextProvider $checkoutShippingContextProvider
@@ -57,12 +51,6 @@ class ShippableWithDpdFrance
      * @var LoggerInterface $logger
      */
     protected LoggerInterface $logger;
-    /**
-     * Description $shippingMethodProvider field
-     *
-     * @var DpdFranceShippingMethodProvider $shippingMethodProvider
-     */
-    protected DpdFranceShippingMethodProvider $shippingMethodProvider;
     /**
      * Description $shippingServiceProvider field
      *

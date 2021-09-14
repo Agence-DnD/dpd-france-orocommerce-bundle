@@ -38,12 +38,6 @@ class OrderListener
      */
     protected MessageProducerInterface $producer;
     /**
-     * Description $serializer field
-     *
-     * @var Serializer $serializer
-     */
-    protected Serializer $serializer;
-    /**
      * Description $settingsProvider field
      *
      * @var SettingsProvider $settingsProvider

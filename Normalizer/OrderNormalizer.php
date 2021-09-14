@@ -10,7 +10,6 @@ use Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\SaleBundle\Provider\ContactInfoProviderInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -81,12 +80,6 @@ class OrderNormalizer implements NormalizerInterface
      */
     protected ShippingOriginProvider $shippingOriginProvider;
     /**
-     * Description $contactInfoProvider field
-     *
-     * @var ContactInfoProviderInterface $contactInfoProvider
-     */
-    protected ContactInfoProviderInterface $contactInfoProvider;
-    /**
      * Description $fillerCount field
      *
      * @var int $fillerCount
@@ -108,18 +101,15 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * OrderNormalizer constructor
      *
-     * @param PackageFactory               $packagesFactory
-     * @param ShippingOriginProvider       $shippingOriginProvider
-     * @param ContactInfoProviderInterface $contactInfoProvider
+     * @param PackageFactory         $packagesFactory
+     * @param ShippingOriginProvider $shippingOriginProvider
      */
     public function __construct(
         PackageFactory $packagesFactory,
-        ShippingOriginProvider $shippingOriginProvider,
-        ContactInfoProviderInterface $contactInfoProvider
+        ShippingOriginProvider $shippingOriginProvider
     ) {
         $this->packagesFactory        = $packagesFactory;
         $this->shippingOriginProvider = $shippingOriginProvider;
-        $this->contactInfoProvider    = $contactInfoProvider;
     }
 
     /**
@@ -150,10 +140,10 @@ class OrderNormalizer implements NormalizerInterface
             $this->packageCount++;
             $data = array_merge(
                 $this->getGeneralFields($order, $package),
-                $this->getRecipientFields($order, $package),
+                $this->getRecipientFields($order),
                 $this->getSenderFields($order),
                 $this->getShipmentFields($order, $package),
-                $this->getReturnFields($order, $package),
+                $this->getReturnFields(),
                 $this->getLineEnd()
             );
         }
@@ -179,7 +169,7 @@ class OrderNormalizer implements NormalizerInterface
                 1,
                 35,
                 'Référence client N°1',
-                'ref'
+                'ref' //@TODO
             ),
             $this->makeFiller(36, 2),
             $this->getElement(
@@ -197,13 +187,12 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * Builds an array of recipient address related elements
      *
-     * @param Order                              $order
-     * @param DpdShippingPackageOptionsInterface $package
+     * @param Order $order
      *
      * @return array
      * @throws NormalizerException
      */
-    private function getRecipientFields(Order $order, DpdShippingPackageOptionsInterface $package): array
+    private function getRecipientFields(Order $order): array
     {
         /** @var OrderAddress $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
@@ -435,8 +424,6 @@ class OrderNormalizer implements NormalizerInterface
         /** @var OrderAddress $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
 
-        $this->contactInfoProvider->getContactInfo();
-
         if (null === $shippingAddress) {
             throw new NormalizerException('The order has no shipping address');
         }
@@ -608,13 +595,10 @@ class OrderNormalizer implements NormalizerInterface
      * Builds an array of elements related with the return procedure
      * Return policy not implemented yet, returns only empty values
      *
-     * @param Order                              $order
-     * @param DpdShippingPackageOptionsInterface $package
-     *
      * @return array
      * @throws NormalizerException
      */
-    private function getReturnFields(Order $order, DpdShippingPackageOptionsInterface $package): array
+    private function getReturnFields(): array
     {
         return [
             $this->getElement(
@@ -739,7 +723,7 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * Description closeLine function
      *
-     * @return \mixed[][]
+     * @return mixed[][]
      * @throws NormalizerException
      */
     private function getLineEnd(): array

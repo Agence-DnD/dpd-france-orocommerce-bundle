@@ -102,12 +102,6 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
      */
     protected SettingsProvider $settingsProvider;
     /**
-     * Description $shippingMethodProvider field
-     *
-     * @var DpdFranceShippingMethodProvider $shippingMethodProvider
-     */
-    protected DpdFranceShippingMethodProvider $shippingMethodProvider;
-    /**
      * Description $shippingServiceProvider field
      *
      * @var ShippingServiceProvider $shippingServiceProvider

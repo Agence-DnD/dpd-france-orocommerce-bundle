@@ -6,7 +6,6 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Client;
 
 use phpseclib\Net\SFTP;
 use Psr\Log\InvalidArgumentException;
-use Symfony\Component\Filesystem\Filesystem as SymfonyFileSystem;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**

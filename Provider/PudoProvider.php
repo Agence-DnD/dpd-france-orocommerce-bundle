@@ -108,7 +108,7 @@ class PudoProvider
             'city'        => $city ?? '',
             'countrycode' => self::FR_COUNTRY_CODE,
             'requestID'   => $checkoutId,
-            'date_from'   => $now->add('P1D')->format('d/m/Y'),
+            'date_from'   => $now->add(new \DateInterval('P1D'))->format('d/m/Y'),
         ];
     }
 
@@ -120,7 +120,7 @@ class PudoProvider
      * @param string $postalCode
      * @param string $address
      *
-     * @return array
+     * @return mixed[]
      * @throws ClientExceptionInterface
      * @throws PudoException
      * @throws RedirectionExceptionInterface
@@ -130,6 +130,7 @@ class PudoProvider
      */
     public function getPudoList(string $checkoutId, string $city, string $postalCode, string $address): array
     {
+        /** @var Response $response */
         $response = $this->client->request(
             Request::METHOD_POST,
             self::getUrl(),
@@ -158,7 +159,7 @@ class PudoProvider
      *
      * @param string $xml
      *
-     * @return array
+     * @return mixed[]
      * @throws \JsonException
      */
     private function parseXML(string $xml): array

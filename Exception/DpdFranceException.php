@@ -13,6 +13,6 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Exception;
  * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
-interface DpdFranceException
+interface DpdFranceException extends \Throwable
 {
 }

@@ -79,6 +79,7 @@ services:
         class: Dnd\Bundle\DpdFranceShippingBundle\Normalizer\OrderNormalizer
         arguments:
             - '@dnd_dpd_france_shipping.factory.package'
+            - 'Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider'
 
     dnd_dpd_france_shipping.processor.async.station_export:
             class: Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async\StationExportProcessor

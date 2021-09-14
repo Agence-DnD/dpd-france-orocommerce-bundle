@@ -39,20 +39,33 @@ class RelayController extends AbstractController
     public function listAction(PudoProvider $pudoProvider, Request $request): JsonResponse
     {
 
+        /** @var string $checkoutId */
         $checkoutId = $request->get('checkoutId');
+        /** @var string $city */
         $city = $request->get('city');
+        /** @var string $address */
         $address = $request->get('address');
+        /** @var string $postalCode */
         $postalCode = $request->get('postalCode');
 
         try {
+            if (empty($checkoutId) || empty($city) || empty($address) || empty($postalCode)) {
+                throw new \InvalidArgumentException(
+                    'Missing mandatory parameter, expecting checkoutId, city, address & postalCode.'
+                );
+            }
             $pudoList = $pudoProvider->getPudoList($checkoutId, $city, $postalCode, $address);
-            dump($pudoList);
 
             $response = [
                 'relays' => $pudoList
             ];
-            $status = Response::HTTP_OK;
-        } catch (\ExceptionInterface $e) {
+            $status   = Response::HTTP_OK;
+        } catch (\InvalidArgumentException $e) {
+            $response = [
+                'error' => $e->getMessage()
+            ];
+            $status = Response::HTTP_BAD_REQUEST;
+        } catch (\Throwable $e) {
             $response = [
                 'error' => $e->getMessage()
             ];

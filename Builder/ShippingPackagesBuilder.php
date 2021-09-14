@@ -234,7 +234,7 @@ class ShippingPackagesBuilder
     {
         $this->currentPackage = $this->createPackageOptions(
             0,
-            Dimensions::create(0, 0, 0, null),
+            Dimensions::create(0, 0, 0),
             Price::create(0, self::CURRENCY)
         );
     }

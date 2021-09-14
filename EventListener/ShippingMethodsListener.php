@@ -79,7 +79,7 @@ class ShippingMethodsListener
                  * @var string  $methodTypeId
                  * @var mixed[] $methodTypesView
                  */
-                foreach ($methodTypes as $methodTypeId => &$methodTypesView) {
+                foreach ($methodTypes as $methodTypeId => $methodTypesView) {
                     $methodTypeView = $methodCollection->getMethodTypeView($shippingMethodName, $methodTypeId);
                     $methodTypeView['logo'] = $this->shippingServiceProvider->getShippingServiceLogo($methodTypeId);
                     $methodCollection->removeMethodTypeView($shippingMethodName, $methodTypeId);
