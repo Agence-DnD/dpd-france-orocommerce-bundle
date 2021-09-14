@@ -25,6 +25,12 @@ class ShippingServiceProvider
      * @var DoctrineHelper $doctrineHelper
      */
     protected DoctrineHelper $doctrineHelper;
+    /**
+     * Description $dpdFrShippingServices field
+     *
+     * @var array $dpdFrShippingServices
+     */
+    protected array $dpdFrShippingServices;
 
     /**
      * ShippingServiceProvider constructor
@@ -73,5 +79,19 @@ class ShippingServiceProvider
         }
 
         return $this->dpdFrShippingServices;
+    }
+
+    /**
+     * Description getShippingServiceLogo function
+     *
+     * @param string $identifier
+     *
+     * @return string
+     */
+    public function getShippingServiceLogo(string $identifier): string
+    {
+        $service = $this->getServiceForMethodTypeIdentifier($identifier);
+
+        return $service !== null ? $service->getIcon() : '';
     }
 }

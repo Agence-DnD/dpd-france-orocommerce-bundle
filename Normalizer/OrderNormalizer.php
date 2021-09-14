@@ -448,7 +448,7 @@ class OrderNormalizer implements NormalizerInterface
                 902,
                 10,
                 "Date d'expédition",
-                ''
+                '' //TODO date d'impression de l'etiquette ? (date courante)
             ),
             $this->getElement(
                 self::TYPE_NUMERIC,
@@ -456,7 +456,7 @@ class OrderNormalizer implements NormalizerInterface
                 912,
                 8,
                 "Numéro de compte",
-                0
+                0 //TODO fetch it from integration settings
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -566,7 +566,7 @@ class OrderNormalizer implements NormalizerInterface
                 1569,
                 1,
                 'Predict',
-                0 // todo '+' if predict order, O otherwise - so much for a numeric value
+                $order->getShippingMethodType() === 'predict' ? '+' : '0' // so much for a numeric value
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,

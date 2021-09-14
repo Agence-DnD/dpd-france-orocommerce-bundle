@@ -1,0 +1,9 @@
+services:
+    _defaults:
+        public: true
+
+    Dnd\Bundle\DpdFranceShippingBundle\Controller\Frontend\RelayController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_subscriber }

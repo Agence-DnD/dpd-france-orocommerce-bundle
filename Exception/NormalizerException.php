@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Exception;
 
-use Oro\Bundle\ActivityBundle\Exception\Exception as BaseException;
-
 /**
  * Class NormalizerException
  *
@@ -15,6 +13,6 @@ use Oro\Bundle\ActivityBundle\Exception\Exception as BaseException;
  * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
-class NormalizerException extends \Exception implements BaseException
+class NormalizerException extends \Exception implements DpdFranceException
 {
 }

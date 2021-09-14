@@ -1,0 +1,173 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Dnd\Bundle\DpdFranceShippingBundle\Provider;
+
+use Dnd\Bundle\DpdFranceShippingBundle\Exception\PudoException;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+
+/**
+ * Class PudoProvider
+ *
+ * @package   Dnd\Bundle\DpdFranceShippingBundle\Provider
+ * @author    Agence Dn'D <contact@dnd.fr>
+ * @copyright 2004-present Agence Dn'D
+ * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      https://www.dnd.fr/
+ */
+class PudoProvider
+{
+    /**
+     * MyPUDO webservice endpoint to retrieve PUDO list
+     *
+     * @var string ENDPOINT
+     */
+    public const ENDPOINT = '/mypudo/mypudo.asmx/GetPudoList';
+    /**
+     * MyPUDO webservice host URL
+     *
+     * @var string HOST_URL
+     */
+    public const HOST_URL = 'mypudo.pickup-services.com';
+    /**
+     * Iso2 country code for France
+     *
+     * @var string FR_COUNTRY_CODE
+     */
+    public const FR_COUNTRY_CODE = 'FR';
+    /**
+     * Access identifier @TODO ensure this thing doesn't need to be parametred
+     *
+     * @var string CARRIER
+     */
+    public const CARRIER = 'EXA';
+    /**
+     * MyPUDO webservice security key @TODO ensure this thing doesn't need to be parametred
+     *
+     * @var string SECURITY_KEY
+     */
+    public const SECURITY_KEY = 'deecd7bc81b71fcc0e292b53e826c48f';
+    /**
+     * Description $client field
+     *
+     * @var HttpClientInterface $client
+     */
+    protected HttpClientInterface $client;
+
+    /**
+     * PudoProvider constructor
+     *
+     * @param HttpClientInterface $client
+     */
+    public function __construct(HttpClientInterface $client)
+    {
+        $this->client = $client;
+    }
+
+    /**
+     * Description getUrl function
+     *
+     * @return string
+     */
+    private static function getUrl(): string
+    {
+        return implode('', [
+            'https://',
+            self::HOST_URL,
+            self::ENDPOINT,
+        ]);
+    }
+
+    /**
+     * Builds the list of params which have to be wrapped in the request body
+     *
+     * @param string $checkoutId
+     * @param string $city
+     * @param string $postalCode
+     * @param string $address
+     *
+     * @return array
+     */
+    private function getParams(string $checkoutId, string $city, string $postalCode, string $address): array
+    {
+        /** @var \DateTime $now */
+        $now = new \DateTime();
+
+        return [
+            'carrier'     => self::CARRIER,
+            'key'         => self::SECURITY_KEY,
+            'address'     => $address ?? '',
+            'zipCode'     => $postalCode ?? '',
+            'city'        => $city ?? '',
+            'countrycode' => self::FR_COUNTRY_CODE,
+            'requestID'   => $checkoutId,
+            'date_from'   => $now->add('P1D')->format('d/m/Y'),
+        ];
+    }
+
+    /**
+     * Description getPudoList function
+     *
+     * @param string $checkoutId
+     * @param string $city
+     * @param string $postalCode
+     * @param string $address
+     *
+     * @return array
+     * @throws ClientExceptionInterface
+     * @throws PudoException
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws TransportExceptionInterface
+     * @throws \JsonException
+     */
+    public function getPudoList(string $checkoutId, string $city, string $postalCode, string $address): array
+    {
+        $response = $this->client->request(
+            Request::METHOD_POST,
+            self::getUrl(),
+            [
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ],
+                'body' => $this->getParams($checkoutId, $city, $postalCode, $address)
+            ]
+        );
+        if (Response::HTTP_OK !== $response->getStatusCode()) {
+            throw new PudoException(
+                sprintf(
+                    'MyPudo WS returned an error response [%d] - %s',
+                    $response->getStatusCode(),
+                    $response->getContent()
+                )
+            );
+        }
+
+        return $this->parseXML($response->getContent());
+    }
+
+    /**
+     * Turns a xml string into an associative array
+     *
+     * @param string $xml
+     *
+     * @return array
+     * @throws \JsonException
+     */
+    private function parseXML(string $xml): array
+    {
+        return json_decode(
+            json_encode((array)simplexml_load_string($xml), JSON_THROW_ON_ERROR),
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+    }
+}

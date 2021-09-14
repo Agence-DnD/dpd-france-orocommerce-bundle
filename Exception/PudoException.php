@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Exception;
 
 /**
- * Class ExportException
+ * Class PudoException
  *
  * @package   Dnd\Bundle\DpdFranceShippingBundle\Exception
  * @author    Agence Dn'D <contact@dnd.fr>
@@ -13,6 +13,6 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Exception;
  * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
-class ExportException extends \Exception implements DpdFranceException
+class PudoException extends \Exception implements DpdFranceException
 {
 }

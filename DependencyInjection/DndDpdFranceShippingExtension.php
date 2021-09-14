@@ -41,6 +41,7 @@ class DndDpdFranceShippingExtension extends Extension implements PrependExtensio
     {
         /** @var YamlFileLoader $loader */
         $loader = new YamlFileLoader($container, new FileLocator([__DIR__ . '/../Resources/config']));
+        $loader->load('controllers.yml');
         $loader->load('event_listeners.yml');
         $loader->load('form_types.yml');
         $loader->load('integration.yml');
