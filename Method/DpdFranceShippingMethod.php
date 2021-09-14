@@ -189,7 +189,7 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
         /** @var ShippingService $service */
         $service = $this->transportSettings->getShippingService($this->getIdentifier());
 
-        return $service->getIcon();
+        return $service !== null ? $service->getIcon() : '';
     }
 
     /**

@@ -21,6 +21,22 @@ bin/console oro:migration:data:load --bundles=DndDpdFranceShippingBundle
 ### Reinstall the assets to copy bundle public folder (for integration logo)
 ```bin/console assets:install```
 
+
+### Configuration:
+Method/DpdFranceShippingMethod.php
+#### Create a DPD France shipping integration
+
+On the admin section, go to System > Integrations > Manage integrations > Create Integration
+
+Select DPD France integration type and fill in the requested configurations.
+
+#### Create shipping rules
+
+On the admin section, go to System > Shipping rules > Create shipping rule
+
+Select the proper currency / website combination for your store, set a base price for the services and an eventual extra fee per service in additional options section.
+
+
 ### Requirements:
 
 | OroCommerce           | PHP                               |

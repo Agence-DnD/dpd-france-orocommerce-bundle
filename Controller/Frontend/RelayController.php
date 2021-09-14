@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Controller\Frontend;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider;
-use Oro\Bundle\SecurityBundle\Annotation\CsrfProtection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,19 +25,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class RelayController extends AbstractController
 {
     /**
-     * Returns a list of the closest PUDOs for a given address
+     * @Route("/relays", name="dpd_france_relay_list", methods={"GET", "POST"})
      *
-     * @Route("/dpd_france/relays", name="dpd_france_relay_list", methods={"GET"})
-     * @CsrfProtection()
-     *
-     * @param PudoProvider $pudoProvider
      * @param Request $request
      *
      * @return JsonResponse
      */
-    public function listAction(PudoProvider $pudoProvider, Request $request): JsonResponse
+    public function listAction(Request $request, PudoProvider $pudoProvider): JsonResponse
     {
-
         /** @var string $checkoutId */
         $checkoutId = $request->get('checkoutId');
         /** @var string $city */
@@ -49,27 +43,27 @@ class RelayController extends AbstractController
         $postalCode = $request->get('postalCode');
 
         try {
-            if (empty($checkoutId) || empty($city) || empty($address) || empty($postalCode)) {
+            if (empty($checkoutId) || (empty($city) && empty($address) && empty($postalCode))) {
                 throw new \InvalidArgumentException(
                     'Missing mandatory parameter, expecting checkoutId, city, address & postalCode.'
                 );
             }
-            $pudoList = $pudoProvider->getPudoList($checkoutId, $city, $postalCode, $address);
 
+            /** @var mixed[] $response */
             $response = [
-                'relays' => $pudoList
+                'relays' => $pudoProvider->getPudoList($checkoutId, $city, $postalCode, $address),
             ];
             $status   = Response::HTTP_OK;
         } catch (\InvalidArgumentException $e) {
             $response = [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
-            $status = Response::HTTP_BAD_REQUEST;
+            $status   = Response::HTTP_BAD_REQUEST;
         } catch (\Throwable $e) {
             $response = [
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ];
-            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+            $status   = Response::HTTP_INTERNAL_SERVER_ERROR;
         }
 
         return new JsonResponse($response, $status);

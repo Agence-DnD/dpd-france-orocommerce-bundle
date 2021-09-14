@@ -88,14 +88,14 @@ class PudoProvider
     /**
      * Builds the list of params which have to be wrapped in the request body
      *
-     * @param string $checkoutId
-     * @param string $city
-     * @param string $postalCode
-     * @param string $address
+     * @param string      $checkoutId
+     * @param string|null $city
+     * @param string|null $postalCode
+     * @param string|null $address
      *
      * @return array
      */
-    private function getParams(string $checkoutId, string $city, string $postalCode, string $address): array
+    private function getParams(string $checkoutId, ?string $city, ?string $postalCode, ?string $address): array
     {
         /** @var \DateTime $now */
         $now = new \DateTime();
@@ -115,32 +115,27 @@ class PudoProvider
     /**
      * Description getPudoList function
      *
-     * @param string $checkoutId
-     * @param string $city
-     * @param string $postalCode
-     * @param string $address
+     * @param string      $checkoutId
+     * @param string|null $city
+     * @param string|null $postalCode
+     * @param string|null $address
      *
      * @return mixed[]
-     * @throws ClientExceptionInterface
      * @throws PudoException
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      * @throws \JsonException
      */
-    public function getPudoList(string $checkoutId, string $city, string $postalCode, string $address): array
+    public function getPudoList(string $checkoutId, ?string $city, ?string $postalCode, ?string $address): array
     {
         /** @var Response $response */
         $response = $this->client->request(
             Request::METHOD_POST,
             self::getUrl(),
             [
-                'headers' => [
-                    'Content-Type' => 'application/x-www-form-urlencoded',
-                ],
                 'body' => $this->getParams($checkoutId, $city, $postalCode, $address)
             ]
         );
+
         if (Response::HTTP_OK !== $response->getStatusCode()) {
             throw new PudoException(
                 sprintf(

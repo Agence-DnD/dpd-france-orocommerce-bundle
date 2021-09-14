@@ -31,6 +31,10 @@ services:
             $channelRepository: '@oro_integration.repository.channel'
             $contextMediator : '@oro_integration.provider.connector_context_mediator'
 
+    Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider:
+        autowire: true
+        public: true
+
     dnd_dpd_france_shipping.provider.shipping_service:
         class: Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider
         autowire: true
