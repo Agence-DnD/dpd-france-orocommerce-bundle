@@ -227,11 +227,11 @@ class ShippingService
     /**
      * Description setParcelMaxAmount function
      *
-     * @param float $parcelMaxAmount
+     * @param float|null $parcelMaxAmount
      *
      * @return void
      */
-    public function setParcelMaxAmount(float $parcelMaxAmount): void
+    public function setParcelMaxAmount(?float $parcelMaxAmount): void
     {
         $this->parcelMaxAmount = $parcelMaxAmount;
     }
@@ -239,9 +239,9 @@ class ShippingService
     /**
      * Description getParcelMaxValue function
      *
-     * @return float
+     * @return float|null
      */
-    public function getParcelMaxValue(): float
+    public function getParcelMaxValue(): ?float
     {
         return $this->parcelMaxValue;
     }

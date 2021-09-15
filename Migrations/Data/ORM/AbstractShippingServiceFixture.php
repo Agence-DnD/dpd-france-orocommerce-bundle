@@ -92,7 +92,7 @@ abstract class AbstractShippingServiceFixture extends AbstractFixture
                 $shippingService['parcel_max_weight'] ?? self::DEFAULT_PARCEL_MAX_WEIGHT
             );
             $entity->setParcelMaxAmount(
-                $shippingService['parcel_max_amount'] ?? self::DEFAULT_PARCEL_MAX_AMOUNT
+                $shippingService['parcel_max_amount'] ?? null
             );
             $entity->setParcelMaxValue(
                 $shippingService['parcel_max_value'] ?? self::DEFAULT_PARCEL_MAX_VALUE

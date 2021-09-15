@@ -9,6 +9,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Dnd\Bundle\DpdFranceShippingBundle\Factory\DpdShippingPackageOptionsFactoryInterface;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptions;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
+use Dnd\Bundle\DpdFranceShippingBundle\Provider\SettingsProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
@@ -54,6 +55,12 @@ class ShippingPackagesBuilder
      */
     protected MeasureUnitConversion $measureUnitConversion;
     /**
+     * Description $settingsProvider field
+     *
+     * @var SettingsProvider $settingsProvider
+     */
+    protected SettingsProvider $settingsProvider;
+    /**
      * @var DpdShippingPackageOptionsFactoryInterface
      */
     private DpdShippingPackageOptionsFactoryInterface $packageOptionsFactory;
@@ -79,13 +86,16 @@ class ShippingPackagesBuilder
      *
      * @param DpdShippingPackageOptionsFactoryInterface $packageOptionsFactory
      * @param MeasureUnitConversion                     $measureUnitConversion
+     * @param SettingsProvider                          $settingsProvider
      */
     public function __construct(
         DpdShippingPackageOptionsFactoryInterface $packageOptionsFactory,
-        MeasureUnitConversion $measureUnitConversion
+        MeasureUnitConversion $measureUnitConversion,
+        SettingsProvider $settingsProvider
     ) {
         $this->packageOptionsFactory = $packageOptionsFactory;
         $this->measureUnitConversion = $measureUnitConversion;
+        $this->settingsProvider      = $settingsProvider;
     }
 
     /**
@@ -143,7 +153,7 @@ class ShippingPackagesBuilder
                         sprintf(
                             'Too many packages, need more than %d packages while %d are allowed. Advise splitting order.',
                             count($this->packages) + 1,
-                            $this->shippingService->getParcelMaxAmount()
+                            $this->getParcelMaxAmount()
                         )
                     );
                 }
@@ -153,6 +163,22 @@ class ShippingPackagesBuilder
         }
 
         return true;
+    }
+
+    /**
+     * Retrieves the max amount of parcel per shipment for the current service
+     *
+     * @return int
+     */
+    private function getParcelMaxAmount(): int
+    {
+        /** @var int|null $maxAmount */
+        $maxAmount = $this->shippingService->getParcelMaxAmount();
+        if ($maxAmount === null) {
+            //Fallback on general value set at integration level
+            $maxAmount = $this->settingsProvider->getSettings()->get('max_amount');
+        }
+        return $maxAmount;
     }
 
     /**
@@ -216,7 +242,7 @@ class ShippingPackagesBuilder
      */
     private function packCurrentPackage(): bool
     {
-        if (count($this->packages) < $this->shippingService->getParcelMaxAmount()) {
+        if (count($this->packages) < $this->getParcelMaxAmount()) {
             $this->packages[] = $this->currentPackage;
 
             return true;
