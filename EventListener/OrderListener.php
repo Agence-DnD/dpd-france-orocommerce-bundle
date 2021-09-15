@@ -12,7 +12,6 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Transport\Exception\Exception;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Serializer\Serializer;
 
 /**
  * Class OrderListener
@@ -71,7 +70,12 @@ class OrderListener
      */
     public function postUpdate(Order $order): void
     {
-        if (!$this->isOrderExportable($order)) {
+        try {
+            if (!$this->isOrderExportable($order)) {
+                return;
+            }
+        } catch (\InvalidArgumentException $e) {
+            //No integration exists for DPD France
             return;
         }
 
@@ -94,6 +98,7 @@ class OrderListener
      */
     public function isOrderExportable(Order $order): bool
     {
+        /** @var string|null $internalStatusName */
         $internalStatusName = $order->getInternalStatus() ? strtolower($order->getInternalStatus()->getName()) : null;
 
         /** @var false|string[] $exportableStatuses */
