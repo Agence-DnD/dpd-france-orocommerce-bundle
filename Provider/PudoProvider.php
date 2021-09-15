@@ -7,9 +7,6 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Provider;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PudoException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -54,6 +51,12 @@ class PudoProvider
      * @var string SECURITY_KEY
      */
     public const SECURITY_KEY = 'deecd7bc81b71fcc0e292b53e826c48f';
+    /**
+     * Timeout for pudo retrieval
+     *
+     * @var string TIMEOUT
+     */
+    public const TIMEOUT = 30;
     /**
      * Description $client field
      *
@@ -101,14 +104,19 @@ class PudoProvider
         $now = new \DateTime();
 
         return [
-            'carrier'     => self::CARRIER,
-            'key'         => self::SECURITY_KEY,
-            'address'     => $address ?? '',
-            'zipCode'     => $postalCode ?? '',
-            'city'        => $city ?? '',
-            'countrycode' => self::FR_COUNTRY_CODE,
-            'requestID'   => $checkoutId,
-            'date_from'   => $now->add(new \DateInterval('P1D'))->format('d/m/Y'),
+            'carrier'             => self::CARRIER,
+            'key'                 => self::SECURITY_KEY,
+            'address'             => $address ?? '',
+            'zipCode'             => $postalCode ?? '',
+            'city'                => $city ?? '',
+            'countrycode'         => self::FR_COUNTRY_CODE,
+            'requestID'           => $checkoutId,
+            'date_from'           => $now->add(new \DateInterval('P1D'))->format('d/m/Y'),
+            'max_distance_search' => '',
+            'category'            => '',
+            'max_pudo_number'     => '',
+            'weight'              => '',
+            'holiday_tolerant'    => '',
         ];
     }
 
@@ -128,13 +136,15 @@ class PudoProvider
     public function getPudoList(string $checkoutId, ?string $city, ?string $postalCode, ?string $address): array
     {
         /** @var Response $response */
-        $response = $this->client->request(
-            Request::METHOD_POST,
-            self::getUrl(),
-            [
-                'body' => $this->getParams($checkoutId, $city, $postalCode, $address)
-            ]
-        );
+        $response = $this->client->request(Request::METHOD_POST, self::getUrl(), [
+            'http_version' => 1.1,
+            'headers'      => [
+                'Content-Type' => "application/x-www-form-urlencoded",
+
+            ],
+            'body'         => $this->getParams($checkoutId, $city, $postalCode, $address),
+            'timeout'      => self::TIMEOUT,
+        ]);
 
         if (Response::HTTP_OK !== $response->getStatusCode()) {
             throw new PudoException(

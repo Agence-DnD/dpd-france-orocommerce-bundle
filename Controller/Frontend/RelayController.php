@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /**
  * Class RelayController
@@ -27,7 +28,8 @@ class RelayController extends AbstractController
     /**
      * @Route("/relays", name="dpd_france_relay_list", methods={"GET", "POST"})
      *
-     * @param Request $request
+     * @param Request      $request
+     * @param PudoProvider $pudoProvider
      *
      * @return JsonResponse
      */
@@ -43,9 +45,9 @@ class RelayController extends AbstractController
         $postalCode = $request->get('postalCode');
 
         try {
-            if (empty($checkoutId) || (empty($city) && empty($address) && empty($postalCode))) {
+            if (empty($checkoutId) || (empty($city) || empty($postalCode))) {
                 throw new \InvalidArgumentException(
-                    'Missing mandatory parameter, expecting checkoutId, city, address & postalCode.'
+                    'Missing mandatory parameter, expecting checkoutId, city & postalCode.'
                 );
             }
 
@@ -59,7 +61,7 @@ class RelayController extends AbstractController
                 'error' => $e->getMessage(),
             ];
             $status   = Response::HTTP_BAD_REQUEST;
-        } catch (\Throwable $e) {
+        } catch (TransportExceptionInterface | \Exception $e) {
             $response = [
                 'error' => $e->getMessage(),
             ];
