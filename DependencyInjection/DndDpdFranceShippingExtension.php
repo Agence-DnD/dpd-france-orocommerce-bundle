@@ -61,10 +61,10 @@ class DndDpdFranceShippingExtension extends Extension implements PrependExtensio
             'channels' => [self::ALIAS],
             'handlers' => [
                 self::ALIAS => [
-                    'type' => 'rotating_file',
+                    'type'      => 'rotating_file',
                     'max_files' => 5,
-                    'path' => "%kernel.logs_dir%/dpd-fr_%kernel.environment%.log",
-                    'channels' => [ self::ALIAS ],
+                    'path'      => "%kernel.logs_dir%/dpd-fr_%kernel.environment%.log",
+                    'channels'  => [self::ALIAS],
                 ],
             ],
         ]);

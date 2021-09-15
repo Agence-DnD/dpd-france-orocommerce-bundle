@@ -40,7 +40,7 @@ class FTPClient
     public function __construct(
         ParameterBag $settings
     ) {
-        $this->settings   = $settings;
+        $this->settings = $settings;
     }
 
     /**

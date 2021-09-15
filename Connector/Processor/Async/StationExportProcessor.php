@@ -7,7 +7,6 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async;
 use Dnd\Bundle\DpdFranceShippingBundle\Async\Topics;
 use Dnd\Bundle\DpdFranceShippingBundle\Client\FTPClient;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\ExportException;
-use Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\SettingsProvider;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider;
 use Doctrine\ORM\EntityManagerInterface;

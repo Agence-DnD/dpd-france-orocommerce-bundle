@@ -7,7 +7,6 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Condition;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory;
-use Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;

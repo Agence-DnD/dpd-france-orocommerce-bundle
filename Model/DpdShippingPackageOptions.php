@@ -57,5 +57,4 @@ class DpdShippingPackageOptions extends ShippingPackageOptions implements DpdShi
     {
         $this->price = $price;
     }
-
 }

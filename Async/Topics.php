@@ -15,14 +15,12 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Async;
  */
 class Topics
 {
-
     /**
      * The MQ identifier used for the DPD FR STATION shipment export
      *
      * @var string SHIPMENT_EXPORT_TO_DPD_STATION attribute identifier
      */
     public const SHIPMENT_EXPORT_TO_DPD_STATION = 'dnd_dpd_france_shipping.flow.station_export';
-
     /**
      * The MQ identifier used for the DPD FR STATION shipment forced export (when exported again)
      *

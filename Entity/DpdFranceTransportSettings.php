@@ -721,6 +721,7 @@ class DpdFranceTransportSettings extends Transport
                 break;
             }
         }
+
         return $result;
     }
 
@@ -736,6 +737,7 @@ class DpdFranceTransportSettings extends Transport
         if (!$this->shippingServices->contains($service)) {
             $this->shippingServices->add($service);
         }
+
         return $this;
     }
 
@@ -751,6 +753,7 @@ class DpdFranceTransportSettings extends Transport
         if ($this->shippingServices->contains($service)) {
             $this->shippingServices->removeElement($service);
         }
+
         return $this;
     }
 }

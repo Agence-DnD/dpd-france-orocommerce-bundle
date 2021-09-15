@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Form\DataTransformer;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Extend\Entity\EV_Order_Internal_Status;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Symfony\Component\Form\DataTransformerInterface;
-use Extend\Entity\EV_Order_Internal_Status;
 
 /**
  * Class OrderStatusTransformer
@@ -64,6 +64,7 @@ class OrderStatusTransformer implements DataTransformerInterface
             }
             $items->add(new EV_Order_Internal_Status($id, $name));
         }
+
         return $items;
     }
 
