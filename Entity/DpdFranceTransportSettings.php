@@ -70,7 +70,7 @@ class DpdFranceTransportSettings extends Transport
      *
      * @var int DEFAULT_MAX_QTY
      */
-    public const DEFAULT_MAX_QTY = 5;
+    public const DEFAULT_MAX_QTY = 1;
     /**
      * The default name for DPD Classic method
      *
@@ -243,6 +243,14 @@ class DpdFranceTransportSettings extends Transport
      * )
      */
     protected $shippingServices;
+    /**
+     * Description $googleMapsApiKey field
+     *
+     * @ORM\Column(name="dpd_fr_google_maps_api_key", type="string", length=255)
+     *
+     * @var string $googleMapsApiKey
+     */
+    protected string $googleMapsApiKey;
 
     /**
      * DpdFranceTransportSettings constructor
@@ -755,5 +763,27 @@ class DpdFranceTransportSettings extends Transport
         }
 
         return $this;
+    }
+
+    /**
+     * Description getGoogleMapsApiKey function
+     *
+     * @return string
+     */
+    public function getGoogleMapsApiKey(): string
+    {
+        return $this->googleMapsApiKey;
+    }
+
+    /**
+     * Description setGoogleMapsApiKey function
+     *
+     * @param string $googleMapsApiKey
+     *
+     * @return void
+     */
+    public function setGoogleMapsApiKey(string $googleMapsApiKey): void
+    {
+        $this->googleMapsApiKey = $googleMapsApiKey;
     }
 }

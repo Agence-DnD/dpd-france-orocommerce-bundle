@@ -152,6 +152,7 @@ class DpdFranceTransportSettingsFormType extends AbstractType
             'required' => true,
         ])->add('maxQty', IntegerType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.max_qty.label',
+            'tooltip'    => 'dnd_dpd_france_shipping.transport.max_qty.tooltip',
             'required' => true,
         ])->add('shippingServices', EntityType::class, [
             'class'        => ShippingService::class,
@@ -159,6 +160,10 @@ class DpdFranceTransportSettingsFormType extends AbstractType
             'label'        => 'dnd_dpd_france_shipping.integration.settings.shipping_services.label',
             'required'     => true,
             'multiple'     => true,
+        ])->add('googleMapsApiKey', TextType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.google_maps_api_key.label',
+            'tooltip'  => 'dnd_dpd_france_shipping.transport.google_maps_api_key.tooltip',
+            'required' => true,
         ]);
     }
 

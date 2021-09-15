@@ -21,10 +21,14 @@ dnd_dpd_france_shipping:
     transport:
         agency_code:
             label: Agency code
+        google_maps_api_key:
+            label: Google Maps API key
+            tooltip: Required to display relays on a map
         contract_number:
             label: Contract number
         max_qty:
             label: Max quantity
+            tooltip: Can be overriden by setting a shipping service specific value in dnd_dpd_fr_shipping_service table
         order_statuses_sent_to_station:
             label: Order statuses sent to station
         station_ftp_host:
