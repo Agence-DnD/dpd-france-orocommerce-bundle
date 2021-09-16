@@ -1,8 +1,20 @@
 oro:
+    order:
+        dpd_fr_relay_id:
+            label: ID de point relais DPD
+        delivery_phone:
+            label: Numéro de téléphone de livraison
+        synchronized_dpd:
+            label: Date de synchro DPD Station
     product:
         max_qty_for_dpd_fr.label: Qté max DPD France
         max_qty_for_dpd_fr.description: Quantité maximale possible en expédition DPDFrance pour ce produit
 dnd_dpd_france_shipping:
+    action:
+        message:
+            order:
+                station_export:
+                    success: 'La commande #%id% va être exportée dans DPD Station.'
     method:
         price.label: Prix
     form:

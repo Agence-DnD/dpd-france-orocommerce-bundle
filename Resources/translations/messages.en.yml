@@ -1,8 +1,20 @@
 oro:
+    order:
+        dpd_fr_relay_id:
+            label: DPD FR Relay ID
+        delivery_phone:
+            label: Delivery phone
+        synchronized_dpd:
+            label: DPD Station Sync. date
     product:
         max_qty_for_dpd_fr.label: DPD France Max qty
         max_qty_for_dpd_fr.description: Max qty allowed of this product that can be shipped with DPDFrance
 dnd_dpd_france_shipping:
+    action:
+        message:
+            order:
+                station_export:
+                    success: 'Order #%id% has been queued for DPD Station export.'
     method:
         price.label: Price
     form:

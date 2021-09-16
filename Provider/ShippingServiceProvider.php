@@ -31,16 +31,25 @@ class ShippingServiceProvider
      * @var array $dpdFrShippingServices
      */
     protected array $dpdFrShippingServices;
+    /**
+     * Description $settingsProvider field
+     *
+     * @var SettingsProvider $settingsProvider
+     */
+    protected SettingsProvider $settingsProvider;
 
     /**
      * ShippingServiceProvider constructor
      *
-     * @param DoctrineHelper $doctrineHelper
+     * @param DoctrineHelper   $doctrineHelper
+     * @param SettingsProvider $settingsProvider
      */
     public function __construct(
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        SettingsProvider $settingsProvider
     ) {
         $this->doctrineHelper = $doctrineHelper;
+        $this->settingsProvider = $settingsProvider;
     }
 
     /**
@@ -93,5 +102,20 @@ class ShippingServiceProvider
         $service = $this->getServiceForMethodTypeIdentifier($identifier);
 
         return $service !== null ? $service->getIcon() : '';
+    }
+
+    /**
+     * Description getShippingServiceDescription function
+     *
+     * @param string $identifier
+     *
+     * @return string
+     */
+    public function getShippingServiceDescription(string $identifier): string
+    {
+
+        $settings = $this->settingsProvider->getSettings();
+        dump($settings);
+        return '';
     }
 }

@@ -40,6 +40,14 @@ services:
         autowire: true
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@dnd_dpd_france_shipping.provider.settings'
+
+    dnd_dpd_france_shipping.provider.station_export:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Provider\StationExportProvider
+        arguments:
+            - '@monolog.logger.dnd_dpd_france_shipping'
+            - '@oro_message_queue.client.message_producer'
+            - '@dnd_dpd_france_shipping.provider.settings'
 
     dnd_dpd_france_shipping.method.provider:
         class: 'Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider'
@@ -73,6 +81,7 @@ services:
         arguments:
             - '@dnd_dpd_france_shipping.factory.dpd_shipping_package_options'
             - '@oro_shipping.provider.measure_units.conversion'
+            - '@dnd_dpd_france_shipping.provider.settings'
 
     dnd_dpd_france_shipping.factory.package:
         class: Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory
@@ -83,7 +92,7 @@ services:
         class: Dnd\Bundle\DpdFranceShippingBundle\Normalizer\OrderNormalizer
         arguments:
             - '@dnd_dpd_france_shipping.factory.package'
-            - 'Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider'
+            - '@oro_shipping.shipping_origin.provider'
 
     dnd_dpd_france_shipping.processor.async.station_export:
             class: Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async\StationExportProcessor

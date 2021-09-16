@@ -6,7 +6,9 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Async\Topics;
 use Dnd\Bundle\DpdFranceShippingBundle\Client\FTPClient;
+use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\ExportException;
+use Dnd\Bundle\DpdFranceShippingBundle\Normalizer\OrderNormalizer;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\SettingsProvider;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,6 +19,7 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFileSystem;
@@ -109,22 +112,22 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     /**
      * Description $settings field
      *
-     * @var ParameterBag $settings
+     * @var ParameterBag|null $settings
      */
-    private ParameterBag $settings;
+    protected ?ParameterBag $settings = null;
 
     /**
      * AbstractExportProcessor constructor
      *
      * @param DoctrineHelper          $doctrineHelper
-     * @param NormalizerInterface     $normalizer
+     * @param OrderNormalizer         $normalizer
      * @param SettingsProvider        $settingsProvider
      * @param LoggerInterface         $logger
      * @param ShippingServiceProvider $shippingServiceProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        NormalizerInterface $normalizer,
+        OrderNormalizer $normalizer,
         SettingsProvider $settingsProvider,
         LoggerInterface $logger,
         ShippingServiceProvider $shippingServiceProvider
@@ -155,15 +158,22 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
      */
     public function process(MessageInterface $message, SessionInterface $session): string
     {
+        /** @var string $topic */
         $topic = $message->getProperty(Config::PARAMETER_TOPIC_NAME);
 
-        $orderId = 10;
-
-        $order = $this->getManager()->find(Order::class, $orderId);
+        /** @var array|null $body */
+        $body = JSON::decode($message->getBody());
+        if (empty($body['orderId'])) {
+            $this->logger->error(
+                sprintf('Incomplete message, the body must contain an orderId. Topic: %s - Body: %s', $body['orderId'], $topic)
+            );
+            return self::REJECT;
+        }
+        $order = $this->getManager()->find(Order::class, $body['orderId']);
 
         if ($order === null) {
             $this->logger->error(
-                sprintf('Async processor could not fetch order with id %d for topic %s', $orderId, $topic)
+                sprintf('Async processor could not fetch order with id %d for topic %s', $body['orderId'], $topic)
             );
 
             return self::REJECT;
@@ -184,8 +194,9 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     {
         try {
             /** @var string $fileName */
-            $fileName = $this->generateFileName($order->getId());
+            $fileName = $this->generateFileName($order->getId(), $topic);
 
+            /** @var ShippingService $shippingService */
             $shippingService = $this->shippingServiceProvider->getServiceForMethodTypeIdentifier(
                 $order->getShippingMethodType()
             );
@@ -197,7 +208,9 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
             $this->filesystem->dumpFile(
                 self::LOCAL_FOLDER . $fileName,
                 $this->assembleNormalizedData(
-                    $this->normalizer->normalize($order, 'dpd_fr_station', ['shipping_service' => $shippingService])
+                    $this->normalizer->normalize($order,
+                        'dpd_fr_station',
+                        ['shipping_service' => $shippingService, 'settings' => $this->getSettings()])
                 )
             );
 
@@ -269,20 +282,25 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     /**
      * Description generateFileName function
      *
-     * @param int $orderId
+     * @param int    $orderId
+     * @param string $topic
      *
      * @return string
      */
-    private function generateFileName(int $orderId): string
+    private function generateFileName(int $orderId, string $topic): string
     {
         /** @var \DateTime $now */
         $now = new \DateTime();
 
+        /** @var string $forced */
+        $forced = $topic === Topics::SHIPMENT_EXPORT_TO_DPD_STATION_FORCED ? '_forced' : '';
+
         return sprintf(
-            '%s_%s_%d.%s',
+            '%s_%s_%s%s.%s',
             self::FILE_PREFIX,
             $now->format('Ymd_His'),
             (string)$orderId,
+            $forced,
             self::FILE_EXTENSION
         );
     }

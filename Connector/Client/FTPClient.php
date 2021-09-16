@@ -28,9 +28,9 @@ class FTPClient
     /**
      * Description $settings field
      *
-     * @var ParameterBag $settings
+     * @var ParameterBag|null $settings
      */
-    protected ParameterBag $settings;
+    protected ?ParameterBag $settings = null;
 
     /**
      * FTPClient constructor

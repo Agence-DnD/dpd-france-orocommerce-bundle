@@ -40,13 +40,13 @@ class PudoProvider
      */
     public const FR_COUNTRY_CODE = 'FR';
     /**
-     * Access identifier @TODO ensure this thing doesn't need to be parametred
+     * Access identifier
      *
      * @var string CARRIER
      */
     public const CARRIER = 'EXA';
     /**
-     * MyPUDO webservice security key @TODO ensure this thing doesn't need to be parametred
+     * MyPUDO webservice security key
      *
      * @var string SECURITY_KEY
      */

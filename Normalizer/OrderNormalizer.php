@@ -12,6 +12,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
@@ -113,6 +114,25 @@ class OrderNormalizer implements NormalizerInterface
     }
 
     /**
+     * Ensures that vital elements are set in the context
+     *
+     * @param array $context
+     *
+     * @return void
+     * @throws NormalizerException
+     */
+    private function checkContext(array $context): void
+    {
+        /** @var string[] $mandatoryKeys */
+        $mandatoryKeys = ['shipping_service', 'settings'];
+        foreach ($mandatoryKeys as $mandatoryKey) {
+            if (!isset($context[$mandatoryKey])) {
+                throw new NormalizerException(sprintf('Could not fetch %s from context.', $mandatoryKey));
+            }
+        }
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param Order  $order
@@ -126,9 +146,7 @@ class OrderNormalizer implements NormalizerInterface
     {
         /** @var mixed[] $data */
         $data = [];
-        if (!isset($context['shipping_service'])) {
-            throw new NormalizerException('Could not fetch shipping service from context.');
-        }
+        $this->checkContext($context);
         /** @var DpdShippingPackageOptionsInterface[] $packages */
         $packages = $this->packagesFactory->create(
             $order->getLineItems(),
@@ -139,10 +157,10 @@ class OrderNormalizer implements NormalizerInterface
         foreach ($packages as $package) {
             $this->packageCount++;
             $data = array_merge(
-                $this->getGeneralFields($order, $package),
+                $this->getGeneralFields($order, $package, $context['settings']),
                 $this->getRecipientFields($order),
                 $this->getSenderFields($order),
-                $this->getShipmentFields($order, $package),
+                $this->getShipmentFields($order, $package, $context['settings']),
                 $this->getReturnFields(),
                 $this->getLineEnd()
             );
@@ -156,12 +174,16 @@ class OrderNormalizer implements NormalizerInterface
      *
      * @param Order                              $order
      * @param DpdShippingPackageOptionsInterface $package
+     * @param ParameterBag                       $settings
      *
      * @return array
      * @throws NormalizerException
      */
-    private function getGeneralFields(Order $order, DpdShippingPackageOptionsInterface $package): array
-    {
+    private function getGeneralFields(
+        Order $order,
+        DpdShippingPackageOptionsInterface $package,
+        ParameterBag $settings
+    ): array {
         return [
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -169,7 +191,11 @@ class OrderNormalizer implements NormalizerInterface
                 1,
                 35,
                 'Référence client N°1',
-                'ref' //@TODO
+                implode(
+                    '_',
+                    [$order->getId(), $settings->get('dpd_fr_agency_code') . $settings->get('dpd_fr_contract_number')]
+                )
+
             ),
             $this->makeFiller(36, 2),
             $this->getElement(
@@ -372,7 +398,7 @@ class OrderNormalizer implements NormalizerInterface
                 732,
                 20,
                 "Téléphone",
-                '' //@TODO set phone  in integration settings & fetch it here
+                '' //@TODO set phone in integration settings & fetch it here
             ),
             $this->makeFiller(752, 10),
             $this->getElement(
@@ -419,8 +445,11 @@ class OrderNormalizer implements NormalizerInterface
      * @return array
      * @throws NormalizerException
      */
-    private function getShipmentFields(Order $order, DpdShippingPackageOptionsInterface $package): array
-    {
+    private function getShipmentFields(
+        Order $order,
+        DpdShippingPackageOptionsInterface $package,
+        ParameterBag $settings
+    ): array {
         /** @var OrderAddress $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
 
@@ -435,7 +464,7 @@ class OrderNormalizer implements NormalizerInterface
                 902,
                 10,
                 "Date d'expédition",
-                '' //TODO date d'impression de l'etiquette ? (date courante)
+                date('')
             ),
             $this->getElement(
                 self::TYPE_NUMERIC,
@@ -443,7 +472,7 @@ class OrderNormalizer implements NormalizerInterface
                 912,
                 8,
                 "Numéro de compte",
-                0 //TODO fetch it from integration settings
+                $settings->get('dpd_fr_contract_number')
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -486,7 +515,7 @@ class OrderNormalizer implements NormalizerInterface
                 1072,
                 35,
                 'Numéro de consolidation',
-                $order->getId() . '_' . date('Ymd_His') . '_' . $this->packageCount
+                implode('_', [$order->getId(), date('Ymd_His'), $this->packageCount])
             ),
             $this->makeFiller(1107, 10),
             $this->getElement(
@@ -495,7 +524,7 @@ class OrderNormalizer implements NormalizerInterface
                 1117,
                 80,
                 'Email expéditeur',
-                '' //@TODO fetch the contact email from the integration
+                '' //@TODO set contact email in integration settings & fetch it here
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -503,7 +532,7 @@ class OrderNormalizer implements NormalizerInterface
                 1197,
                 35,
                 'GSM expéditeur',
-                '' //@TODO fetch the contact phone from the integration
+                '' //@TODO set GSM phone in integration settings & fetch it here
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,

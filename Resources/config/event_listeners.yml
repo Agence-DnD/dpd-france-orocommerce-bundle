@@ -10,9 +10,6 @@ services:
     dnd_dpd_france_shipping.event_listener.order_listener:
         class: Dnd\Bundle\DpdFranceShippingBundle\EventListener\OrderListener
         arguments:
-            - '@monolog.logger.dnd_dpd_france_shipping'
-            - '@oro_message_queue.client.message_producer'
-            - '@dnd_dpd_france_shipping.provider.settings'
-            - '@dnd_dpd_france_shipping.factory.method'
+            - '@dnd_dpd_france_shipping.provider.station_export'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: postUpdate }
