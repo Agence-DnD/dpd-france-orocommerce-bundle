@@ -1,0 +1,76 @@
+/**
+ * @theme     default
+ * @package   dnddpdfranceshipping
+ * @author    Agence Dn'D <contact@dnd.fr>
+ * @copyright 2004-present Agence Dn'D
+ * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      https://www.dnd.fr/
+ */
+
+.dnddpd-method {
+    margin: $dnddpd-method-margin;
+    padding: $dnddpd-method-padding;
+
+    &-radio {
+        width: 100%;
+        position: relative;
+
+        &__text {
+            cursor: pointer;
+            display: flex;
+        }
+    }
+
+    &__icon {
+        margin: 0 auto;
+        display: block;
+
+        &-wrapper {
+            min-width: $dnddpd-method-icon-min-width;
+        }
+    }
+
+    &__content {
+        flex: auto;
+        margin: $dnddpd-method-content-margin;
+    }
+
+    &__name {
+        font-weight: $dnddpd-method-name-font-weight;
+        margin: $dnddpd-method-name-margin;
+        display: block;
+        color: $dnddpd-method-name-color;
+    }
+
+    &__description {
+        line-height: $dnddpd-method-description-line-height;
+    }
+
+    &__price {
+        font-weight: $dnddpd-method-price-font-weight;
+        color: $dnddpd-method-price-color;
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .dnddpd-method {
+        padding: $dnddpd-method-tablet-padding;
+        margin: $dnddpd-method-tablet-margin;
+
+        &-radio {
+            &__text {
+                flex-wrap: wrap;
+            }
+        }
+
+        &__content {
+            width: 100%;
+            margin: $dnddpd-method-content-tablet-margin;
+        }
+
+        &__price {
+            width: 100%;
+            margin: $dnddpd-method-price-tablet-margin;
+        }
+    }
+}
