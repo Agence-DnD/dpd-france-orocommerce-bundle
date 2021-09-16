@@ -105,17 +105,26 @@ class ShippingServiceProvider
     }
 
     /**
-     * Description getShippingServiceDescription function
+     * Description getShippingServiceLabel function
      *
      * @param string $identifier
      *
      * @return string
      */
-    public function getShippingServiceDescription(string $identifier): string
+    public function getShippingServiceLabel(string $identifier): string
     {
+        return $this->settingsProvider->getServiceLabel($identifier) ?? '';
+    }
 
-        $settings = $this->settingsProvider->getSettings();
-        dump($settings);
-        return '';
+    /**
+     * Description getShippingServiceDesc function
+     *
+     * @param string $identifier
+     *
+     * @return string
+     */
+    public function getShippingServiceDesc(string $identifier): string
+    {
+        return $this->settingsProvider->getServiceDesc($identifier) ?? '';
     }
 }

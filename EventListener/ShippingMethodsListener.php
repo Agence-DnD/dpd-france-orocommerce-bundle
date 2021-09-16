@@ -81,8 +81,19 @@ class ShippingMethodsListener
                  */
                 foreach ($methodTypes as $methodTypeId => $methodTypesView) {
                     /** @var mixed[] $methodTypeView */
-                    $methodTypeView         = $methodCollection->getMethodTypeView($shippingMethodName, $methodTypeId);
-                    $methodTypeView['logo'] = $this->shippingServiceProvider->getShippingServiceLogo($methodTypeId);
+                    $methodTypeView                = $methodCollection->getMethodTypeView(
+                        $shippingMethodName,
+                        $methodTypeId
+                    );
+                    $methodTypeView['logo']        = $this->shippingServiceProvider->getShippingServiceLogo(
+                        $methodTypeId
+                    );
+                    $methodTypeView['description'] = $this->shippingServiceProvider->getShippingServiceDesc(
+                        $methodTypeId
+                    );
+                    $methodTypeView['name']        = $this->shippingServiceProvider->getShippingServiceLabel(
+                        $methodTypeId
+                    );
                     $methodCollection->removeMethodTypeView($shippingMethodName, $methodTypeId);
                     $methodCollection->addMethodTypeView($shippingMethodName, $methodTypeId, $methodTypeView);
                     if ($this->shippableWithDpdFranceCondition->isValid($methodTypesView, $sourceEntity) !== true) {

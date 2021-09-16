@@ -31,6 +31,18 @@ dnd_dpd_france_shipping:
         transport:
             label: DPD France
     transport:
+        classic_method_name:
+            label: Label DPD Classic service
+        predict_method_name:
+            label: Label DPD Predict service
+        pickup_method_name:
+            label: Label DPD Relay service
+        classic_method_description:
+            label: Description DPD Classic service
+        predict_method_description:
+            label: Description DPD Predict service
+        pickup_method_description:
+            label: Description DPD Relay service
         agency_code:
             label: Agency code
         google_maps_api_key:

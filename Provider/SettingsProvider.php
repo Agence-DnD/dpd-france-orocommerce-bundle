@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Provider;
 
+use Dnd\Bundle\DpdFranceShippingBundle\Entity\DpdFranceTransportSettings;
 use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel;
 use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceTransport;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
@@ -100,5 +101,29 @@ class SettingsProvider
         }
 
         return $this->channel;
+    }
+
+    /**
+     * Description getServiceLabel function
+     *
+     * @param string $serviceIdentifier
+     *
+     * @return string
+     */
+    public function getServiceLabel(string $serviceIdentifier): string
+    {
+        return $this->getSettings()->get($serviceIdentifier.'_method_name');
+    }
+
+    /**
+     * Description getServiceDesc function
+     *
+     * @param string $serviceIdentifier
+     *
+     * @return string
+     */
+    public function getServiceDesc(string $serviceIdentifier): string
+    {
+        return $this->getSettings()->get($serviceIdentifier.'_method_desc');
     }
 }
