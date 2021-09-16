@@ -168,15 +168,15 @@ class ShippingPackagesBuilder
     /**
      * Retrieves the max amount of parcel per shipment for the current service
      *
-     * @return int
+     * @return int|null
      */
-    private function getParcelMaxAmount(): int
+    private function getParcelMaxAmount(): ?int
     {
         /** @var int|null $maxAmount */
         $maxAmount = $this->shippingService->getParcelMaxAmount();
         if ($maxAmount === null) {
             //Fallback on general value set at integration level
-            $maxAmount = $this->settingsProvider->getSettings()->get('max_amount');
+            $maxAmount = $this->settingsProvider->getSettings()->get('dpd_fr_max_qty');
         }
         return $maxAmount;
     }

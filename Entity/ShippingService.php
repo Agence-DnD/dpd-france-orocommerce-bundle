@@ -72,11 +72,11 @@ class ShippingService
     /**
      * The maximum amount of packages
      *
-     * @ORM\Column(name="parcel_max_amount", type="float")
+     * @ORM\Column(name="parcel_max_amount", type="integer", nullable=true)
      *
-     * @var float $parcelMaxAmount
+     * @var int|null $parcelMaxAmount
      */
-    protected float $parcelMaxAmount;
+    protected ?int $parcelMaxAmount = null;
     /**
      * The maximum cumulated value for every package
      *
@@ -217,9 +217,9 @@ class ShippingService
     /**
      * Description getParcelMaxAmount function
      *
-     * @return float
+     * @return int|null
      */
-    public function getParcelMaxAmount(): float
+    public function getParcelMaxAmount(): ?int
     {
         return $this->parcelMaxAmount;
     }
@@ -227,11 +227,11 @@ class ShippingService
     /**
      * Description setParcelMaxAmount function
      *
-     * @param float|null $parcelMaxAmount
+     * @param int|null $parcelMaxAmount
      *
      * @return void
      */
-    public function setParcelMaxAmount(?float $parcelMaxAmount): void
+    public function setParcelMaxAmount(?int $parcelMaxAmount): void
     {
         $this->parcelMaxAmount = $parcelMaxAmount;
     }
