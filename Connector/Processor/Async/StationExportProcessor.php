@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Async\Topics;
-use Dnd\Bundle\DpdFranceShippingBundle\Client\FTPClient;
+use Dnd\Bundle\DpdFranceShippingBundle\Connector\Client\FTPClient;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\ExportException;
 use Dnd\Bundle\DpdFranceShippingBundle\Normalizer\OrderNormalizer;
@@ -60,7 +60,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
      *
      * @var string FILE_PREFIX
      */
-    public const FILE_PREFIX = '';
+    public const FILE_PREFIX = 'oro';
     /**
      * The extension for the station filenames
      *
@@ -94,9 +94,9 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     /**
      * Description $FTPClient field
      *
-     * @var FTPClient $FTPClient
+     * @var FTPClient|null $FTPClient
      */
-    protected FTPClient $FTPClient;
+    protected ?FTPClient $FTPClient = null;
     /**
      * Description $settingsProvider field
      *
@@ -165,8 +165,13 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         $body = JSON::decode($message->getBody());
         if (empty($body['orderId'])) {
             $this->logger->error(
-                sprintf('Incomplete message, the body must contain an orderId. Topic: %s - Body: %s', $body['orderId'], $topic)
+                sprintf(
+                    'Incomplete message, the body must contain an orderId. Topic: %s - Body: %s',
+                    $body['orderId'],
+                    $topic
+                )
             );
+
             return self::REJECT;
         }
         $order = $this->getManager()->find(Order::class, $body['orderId']);
@@ -203,6 +208,8 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
             if (!$this->filesystem->exists(self::LOCAL_FOLDER)) {
                 $this->filesystem->mkdir(self::LOCAL_FOLDER);
+                $this->filesystem->mkdir(self::LOCAL_FOLDER . self::SUCCESS_FOLDER);
+                $this->filesystem->mkdir(self::LOCAL_FOLDER . self::FAIL_FOLDER);
             }
             $this->filesystem->touch(self::LOCAL_FOLDER . $fileName);
             $this->filesystem->dumpFile(
@@ -221,7 +228,10 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
                 throw new \Exception('Fail to upload exported file to SFTP');
             }
 
-            $this->filesystem->copy(self::LOCAL_FOLDER . $fileName, self::LOCAL_FOLDER . self::SUCCESS_FOLDER);
+            $this->filesystem->copy(
+                self::LOCAL_FOLDER . $fileName,
+                self::LOCAL_FOLDER . self::SUCCESS_FOLDER . $fileName
+            );
             $this->filesystem->remove(self::LOCAL_FOLDER . $fileName);
 
             $this->onSuccess($order);
@@ -249,21 +259,27 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     {
         /** @var string $mightyString */
         $mightyString = '';
+        /** @var string $lineString */
+        $lineString = '';
 
         $mightyString .= $this->getFileHeader();
 
         foreach ($data as $datum) {
-            if (strlen($mightyString) !== $datum['position']) {
+            if (strlen($lineString) + 1 !== $datum['position']) {
                 throw new ExportException(
                     sprintf(
                         'Data inconsistency, attribute %s not in its rightful position. (%d instead of %d)',
                         $datum['code'],
                         $datum['position'],
-                        strlen($mightyString),
+                        strlen($lineString) + 1,
                     )
                 );
             }
-            $mightyString .= $datum['value'];
+            $lineString .= $datum['value'];
+            if ($datum['position'] === 2247) {
+                $mightyString .= $lineString;
+                $lineString   = '';
+            }
         }
 
         return $mightyString;
@@ -319,7 +335,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     {
         $entityInfoMsg = sprintf(
             ' while exporting %s with id %d for topic %s. ',
-            get_class($entity),
+            (new \ReflectionClass($entity))->getShortName(),
             $entity->getId(),
             $topic
         );
@@ -340,7 +356,10 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     {
         if ($fileName !== null) {
             try {
-                $this->filesystem->copy(self::LOCAL_FOLDER . $fileName, self::LOCAL_FOLDER . self::FAIL_FOLDER);
+                $this->filesystem->copy(
+                    self::LOCAL_FOLDER . $fileName,
+                    self::LOCAL_FOLDER . self::FAIL_FOLDER . $fileName
+                );
                 $this->filesystem->remove(self::LOCAL_FOLDER . $fileName);
             } catch (\Exception $e) {
                 $this->logger->error('Failed to move file to local error folder');
