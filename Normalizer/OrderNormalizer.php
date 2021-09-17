@@ -453,6 +453,7 @@ class OrderNormalizer implements NormalizerInterface
      *
      * @param Order                              $order
      * @param DpdShippingPackageOptionsInterface $package
+     * @param ParameterBag                       $settings
      *
      * @return array
      * @throws NormalizerException
@@ -762,7 +763,7 @@ class OrderNormalizer implements NormalizerInterface
     }
 
     /**
-     * Description closeLine function
+     * Returns a line closing element
      *
      * @return mixed[][]
      * @throws NormalizerException
@@ -782,7 +783,7 @@ class OrderNormalizer implements NormalizerInterface
     }
 
     /**
-     * Description makeFiller function
+     * Returns a filler with a given position and length
      *
      * @param int $position
      * @param int $length
@@ -804,7 +805,7 @@ class OrderNormalizer implements NormalizerInterface
     }
 
     /**
-     * Element builder function
+     * Builds a formatted element ready to be assembled into the export string
      *
      * @param string $format
      * @param string $status
@@ -841,7 +842,7 @@ class OrderNormalizer implements NormalizerInterface
     }
 
     /**
-     * Description format function
+     * Formats the different kind of data to DPD Station requirements
      *
      * @param mixed  $value
      * @param string $format

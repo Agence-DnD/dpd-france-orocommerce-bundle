@@ -286,7 +286,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     }
 
     /**
-     * Description getFileHeader function
+     * Prepares the first line of the file
      *
      * @return void
      */
@@ -296,7 +296,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     }
 
     /**
-     * Description generateFileName function
+     * Generates the filename for the export
      *
      * @param int    $orderId
      * @param string $topic
@@ -322,21 +322,20 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     }
 
     /**
-     * Description handleError function
+     * Prepares an error message with some details about the context and logs it
      *
      * @param string          $errorMsg Some information about the exception
-     * @param mixed           $entity the entity being exported
+     * @param Order           $order the order being exported
      * @param string          $topic the topic of the async message
      * @param \Throwable|null $e
      *
      * @return void
      */
-    private function logError(string $errorMsg, $entity, string $topic, ?\Throwable $e = null): void
+    private function logError(string $errorMsg, Order $order, string $topic, ?\Throwable $e = null): void
     {
         $entityInfoMsg = sprintf(
-            ' while exporting %s with id %d for topic %s. ',
-            (new \ReflectionClass($entity))->getShortName(),
-            $entity->getId(),
+            ' while exporting order with id %d for topic %s. ',
+            $order->getId(),
             $topic
         );
         $this->logger->error($errorMsg . $entityInfoMsg);
@@ -346,7 +345,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     }
 
     /**
-     * Description onFail function
+     * Does some cleanup and logging whenever the process fails
      *
      * @param string|null $fileName
      *
@@ -393,7 +392,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     }
 
     /**
-     * Description getFTPClient function
+     * Returns a configured FTP client
      *
      * @return FTPClient|null
      */
@@ -407,7 +406,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     }
 
     /**
-     * Description getSettings function
+     * Returns the settings from DPD France Integration
      *
      * @return ParameterBag
      */
