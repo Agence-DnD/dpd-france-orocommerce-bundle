@@ -12,7 +12,7 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
-            view: 'oroshipping/js/app/views/shipping-methods-view',
+            view: 'dnddpdfranceshipping/js/app/views/shipping-methods-view',
             data: {
                 methods: methods,
                 currentShippingMethod: currentShippingMethod,
@@ -77,26 +77,22 @@
                             </span>
                         </label>
                     </div>
+                    <%= methodDetails(type.identifier) %>
                 <% } %>
             <% }); %>
         <% } %>
     <% }); %>
 {% endblock %}
 
-{% block _checkout_form_fields_widget %}
-    {{ form_errors(form.shipping_method) }}
-    <div class="hidden">
-        <div class="grid__row grid__row--offset-none">
-            {{ form_widget(form.shipping_method) }}
-            {{ form_widget(form.shipping_method_type) }}
-            {%  if  form.state_token is defined %}
-                {{ form_row(form.state_token) }}
-            {% endif %}
+{% block method_dpd_fr_predict_widget %}
+    test hello
+{% endblock %}
 
-            {# Add @DND #}
-            {{ form_widget(form.delivery_phone) }}
-            {{ form_widget(form.dpd_fr_relay_id) }}
-            {# Add @DND #}
-        </div>
-    </div>
+{% block _checkout_form_fields_widget %}
+    {{ parent_block_widget(block) }}
+
+    {# Add @DND #}
+    {{ form_widget(form.delivery_phone) }}
+    {{ form_widget(form.dpd_fr_relay_id) }}
+    {# Add @DND #}
 {% endblock %}
