@@ -658,10 +658,10 @@ workflows:
                         dpd_fr_relay_id:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options: null
+                        # @ADD DND END
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options: null
-                        # @ADD DND END
                 is_start: false
                 is_hidden: false
                 is_unavailable_hidden: false
@@ -2154,18 +2154,3 @@ workflows:
         datagrids: {  }
         disable_operations: {  }
         entity_restrictions: {  }
-        init_entities:
-            Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
-                - start_from_shoppinglist
-        init_routes:
-            oro_shopping_list_frontend_view:
-                - start_from_shoppinglist
-            oro_shopping_list_frontend_update:
-                - start_from_shoppinglist
-            oro_product_frontend_quick_add:
-                - start_from_quickorderform
-            oro_product_frontend_quick_add_copy_paste:
-                - start_from_quickorderform
-            oro_product_frontend_quick_add_import:
-                - start_from_quickorderform
-
