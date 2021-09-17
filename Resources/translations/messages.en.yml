@@ -11,6 +11,8 @@ oro:
         max_qty_for_dpd_fr.description: Max qty allowed of this product that can be shipped with DPDFrance
 dnd_dpd_france_shipping:
     action:
+        order:
+            station_export: DPD Station Export
         message:
             order:
                 station_export:
