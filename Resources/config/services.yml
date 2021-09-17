@@ -44,6 +44,8 @@ services:
 
     dnd_dpd_france_shipping.provider.station_export:
         class: Dnd\Bundle\DpdFranceShippingBundle\Provider\StationExportProvider
+        public: true
+        autowire: true
         arguments:
             - '@monolog.logger.dnd_dpd_france_shipping'
             - '@oro_message_queue.client.message_producer'
@@ -93,6 +95,7 @@ services:
         arguments:
             - '@dnd_dpd_france_shipping.factory.package'
             - '@oro_shipping.shipping_origin.provider'
+            - '@oro_order.shipping_line_item.converter_basic'
 
     dnd_dpd_france_shipping.processor.async.station_export:
             class: Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async\StationExportProcessor

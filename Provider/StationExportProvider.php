@@ -23,7 +23,6 @@ use Psr\Log\LoggerInterface;
  */
 class StationExportProvider
 {
-
     /**
      * Description $logger field
      *
@@ -59,52 +58,70 @@ class StationExportProvider
         $this->producer         = $producer;
         $this->settingsProvider = $settingsProvider;
     }
+
     /**
      * Enqueues an order for DPD FR station export if elligible
      *
-     * @param Order $order
+     * @param Order     $order
+     * @param bool|null $forced
      *
-     * @return void
+     * @return mixed[]
      * @throws Exception
      */
-    public function queueIfExportable(Order $order)
+    public function queueIfExportable(Order $order, ?bool $forced = false): array
     {
+        $result = [
+            'successful' => false,
+            'error' => [],
+        ];
         try {
-            if (!$this->isOrderExportable($order)) {
-                return;
+            if (!$this->isOrderExportable($order, $forced)) {
+                $result['error'] = "This order doesn't meet DPD export requirements";
+                return $result;
             }
         } catch (\InvalidArgumentException $e) {
-            //No integration exists for DPD France
-            return;
+            $result['error'] = 'No integration exists for DPD France';
+            return $result;
         }
         /** @var string $topic */
         $topic = Topics::SHIPMENT_EXPORT_TO_DPD_STATION;
-
-        if ($order->getSynchronizedDpd() !== null) {
+        if ($forced) {
             $topic = Topics::SHIPMENT_EXPORT_TO_DPD_STATION_FORCED;
         }
         $this->producer->send($topic, JSON::encode(['orderId' => $order->getId()]));
+        $result['successful'] = true;
+        return $result;
     }
 
     /**
      * Checks whether the order is a valid candidate for Station export or not
      *
      * @param Order $order
+     * @param bool  $forced
      *
      * @return bool
      */
-    public function isOrderExportable(Order $order): bool
+    public function isOrderExportable(Order $order, bool $forced): bool
     {
-        /** @var string|null $internalStatusName */
-        $internalStatusName = $order->getInternalStatus() ? strtolower($order->getInternalStatus()->getName()) : null;
+        if (
+            $order->getSynchronizedDpd() === null &&
+            DpdFranceShippingMethodProvider::isDpdFrShippingMethod($order->getShippingMethod())
+        ) {
+            if ($forced) {
+                return true;
+            }
+            /** @var string|null $internalStatusName */
+            $internalStatusName = $order->getInternalStatus() ? strtolower(
+                $order->getInternalStatus()->getName()
+            ) : null;
 
-        /** @var false|string[] $exportableStatuses */
-        $exportableStatuses = explode(
-            ',',
-            $this->settingsProvider->getSettings()->get('dpd_fr_order_statuses_sent_to_station')
-        );
-        if (false !== $exportableStatuses && in_array($internalStatusName, $exportableStatuses, true)) {
-            return DpdFranceShippingMethodProvider::isDpdFrShippingMethod($order->getShippingMethod());
+            /** @var false|string[] $exportableStatuses */
+            $exportableStatuses = explode(
+                ',',
+                $this->settingsProvider->getSettings()->get('dpd_fr_order_statuses_sent_to_station')
+            );
+
+            return (false !== $exportableStatuses && in_array($internalStatusName, $exportableStatuses, true));
         }
 
         return false;

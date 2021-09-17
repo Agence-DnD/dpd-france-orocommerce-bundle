@@ -1,0 +1,33 @@
+operations:
+    dnd_dpd_france_shipping_station_export:
+        label: dnd_dpd_france_shipping.action.order.station_export
+        enabled: true
+        applications: [default]
+        routes:
+            - oro_order_view
+        acl_resource: oro_order_update
+        button_options:
+            icon: fa-cube
+        actions:
+            - '@call_service_method':
+                    service: dnd_dpd_france_shipping.provider.station_export
+                    method: queueIfExportable
+                    method_parameters: [ $.data, true ]
+                    attribute: $.result
+            - '@flash_message':
+                  message: dnd_dpd_france_shipping.action.message.order.station_export.success
+                  type: 'info'
+                  message_parameters:
+                      id: $identifier
+            -   '@flash_message':
+                    conditions:
+                        '@equal': [ '$.result[successful]', true ]
+                    message: dnd_dpd_france_shipping.action.message.order.station_export.success
+                    message_parameters:
+                        id: $identifier
+                    type: 'success'
+            -   '@flash_message':
+                    conditions:
+                        '@equal': [ '$.result[successful]', false ]
+                    message: '$.result[error]'
+                    type: 'error'

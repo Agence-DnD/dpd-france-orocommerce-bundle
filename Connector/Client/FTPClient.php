@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dnd\Bundle\DpdFranceShippingBundle\Client;
+namespace Dnd\Bundle\DpdFranceShippingBundle\Connector\Client;
 
 use phpseclib\Net\SFTP;
 use Psr\Log\InvalidArgumentException;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 /**
  * Class FTPClient
  *
- * @package   Dnd\Bundle\DpdFranceShippingBundle\Integration\Client
+ * @package   Dnd\Bundle\DpdFranceShippingBundle\Connector\Client
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
  * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
