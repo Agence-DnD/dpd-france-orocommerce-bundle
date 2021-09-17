@@ -6,15 +6,21 @@ define(function(require) {
     const $ = require('jquery');
     const NumberFormatter = require('orolocale/js/formatter/number');
     const mediator = require('oroui/js/mediator');
-    const templatePredict = require('tpl-loader!dnddpdfranceshipping/templates/view/method-predict-details.html')
-    const templatePickup = require('tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-details.html')
+    const predict = require('tpl-loader!dnddpdfranceshipping/templates/view/method-predict-details.html')
+    const pickup = require('tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-details.html')
 
 
     const ShippingMethodsView = BaseView.extend({
         autoRender: true,
 
         options: {
-            template: ''
+            template: '',
+            predictSelector: '[data-predict]',
+            pickupSelector: '[data-pickup]',
+            predict: {
+                phoneSelector: '[name="predict_phone"]',
+                errorSelector: '[data-error]'
+            }
         },
 
         /**
@@ -49,17 +55,50 @@ define(function(require) {
                 currentShippingMethod: data.currentShippingMethod,
                 currentShippingMethodType: data.currentShippingMethodType,
                 formatter: NumberFormatter,
-                methodDetails: this.methodDetails
+                methodDetails: this._methodDetails
             }));
             this.$el.html($el);
+            this.$predict = this.$el.find(this.options.predictSelector);
+            this.$pickup = this.$el.find(this.options.pickupSelector);
+            this._validatePhone();
         },
 
-        methodDetails: function(identifier) {
+        /**
+         * Render predict and pickup details
+         *
+         * @param identifier
+         * @private
+         */
+        _methodDetails: function(identifier) {
             if (identifier === "dpd_fr_predict") {
-                return templatePredict();
+                return predict();
             } else if (identifier === "dpd_fr_pickup") {
-                return templatePickup();
+                return pickup();
             }
+        },
+
+        /**
+         * Validate predict method phone number
+         *
+         * @private
+         */
+        _validatePhone: function() {
+            const self = this;
+            const error = this.$predict.find(this.options.predict.errorSelector);
+
+            self.$predict.find(self.options.predict.phoneSelector).on('keyup', (e) => {
+                const input = e.target,
+                      value = input.value,
+                      regex = /(0|\+33|0033)[6-7][0-9]{8}/g;
+
+                if (value.match(regex) && value.length === 10) {
+                    error.hide();
+                    input.removeClass('error');
+                } else {
+                    error.show();
+                    input.addClass('error');
+                }
+            })
         }
     });
 
