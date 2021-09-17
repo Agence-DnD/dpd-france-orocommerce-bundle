@@ -14,6 +14,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\MessageQueue\Client\Config;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -115,22 +116,30 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
      * @var ParameterBag|null $settings
      */
     protected ?ParameterBag $settings = null;
+    /**
+     * Description $crypter field
+     *
+     * @var SymmetricCrypterInterface $crypter
+     */
+    protected SymmetricCrypterInterface $crypter;
 
     /**
      * AbstractExportProcessor constructor
      *
-     * @param DoctrineHelper          $doctrineHelper
-     * @param OrderNormalizer         $normalizer
-     * @param SettingsProvider        $settingsProvider
-     * @param LoggerInterface         $logger
-     * @param ShippingServiceProvider $shippingServiceProvider
+     * @param DoctrineHelper            $doctrineHelper
+     * @param OrderNormalizer           $normalizer
+     * @param SettingsProvider          $settingsProvider
+     * @param LoggerInterface           $logger
+     * @param ShippingServiceProvider   $shippingServiceProvider
+     * @param SymmetricCrypterInterface $crypter
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         OrderNormalizer $normalizer,
         SettingsProvider $settingsProvider,
         LoggerInterface $logger,
-        ShippingServiceProvider $shippingServiceProvider
+        ShippingServiceProvider $shippingServiceProvider,
+        SymmetricCrypterInterface $crypter
     ) {
         $this->doctrineHelper          = $doctrineHelper;
         $this->normalizer              = $normalizer;
@@ -138,10 +147,11 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         $this->filesystem              = new SymfonyFileSystem();
         $this->settingsProvider        = $settingsProvider;
         $this->shippingServiceProvider = $shippingServiceProvider;
+        $this->crypter = $crypter;
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public static function getSubscribedTopics(): array
     {
@@ -154,7 +164,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     /**
      * Processes order export
      *
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function process(MessageInterface $message, SessionInterface $session): string
     {
@@ -174,6 +184,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
             return self::REJECT;
         }
+        /** @var Order $order */
         $order = $this->getManager()->find(Order::class, $body['orderId']);
 
         if ($order === null) {
@@ -258,12 +269,11 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     private function assembleNormalizedData(array $data): string
     {
         /** @var string $mightyString */
-        $mightyString = '';
+        $mightyString = $this->getFileHeader();
         /** @var string $lineString */
         $lineString = '';
 
-        $mightyString .= $this->getFileHeader();
-
+        /** @var mixed[] $datum */
         foreach ($data as $datum) {
             if (strlen($lineString) + 1 !== $datum['position']) {
                 throw new ExportException(
@@ -333,13 +343,14 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
      */
     private function logError(string $errorMsg, Order $order, string $topic, ?\Throwable $e = null): void
     {
+        /** @var string $entityInfoMsg */
         $entityInfoMsg = sprintf(
             ' while exporting order with id %d for topic %s. ',
             $order->getId(),
             $topic
         );
         $this->logger->error($errorMsg . $entityInfoMsg);
-        if (!is_null($e)) {
+        if ($e !== null) {
             $this->logger->error($e->getMessage());
         }
     }
@@ -399,7 +410,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     private function getFTPClient(): ?FTPClient
     {
         if (null === $this->FTPClient) {
-            $this->FTPClient = new FTPClient($this->getSettings());
+            $this->FTPClient = new FTPClient($this->getSettings(), $this->crypter);
         }
 
         return $this->FTPClient;

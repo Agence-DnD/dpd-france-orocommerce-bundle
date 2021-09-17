@@ -70,6 +70,7 @@ class StationExportProvider
      */
     public function queueIfExportable(Order $order, ?bool $forced = false): array
     {
+        /** @var mixed[] $result */
         $result = [
             'successful' => false,
             'error' => [],

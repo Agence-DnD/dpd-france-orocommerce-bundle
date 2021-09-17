@@ -33,6 +33,7 @@ class DpdShippingPackageOptions extends ShippingPackageOptions implements DpdShi
         Price $price
     ) {
         parent::__construct($dimensions, $weight);
+
         $this->price = $price;
     }
 

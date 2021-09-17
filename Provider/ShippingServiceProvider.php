@@ -99,6 +99,7 @@ class ShippingServiceProvider
      */
     public function getShippingServiceLogo(string $identifier): string
     {
+        /** @var ShippingService|null $service */
         $service = $this->getServiceForMethodTypeIdentifier($identifier);
 
         return $service !== null ? $service->getIcon() : '';

@@ -27,6 +27,12 @@ class DndDpdFranceShippingExtension extends Extension implements PrependExtensio
      * @var string ALIAS
      */
     public const ALIAS = 'dnd_dpd_france_shipping';
+    /**
+     * Max amount of log files to keep
+     *
+     * @var int MAX_ROTATION_LOGFILES
+     */
+    public const MAX_ROTATION_LOGFILES = 5;
 
     /**
      * {@inheritDoc}
@@ -62,7 +68,7 @@ class DndDpdFranceShippingExtension extends Extension implements PrependExtensio
             'handlers' => [
                 self::ALIAS => [
                     'type'      => 'rotating_file',
-                    'max_files' => 5,
+                    'max_files' => self::MAX_ROTATION_LOGFILES,
                     'path'      => "%kernel.logs_dir%/dpd-fr_%kernel.environment%.log",
                     'channels'  => [self::ALIAS],
                 ],
