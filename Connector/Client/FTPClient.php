@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Connector\Client;
 
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use phpseclib\Net\SFTP;
 use Psr\Log\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -31,16 +32,25 @@ class FTPClient
      * @var ParameterBag|null $settings
      */
     protected ?ParameterBag $settings = null;
+    /**
+     * Description $crypter field
+     *
+     * @var SymmetricCrypterInterface $crypter
+     */
+    protected SymmetricCrypterInterface $crypter;
 
     /**
      * FTPClient constructor
      *
-     * @param ParameterBag $settings
+     * @param ParameterBag              $settings
+     * @param SymmetricCrypterInterface $crypter
      */
     public function __construct(
-        ParameterBag $settings
+        ParameterBag $settings,
+        SymmetricCrypterInterface $crypter
     ) {
         $this->settings = $settings;
+        $this->crypter = $crypter;
     }
 
     /**
@@ -53,7 +63,6 @@ class FTPClient
     {
         if (null === $this->ftpConnection) {
             [$host, $port, $username, $password] = $this->getSettings();
-
             $this->ftpConnection = new SFTP($host, $port);
             if (!$this->ftpConnection->login($username, $password)) {
                 throw new \RuntimeException('Login failed');
@@ -72,12 +81,13 @@ class FTPClient
     {
         /** @var string|null $host */
         $host = $this->settings->get('dpd_fr_station_ftp_host');
-        /** @var int|null $host */
+        /** @var int|null $port */
         $port = $this->settings->getInt('dpd_fr_station_ftp_port');
-        /** @var string|null $host */
+        /** @var string|null $username */
         $username = $this->settings->get('dpd_fr_station_ftp_user');
-        /** @var string|null $host */
-        $password = $this->settings->get('dpd_fr_station_ftp_password');
+        /** @var string|null $password */
+        $password = $this->crypter->decryptData($this->settings->get('dpd_fr_station_ftp_password'));
+
         if (!isset($host, $port, $username, $password)) {
             throw new InvalidArgumentException('At least one parameters are missing for FTP connection.');
         }

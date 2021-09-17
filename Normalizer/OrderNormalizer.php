@@ -11,6 +11,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -118,8 +119,8 @@ class OrderNormalizer implements NormalizerInterface
         ShippingOriginProvider $shippingOriginProvider,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter
     ) {
-        $this->packagesFactory        = $packagesFactory;
-        $this->shippingOriginProvider = $shippingOriginProvider;
+        $this->packagesFactory           = $packagesFactory;
+        $this->shippingOriginProvider    = $shippingOriginProvider;
         $this->shippingLineItemConverter = $shippingLineItemConverter;
     }
 
@@ -135,6 +136,7 @@ class OrderNormalizer implements NormalizerInterface
     {
         /** @var string[] $mandatoryKeys */
         $mandatoryKeys = ['shipping_service', 'settings'];
+        /** @var string $mandatoryKey */
         foreach ($mandatoryKeys as $mandatoryKey) {
             if (!isset($context[$mandatoryKey])) {
                 throw new NormalizerException(sprintf('Could not fetch %s from context.', $mandatoryKey));
@@ -145,9 +147,9 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * {@inheritDoc}
      *
-     * @param Order  $order
-     * @param string $format
-     * @param array  $context
+     * @param Order   $order
+     * @param string  $format
+     * @param mixed[] $context
      *
      * @return mixed[]
      * @throws NormalizerException|PackageException
@@ -157,8 +159,12 @@ class OrderNormalizer implements NormalizerInterface
         /** @var mixed[] $data */
         $data = [];
         $this->checkContext($context);
+        /** @var ShippingLineItemCollectionInterface|null $convertedLineItems */
         $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($order->getLineItems());
 
+        if ($convertedLineItems === null) {
+            throw new NormalizerException('The order does not contain any line item.');
+        }
         /** @var DpdShippingPackageOptionsInterface[] $packages */
         $packages = $this->packagesFactory->create(
             $convertedLineItems,
@@ -168,14 +174,17 @@ class OrderNormalizer implements NormalizerInterface
         /** @var DpdShippingPackageOptionsInterface $package */
         foreach ($packages as $package) {
             $this->packageCount++;
-            $data = array_merge(
+            $arraysToMerge = [
                 $this->getGeneralFields($order, $package, $context['settings']),
                 $this->getRecipientFields($order),
                 $this->getSenderFields($order),
                 $this->getShipmentFields($order, $package, $context['settings']),
                 $this->getReturnFields(),
                 $this->getLineEnd()
-            );
+            ];
+
+            $data = array_merge([], ...$arraysToMerge);
+
         }
 
         return $data;
@@ -203,10 +212,8 @@ class OrderNormalizer implements NormalizerInterface
                 1,
                 35,
                 'Référence client N°1',
-                implode(
-                    '_',
-                    [$order->getId(), $settings->get('dpd_fr_agency_code') . $settings->get('dpd_fr_contract_number')]
-                )
+                implode('_',
+                    [$order->getId(), $settings->get('dpd_fr_agency_code') . $settings->get('dpd_fr_contract_number')])
 
             ),
             $this->makeFiller(36, 2),
@@ -856,9 +863,8 @@ class OrderNormalizer implements NormalizerInterface
         $output = '';
         switch ($format) {
             case self::TYPE_NUMERIC:
-                /** @var float $value */
-                $value  = round((float)$value, 2);
-                $output = str_pad((string)$value, $length, '0', STR_PAD_LEFT);
+                /** @var float $value */ $value = round((float)$value, 2);
+                $output                         = str_pad((string)$value, $length, '0', STR_PAD_LEFT);
                 break;
             case self::TYPE_FILLER:
                 $output = str_repeat(' ', $length);
@@ -875,7 +881,7 @@ class OrderNormalizer implements NormalizerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function supportsNormalization($data, $format = null): bool
     {

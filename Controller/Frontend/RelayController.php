@@ -55,6 +55,7 @@ class RelayController extends AbstractController
             $response = [
                 'relays' => $pudoProvider->getPudoList($checkoutId, $city, $postalCode, $address),
             ];
+            /** @var int $status */
             $status   = Response::HTTP_OK;
         } catch (\InvalidArgumentException $e) {
             $response = [
