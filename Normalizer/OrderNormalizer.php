@@ -8,6 +8,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Exception\NormalizerException;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
+use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
@@ -81,6 +82,12 @@ class OrderNormalizer implements NormalizerInterface
      */
     protected ShippingOriginProvider $shippingOriginProvider;
     /**
+     * Description $shippingLineItemConverter field
+     *
+     * @var OrderShippingLineItemConverterInterface $shippingLineItemConverter
+     */
+    protected OrderShippingLineItemConverterInterface $shippingLineItemConverter;
+    /**
      * Description $fillerCount field
      *
      * @var int $fillerCount
@@ -102,15 +109,18 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * OrderNormalizer constructor
      *
-     * @param PackageFactory         $packagesFactory
-     * @param ShippingOriginProvider $shippingOriginProvider
+     * @param PackageFactory                          $packagesFactory
+     * @param ShippingOriginProvider                  $shippingOriginProvider
+     * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
      */
     public function __construct(
         PackageFactory $packagesFactory,
-        ShippingOriginProvider $shippingOriginProvider
+        ShippingOriginProvider $shippingOriginProvider,
+        OrderShippingLineItemConverterInterface $shippingLineItemConverter
     ) {
         $this->packagesFactory        = $packagesFactory;
         $this->shippingOriginProvider = $shippingOriginProvider;
+        $this->shippingLineItemConverter = $shippingLineItemConverter;
     }
 
     /**
@@ -147,9 +157,11 @@ class OrderNormalizer implements NormalizerInterface
         /** @var mixed[] $data */
         $data = [];
         $this->checkContext($context);
+        $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($order->getLineItems());
+
         /** @var DpdShippingPackageOptionsInterface[] $packages */
         $packages = $this->packagesFactory->create(
-            $order->getLineItems(),
+            $convertedLineItems,
             $context['shipping_service']
         );
 
@@ -335,7 +347,7 @@ class OrderNormalizer implements NormalizerInterface
         $shippingOrigin = $this->shippingOriginProvider->getSystemShippingOrigin();
 
         /** @var string[] $multiLineCustomerNotes */
-        $multiLineCustomerNotes = explode("\n", wordwrap($order->getCustomerNotes(), 35));
+        $multiLineCustomerNotes = explode("\n", wordwrap($order->getCustomerNotes() ?? '', 35));
 
         return [
             $this->getElement(
@@ -556,6 +568,7 @@ class OrderNormalizer implements NormalizerInterface
                 self::STATUS_OPTIONAL,
                 1443,
                 8,
+                'Identifiant du point relais',
                 $order->getDpdFrRelayId()
             ),
             $this->makeFiller(1451, 113),
@@ -647,7 +660,6 @@ class OrderNormalizer implements NormalizerInterface
                 'Nom destinataire retour',
                 ''
             ),
-            $this->makeFiller(46, 15),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
                 self::STATUS_OPTIONAL,
@@ -726,7 +738,7 @@ class OrderNormalizer implements NormalizerInterface
                 self::TYPE_ALPHANUMERIC,
                 self::STATUS_OPTIONAL,
                 2164,
-                20,
+                30,
                 "Téléphone",
                 '',
             ),
@@ -813,7 +825,7 @@ class OrderNormalizer implements NormalizerInterface
         $value = null
     ): array {
         if ($status === self::STATUS_MANDATORY && $value === null) {
-            throw new NormalizerException('missing value for mandatory attribute');
+            throw new NormalizerException(sprintf('missing value for mandatory attribute %s', $code));
         }
         /** @var mixed[] $element */
         $element = [];
@@ -843,14 +855,15 @@ class OrderNormalizer implements NormalizerInterface
         $output = '';
         switch ($format) {
             case self::TYPE_NUMERIC:
-                /** @var float $value */ $value = round((float)$value, 2);
-                $output                         = str_pad((string)$value, $length, '0', STR_PAD_LEFT);
+                /** @var float $value */
+                $value  = round((float)$value, 2);
+                $output = str_pad((string)$value, $length, '0', STR_PAD_LEFT);
                 break;
             case self::TYPE_FILLER:
                 $output = str_repeat(' ', $length);
                 break;
             case self::TYPE_ALPHANUMERIC:
-                $output = str_pad($value, $length, ' ', STR_PAD_RIGHT);
+                $output = str_pad($value ?? '', $length, ' ', STR_PAD_RIGHT);
                 break;
             default:
                 $output = $value;
