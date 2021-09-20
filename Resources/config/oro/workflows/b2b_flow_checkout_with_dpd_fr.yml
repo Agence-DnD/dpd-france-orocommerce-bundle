@@ -1340,8 +1340,7 @@ workflows:
                                         parameters:
                                             - $.result.isConsentsAccepted
                                             - true
-                    -
-                        '@flash_message':
+                    - '@flash_message':
                             conditions:
                                 '@and':
                                     -
@@ -1830,8 +1829,7 @@ workflows:
                 conditions: {  }
             place_order_definition:
                 preactions:
-                    -
-                        '@flash_message':
+                    - '@flash_message':
                             conditions:
                                 '@and':
                                     -
@@ -1842,6 +1840,7 @@ workflows:
                                         '@equal':
                                             - $checkout.completed
                                             - false
+                            message: oro.checkout.workflow.condition.payment_has_not_been_processed.message
                             type: warning
                     -
                         '@tree':

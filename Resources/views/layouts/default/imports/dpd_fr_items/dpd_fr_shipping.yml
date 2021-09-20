@@ -1,0 +1,17 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'dpd_fr_shipping.html.twig'
+        -   '@addTree':
+                items:
+                    __shipping_dpd:
+                        blockType: checkout_form_fields
+                        options:
+                            checkout: '=data["checkout"]'
+                            form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
+                            workflowItem: '=data["workflowItem"]'
+
+                tree:
+                    __root:
+                        __shipping_dpd: ~
+
