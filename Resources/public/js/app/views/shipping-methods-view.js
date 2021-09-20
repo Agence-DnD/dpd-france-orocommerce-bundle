@@ -15,12 +15,17 @@ define(function(require) {
 
         options: {
             template: '',
+            methodContainerSelector: '.dnddpd-method',
             predictSelector: '[data-predict]',
             pickupSelector: '[data-pickup]',
             predict: {
                 phoneSelector: '[name="predict_phone"]',
                 errorSelector: '[data-error]'
             }
+        },
+
+        events: {
+            'click [name$="shippingMethodType"]': '_onMethodClick',
         },
 
         /**
@@ -99,6 +104,21 @@ define(function(require) {
                     input.addClass('error');
                 }
             })
+        },
+
+        /**
+         * add Class to selected method
+         *
+         * @param e event
+         * @private
+         */
+        _onMethodClick: function(e) {
+            const input = e.target;
+
+            input.checked && $(input).parents(this.options.methodContainerSelector)
+                                   .addClass('active')
+                                   .siblings()
+                                   .removeClass('active');
         }
     });
 

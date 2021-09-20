@@ -11,6 +11,16 @@
     margin: $dnddpd-method-margin;
     padding: $dnddpd-method-padding;
 
+    &__details {
+        display: none;
+    }
+
+    &.active {
+        + .dnddpd-method__details {
+            display: block;
+        }
+    }
+
     &-radio {
         width: 100%;
         position: relative;
