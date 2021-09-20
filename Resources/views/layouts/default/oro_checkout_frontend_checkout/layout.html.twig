@@ -1,47 +1,3 @@
-{% block _shipping_methods_widget %}
-    {% import 'OroFrontendBundle:layouts/blank:utils.html.twig' as utils %}
-    {% set currentShippingMethod = currentShippingMethod|default(null) %}
-    {% set currentShippingMethodType = currentShippingMethodType|default(null) %}
-
-    {% set shippingMethodsTemplate %}
-        {% spaceless %}
-            {{ block_widget(block) }}
-        {% endspaceless %}
-    {% endset %}
-
-    {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
-            view: 'dnddpdfranceshipping/js/app/views/shipping-methods-view',
-            data: {
-                methods: methods,
-                currentShippingMethod: currentShippingMethod,
-                currentShippingMethodType: currentShippingMethodType
-            },
-            template: utils.underscoreRaw('<%#' ~ shippingMethodsTemplate ~ '#%>')
-        },
-        'data-shipping-method-forms': '',
-        'role': 'group',
-        'aria-labelledby': 'shipping-methods-form-label'
-    }) %}
-
-    <div class="{{ class_prefix }}-form" data-content="shipping_method_form">
-        <div class="grid__row grid__row--offset-none">
-            <div {{ block('block_attributes') }}></div>
-        </div>
-    </div>
-{% endblock %}
-
-{% block _shipping_methods_template_widget %}
-    <% if (!_.isEmpty(methods)) { %>
-        {{ block_widget(block) }}
-    <% } else { %>
-        <div class="notification notification--alert" role="alert">
-            <span class="notification__text">{{ 'oro.shipping.methods.no_method'|trans }}</span>
-        </div>
-    <% } %>
-{% endblock %}
-
 {% block _shipping_methods_template_methods_widget %}
     <span class="label label--full">{{ 'oro.shipping.methods.select_method'|trans }}<sup class="checkout-form__asterix" aria-hidden="true">*</sup></span>
     <% _.each(methods, function(method, key) { %>
@@ -82,21 +38,4 @@
             <% }); %>
         <% } %>
     <% }); %>
-{% endblock %}
-
-{% block _checkout_form_fields_widget %}
-    {{ form_errors(form.shipping_method) }}
-    <div class="hidden">
-        <div class="grid__row grid__row--offset-none">
-            {{ form_widget(form.shipping_method) }}
-            {{ form_widget(form.shipping_method_type) }}
-            {# Add @DND #}
-            {{ form_widget(form.delivery_phone) }}
-            {{ form_widget(form.dpd_fr_relay_id) }}
-            {# Add @DND #}
-            {%  if  form.state_token is defined %}
-                {{ form_row(form.state_token) }}
-            {% endif %}
-        </div>
-    </div>
 {% endblock %}

@@ -1,0 +1,21 @@
+{% block __dpd_fr_items__shipping_dpd_widget %}
+    <div>
+        <div class="grid__row grid__row--offset-none">
+            {{ form_widget(form.delivery_phone) }}
+            {{ form_widget(form.dpd_fr_relay_id) }}
+        </div>
+    </div>
+    {% set postalCode, city, street, phone, google_maps_api_key = '', '', '', '', '' %}
+    {% if checkout.shippingAddress is not null %}
+        {% set postalCode = checkout.shippingAddress.postalCode %}
+        {% set city = checkout.shippingAddress.city %}
+        {% set street = checkout.shippingAddress.street %}
+        {% set phone = checkout.shippingAddress.phone %}
+    {% endif %}
+    <input type='hidden' value="{{ postalCode }}" id="dpd_fr_shipping_address_zipcode"/>
+    <input type='hidden' value="{{ city }}" id="dpd_fr_shipping_address_city"/>
+    <input type='hidden' value="{{ street }}" id="dpd_fr_shipping_address_street"/>
+    <input type='hidden' value="{{ phone }}" id="dpd_fr_shipping_address_phone"/>
+    <input type='hidden' value="{{ google_maps_api_key }}" id="dpd_fr_google_maps_api_key"/>
+
+{% endblock %}

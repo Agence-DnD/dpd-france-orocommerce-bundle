@@ -14,11 +14,6 @@ operations:
                     method: queueIfExportable
                     method_parameters: [ $.data, true ]
                     attribute: $.result
-            - '@flash_message':
-                  message: dnd_dpd_france_shipping.action.message.order.station_export.success
-                  type: 'info'
-                  message_parameters:
-                      id: $identifier
             -   '@flash_message':
                     conditions:
                         '@equal': [ '$.result[successful]', true ]
