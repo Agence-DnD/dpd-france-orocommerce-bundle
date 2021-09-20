@@ -5,16 +5,23 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Async\Topics;
-use Dnd\Bundle\DpdFranceShippingBundle\Connector\Client\FTPClient;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\ExportException;
+use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
+use Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory;
+use Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethod;
+use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Dnd\Bundle\DpdFranceShippingBundle\Normalizer\OrderNormalizer;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\SettingsProvider;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider;
 use Doctrine\ORM\EntityManagerInterface;
+use http\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Component\MessageQueue\Client\Config;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -44,6 +51,12 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
      * @var string LOCAL_FOLDER
      */
     public const LOCAL_FOLDER = 'data/dpd-france/export/';
+    /**
+     * The distant folder for the files
+     *
+     * @var string TARGET_FOLDER
+     */
+    public const TARGET_FOLDER = '/smash/';
     /**
      * The local FS sub folder for the files successfully exported to station
      *
@@ -93,12 +106,6 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
      */
     protected Filesystem $filesystem;
     /**
-     * Description $FTPClient field
-     *
-     * @var FTPClient|null $FTPClient
-     */
-    protected ?FTPClient $FTPClient = null;
-    /**
      * Description $settingsProvider field
      *
      * @var SettingsProvider $settingsProvider
@@ -122,16 +129,36 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
      * @var SymmetricCrypterInterface $crypter
      */
     protected SymmetricCrypterInterface $crypter;
+    /**
+     * Description $shippingLineItemConverter field
+     *
+     * @var OrderShippingLineItemConverterInterface $shippingLineItemConverter
+     */
+    protected OrderShippingLineItemConverterInterface $shippingLineItemConverter;
+    /**
+     * Description $packagesFactory field
+     *
+     * @var PackageFactory $packagesFactory
+     */
+    protected PackageFactory $packagesFactory;
+    /**
+     * Description $packages field
+     *
+     * @var DpdShippingPackageOptionsInterface[]|null $packages
+     */
+    private ?array $packages = null;
 
     /**
      * AbstractExportProcessor constructor
      *
-     * @param DoctrineHelper            $doctrineHelper
-     * @param OrderNormalizer           $normalizer
-     * @param SettingsProvider          $settingsProvider
-     * @param LoggerInterface           $logger
-     * @param ShippingServiceProvider   $shippingServiceProvider
-     * @param SymmetricCrypterInterface $crypter
+     * @param DoctrineHelper                          $doctrineHelper
+     * @param OrderNormalizer                         $normalizer
+     * @param SettingsProvider                        $settingsProvider
+     * @param LoggerInterface                         $logger
+     * @param ShippingServiceProvider                 $shippingServiceProvider
+     * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
+     * @param PackageFactory                          $packagesFactory
+     * @param SymmetricCrypterInterface               $crypter
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
@@ -139,15 +166,19 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         SettingsProvider $settingsProvider,
         LoggerInterface $logger,
         ShippingServiceProvider $shippingServiceProvider,
+        OrderShippingLineItemConverterInterface $shippingLineItemConverter,
+        PackageFactory $packagesFactory,
         SymmetricCrypterInterface $crypter
     ) {
-        $this->doctrineHelper          = $doctrineHelper;
-        $this->normalizer              = $normalizer;
-        $this->logger                  = $logger;
-        $this->filesystem              = new SymfonyFileSystem();
-        $this->settingsProvider        = $settingsProvider;
-        $this->shippingServiceProvider = $shippingServiceProvider;
-        $this->crypter = $crypter;
+        $this->doctrineHelper            = $doctrineHelper;
+        $this->normalizer                = $normalizer;
+        $this->logger                    = $logger;
+        $this->filesystem                = new SymfonyFileSystem();
+        $this->settingsProvider          = $settingsProvider;
+        $this->shippingServiceProvider   = $shippingServiceProvider;
+        $this->crypter                   = $crypter;
+        $this->shippingLineItemConverter = $shippingLineItemConverter;
+        $this->packagesFactory           = $packagesFactory;
     }
 
     /**
@@ -223,21 +254,22 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
                 $this->filesystem->mkdir(self::LOCAL_FOLDER . self::FAIL_FOLDER);
             }
             $this->filesystem->touch(self::LOCAL_FOLDER . $fileName);
+
             $this->filesystem->dumpFile(
                 self::LOCAL_FOLDER . $fileName,
                 $this->assembleNormalizedData(
-                    $this->normalizer->normalize($order,
-                        'dpd_fr_station',
-                        ['shipping_service' => $shippingService, 'settings' => $this->getSettings()])
+                    $this->normalizer->normalize($order, 'dpd_fr_station', [
+                        'shipping_service' => $shippingService,
+                        'settings'         => $this->getSettings(),
+                        'packages'         => $this->getPackages($order, $shippingService),
+                    ])
                 )
             );
 
-            /** @var FTPClient $FTPClient */
-            $FTPClient = $this->getFTPClient();
-            if ($FTPClient === null || !$FTPClient->putFile($fileName, self::LOCAL_FOLDER . $fileName)) {
-                $this->onFail($fileName);
-                throw new \Exception('Fail to upload exported file to SFTP');
-            }
+            $this->filesystem->copy(
+                self::LOCAL_FOLDER . $fileName,
+                 $this->getStationFtpUrl(self::TARGET_FOLDER . $fileName)
+            );
 
             $this->filesystem->copy(
                 self::LOCAL_FOLDER . $fileName,
@@ -245,7 +277,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
             );
             $this->filesystem->remove(self::LOCAL_FOLDER . $fileName);
 
-            $this->onSuccess($order);
+            $this->onSuccess($order, $this->getSettings());
         } catch (\Throwable $e) {
             /** @var string $errorMsg */
             $errorMsg = 'DPD France export processor failed to export shipment to station';
@@ -256,6 +288,57 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         }
 
         return MessageProcessorInterface::ACK;
+    }
+
+    /**
+     * Description getFtpUrl function
+     *
+     * @param string $targetPath
+     *
+     * @return string
+     */
+    private function getStationFtpUrl(string $targetPath): string
+    {
+        $this->settings = $this->getSettings();
+        /** @var string|null $host */
+        $host = $this->settings->get('dpd_fr_station_ftp_host');
+        /** @var int|null $port */
+        $port = $this->settings->getInt('dpd_fr_station_ftp_port');
+        /** @var string|null $username */
+        $username = $this->settings->get('dpd_fr_station_ftp_user');
+        /** @var string|null $password */
+        $password = $this->crypter->decryptData($this->settings->get('dpd_fr_station_ftp_password'));
+        if (!isset($host, $port, $username, $password)) {
+            throw new \InvalidArgumentException('At least one parameter is missing for FTP connection.');
+        }
+
+        return sprintf("ftp://%s:%s@%s:%d%s", $username, $password, $host, $port, $targetPath);
+    }
+
+    /**
+     * Description getPackages function
+     *
+     * @param Order           $order
+     * @param ShippingService $shippingService
+     *
+     * @return DpdShippingPackageOptionsInterface[]|null
+     * @throws PackageException
+     */
+    private function getPackages(Order $order, ShippingService $shippingService): ?array
+    {
+        if ($this->packages === null) {
+            /** @var ShippingLineItemCollectionInterface|null $convertedLineItems */
+            $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($order->getLineItems());
+            if ($convertedLineItems === null) {
+                throw new InvalidArgumentException('The order does not contain any line item.');
+            }
+            $this->packages = $this->packagesFactory->create(
+                $convertedLineItems,
+                $shippingService
+            );
+        }
+
+        return $this->packages;
     }
 
     /**
@@ -381,15 +464,52 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     /**
      * Flag the exported order as having its shipment successfully been synchronized with DPD Station
      *
-     * @param Order $order the order being exported
+     * @param Order        $order the order being exported
+     * @param ParameterBag $settings
      *
      * @return void
      */
-    public function onSuccess(Order $order): void
+    public function onSuccess(Order $order, ParameterBag $settings): void
     {
         $order->setSynchronizedDpd(new \DateTime());
+
+        /** @var string $trackingLink */
+        foreach ($this->getTrackingLinks($order, $settings) as $trackingLink) {
+            /** @var OrderShippingTracking $shippingTracking */
+            $shippingTracking = new OrderShippingTracking();
+            $shippingTracking->setMethod($order->getShippingMethod());
+            $shippingTracking->setNumber($trackingLink);
+            $order->addShippingTracking($shippingTracking);
+        }
         $this->getManager()->persist($order);
         $this->getManager()->flush();
+    }
+
+    /**
+     * Description getTrackingLinks function
+     *
+     * @param Order        $order
+     * @param ParameterBag $settings
+     *
+     * @return string[]
+     */
+    private function getTrackingLinks(Order $order, ParameterBag $settings): array
+    {
+        /** @var string[] $trackingLinks */
+        $trackingLinks = [];
+        $pkgAmount     = count($this->packages);
+        for ($i = 0; $i < $pkgAmount; $i++) {
+            //'%s://www.dpd.fr/tracer_%s_%d%d';
+            $trackingLinks[] = sprintf(
+                DpdFranceShippingMethod::TRACKING_URL_PATTERN,
+                'https',
+                $order->getId() . '-' . $i > 0 ? $i : '',
+                (int)$settings->get('dpd_fr_agency_code'),
+                (int)$settings->get('dpd_fr_contract_number')
+            );
+        }
+
+        return $trackingLinks;
     }
 
     /**
@@ -400,20 +520,6 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     public function getManager(): EntityManagerInterface
     {
         return $this->doctrineHelper->getEntityManagerForClass(Order::class);
-    }
-
-    /**
-     * Returns a configured FTP client
-     *
-     * @return FTPClient|null
-     */
-    private function getFTPClient(): ?FTPClient
-    {
-        if (null === $this->FTPClient) {
-            $this->FTPClient = new FTPClient($this->getSettings(), $this->crypter);
-        }
-
-        return $this->FTPClient;
     }
 
     /**

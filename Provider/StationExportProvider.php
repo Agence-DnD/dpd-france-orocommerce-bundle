@@ -11,6 +11,7 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Transport\Exception\Exception;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class StationExportProvider
@@ -41,6 +42,12 @@ class StationExportProvider
      * @var SettingsProvider $settingsProvider
      */
     protected SettingsProvider $settingsProvider;
+    /**
+     * Description $translator field
+     *
+     * @var TranslatorInterface $translator
+     */
+    protected TranslatorInterface $translator;
 
     /**
      * OrderListener constructor
@@ -48,15 +55,18 @@ class StationExportProvider
      * @param LoggerInterface          $logger
      * @param MessageProducerInterface $producer
      * @param SettingsProvider         $settingsProvider
+     * @param TranslatorInterface      $translator
      */
     public function __construct(
         LoggerInterface $logger,
         MessageProducerInterface $producer,
-        SettingsProvider $settingsProvider
+        SettingsProvider $settingsProvider,
+        TranslatorInterface $translator
     ) {
         $this->logger           = $logger;
         $this->producer         = $producer;
         $this->settingsProvider = $settingsProvider;
+        $this->translator = $translator;
     }
 
     /**
@@ -77,11 +87,11 @@ class StationExportProvider
         ];
         try {
             if (!$this->isOrderExportable($order, $forced)) {
-                $result['error'] = "This order doesn't meet DPD export requirements";
+                $result['error'] = $this->translator->trans("dnd_dpd_france_shipping.action.message.order.station_export.error.requirements");
                 return $result;
             }
         } catch (\InvalidArgumentException $e) {
-            $result['error'] = 'No integration exists for DPD France';
+            $result['error'] = $this->translator->trans('dnd_dpd_france_shipping.action.message.order.station_export.error.missing_integration');
             return $result;
         }
         /** @var string $topic */

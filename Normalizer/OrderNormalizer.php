@@ -6,12 +6,10 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Normalizer;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\NormalizerException;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
-use Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -100,28 +98,16 @@ class OrderNormalizer implements NormalizerInterface
      * @var int $packageCount
      */
     private int $packageCount = 0;
-    /**
-     * Description $packagesFactory field
-     *
-     * @var PackageFactory $packagesFactory
-     */
-    protected PackageFactory $packagesFactory;
 
     /**
      * OrderNormalizer constructor
      *
-     * @param PackageFactory                          $packagesFactory
      * @param ShippingOriginProvider                  $shippingOriginProvider
-     * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
      */
     public function __construct(
-        PackageFactory $packagesFactory,
-        ShippingOriginProvider $shippingOriginProvider,
-        OrderShippingLineItemConverterInterface $shippingLineItemConverter
+        ShippingOriginProvider $shippingOriginProvider
     ) {
-        $this->packagesFactory           = $packagesFactory;
         $this->shippingOriginProvider    = $shippingOriginProvider;
-        $this->shippingLineItemConverter = $shippingLineItemConverter;
     }
 
     /**
@@ -135,7 +121,7 @@ class OrderNormalizer implements NormalizerInterface
     private function checkContext(array $context): void
     {
         /** @var string[] $mandatoryKeys */
-        $mandatoryKeys = ['shipping_service', 'settings'];
+        $mandatoryKeys = ['shipping_service', 'settings', 'packages'];
         /** @var string $mandatoryKey */
         foreach ($mandatoryKeys as $mandatoryKey) {
             if (!isset($context[$mandatoryKey])) {
@@ -159,20 +145,9 @@ class OrderNormalizer implements NormalizerInterface
         /** @var mixed[] $data */
         $data = [];
         $this->checkContext($context);
-        /** @var ShippingLineItemCollectionInterface|null $convertedLineItems */
-        $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($order->getLineItems());
-
-        if ($convertedLineItems === null) {
-            throw new NormalizerException('The order does not contain any line item.');
-        }
-        /** @var DpdShippingPackageOptionsInterface[] $packages */
-        $packages = $this->packagesFactory->create(
-            $convertedLineItems,
-            $context['shipping_service']
-        );
 
         /** @var DpdShippingPackageOptionsInterface $package */
-        foreach ($packages as $package) {
+        foreach ($context['packages'] as $package) {
             $this->packageCount++;
             $arraysToMerge = [
                 $this->getGeneralFields($order, $package, $context['settings']),
@@ -212,9 +187,7 @@ class OrderNormalizer implements NormalizerInterface
                 1,
                 35,
                 'Référence client N°1',
-                implode('_',
-                    [$order->getId(), $settings->get('dpd_fr_agency_code') . $settings->get('dpd_fr_contract_number')])
-
+                $order->getId() . $this->packageCount > 1 ? $this->packageCount : null
             ),
             $this->makeFiller(36, 2),
             $this->getElement(
@@ -870,6 +843,7 @@ class OrderNormalizer implements NormalizerInterface
                 $output = str_repeat(' ', $length);
                 break;
             case self::TYPE_ALPHANUMERIC:
+                $value = (string)$value;
                 $output = str_pad($value ?? '', $length, ' ', STR_PAD_RIGHT);
                 break;
             default:
