@@ -50,6 +50,7 @@ services:
             - '@monolog.logger.dnd_dpd_france_shipping'
             - '@oro_message_queue.client.message_producer'
             - '@dnd_dpd_france_shipping.provider.settings'
+            - '@translator'
 
     dnd_dpd_france_shipping.method.provider:
         class: 'Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider'
@@ -93,9 +94,7 @@ services:
     dnd_dpd_france_shipping.normalizer.order:
         class: Dnd\Bundle\DpdFranceShippingBundle\Normalizer\OrderNormalizer
         arguments:
-            - '@dnd_dpd_france_shipping.factory.package'
             - '@oro_shipping.shipping_origin.provider'
-            - '@oro_order.shipping_line_item.converter_basic'
 
     dnd_dpd_france_shipping.processor.async.station_export:
             class: Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async\StationExportProcessor
@@ -105,6 +104,8 @@ services:
                 - '@dnd_dpd_france_shipping.provider.settings'
                 - '@monolog.logger.dnd_dpd_france_shipping'
                 - '@dnd_dpd_france_shipping.provider.shipping_service'
+                - '@oro_order.shipping_line_item.converter_basic'
+                - '@dnd_dpd_france_shipping.factory.package'
                 - "@oro_security.encoder.default"
             tags:
                 - { name: 'oro_message_queue.client.message_processor', topicName: !php/const Dnd\Bundle\DpdFranceShippingBundle\Async\Topics::SHIPMENT_EXPORT_TO_DPD_STATION }

@@ -17,6 +17,9 @@ dnd_dpd_france_shipping:
             order:
                 station_export:
                     success: 'La commande #%id% va être exportée dans DPD Station.'
+                    error:
+                        requirements: Cette commande ne remplit pas les conditions pour être exportée dans DPD station.
+                        missing_integration: L'intégration DPD France n'a pas été parametrée.
     method:
         price.label: Prix
     form:

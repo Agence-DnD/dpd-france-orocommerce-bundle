@@ -17,6 +17,9 @@ dnd_dpd_france_shipping:
             order:
                 station_export:
                     success: 'Order #%id% has been queued for DPD Station export.'
+                    error:
+                        requirements: This order doesn't meet DPD export requirements
+                        missing_integration: No integration exists for DPD France
     method:
         price.label: Price
     form:
