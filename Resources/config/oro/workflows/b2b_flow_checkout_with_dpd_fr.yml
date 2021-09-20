@@ -1352,6 +1352,7 @@ workflows:
                                             - $consents_available
                                             - true
                             type: warning
+                            message: oro.checkout.workflow.condition.required_consents_should_be_checked.message
                 preconditions:
                     '@equal':
                         - $.result.isConsentsAccepted
