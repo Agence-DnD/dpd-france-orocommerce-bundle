@@ -84,15 +84,19 @@
     <% }); %>
 {% endblock %}
 
-{% block method_dpd_fr_predict_widget %}
-    test hello
-{% endblock %}
-
 {% block _checkout_form_fields_widget %}
-    {{ parent_block_widget(block) }}
-
-    {# Add @DND #}
-    {{ form_widget(form.delivery_phone) }}
-    {{ form_widget(form.dpd_fr_relay_id) }}
-    {# Add @DND #}
+    {{ form_errors(form.shipping_method) }}
+    <div class="hidden">
+        <div class="grid__row grid__row--offset-none">
+            {{ form_widget(form.shipping_method) }}
+            {{ form_widget(form.shipping_method_type) }}
+            {# Add @DND #}
+            {{ form_widget(form.delivery_phone) }}
+            {{ form_widget(form.dpd_fr_relay_id) }}
+            {# Add @DND #}
+            {%  if  form.state_token is defined %}
+                {{ form_row(form.state_token) }}
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}

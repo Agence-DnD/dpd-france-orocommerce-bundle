@@ -29,6 +29,12 @@ $dnddpd-method-predict-bottom-padding: 10px 15px;
 
 $dnddpd-method-predict-phone-margin: 10px;
 
+$dnddpd-method-predict-phone-input-error-box-shadow: 0 1px 7px 0 #dc0032;
+$dnddpd-method-predict-phone-input-valid-box-shadow: 0 1px 7px 0 #64C864;
+$dnddpd-method-predict-phone-input-valid-background-image: url($global-url + '/dnddpdfranceshipping/img/check.svg');
+$dnddpd-method-predict-phone-input-valid-background-position: right center;
+$dnddpd-method-predict-phone-input-valid-background-size: 30px;
+
 $dnddpd-method-predict-phone-error-border: 2px solid #dc0032;
 $dnddpd-method-predict-phone-error-background-color: #fff;
 $dnddpd-method-predict-phone-error-margin: 10px 0;

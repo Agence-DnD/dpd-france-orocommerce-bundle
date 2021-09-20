@@ -4,6 +4,10 @@
         <div class="grid__row grid__row--offset-none">
             {{ form_widget(form.shipping_method) }}
             {{ form_widget(form.shipping_method_type) }}
+            {# Add @DND #}
+            {{ form_widget(form.delivery_phone) }}
+            {{ form_widget(form.dpd_fr_relay_id) }}
+            {# Add @DND #}
             {%  if  form.state_token is defined %}
                 {{ form_row(form.state_token) }}
             {% endif %}

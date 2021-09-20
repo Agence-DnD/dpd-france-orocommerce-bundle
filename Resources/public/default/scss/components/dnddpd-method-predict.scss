@@ -77,6 +77,20 @@
 
     &__phone {
         margin: $dnddpd-method-predict-phone-margin;
+
+        .input {
+            &.error {
+                box-shadow: $dnddpd-method-predict-phone-input-error-box-shadow;
+            }
+
+            &.valid {
+                box-shadow: $dnddpd-method-predict-phone-input-valid-box-shadow;
+                background-image: $dnddpd-method-predict-phone-input-valid-background-image;
+                background-position: $dnddpd-method-predict-phone-input-valid-background-position;
+                background-repeat: no-repeat;
+                background-size: $dnddpd-method-predict-phone-input-valid-background-size;
+            }
+        }
     }
 
     &__error {

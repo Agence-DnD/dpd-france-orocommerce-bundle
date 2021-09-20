@@ -21,6 +21,10 @@ define(function(require) {
             predict: {
                 phoneSelector: '[name="predict_phone"]',
                 errorSelector: '[data-error]'
+            },
+            hiddenInputs: {
+                deliveryPhone: '[name*="delivery_phone"]',
+                relayId: '[name*="dpd_fr_relay_id"]'
             }
         },
 
@@ -65,7 +69,8 @@ define(function(require) {
             this.$el.html($el);
             this.$predict = this.$el.find(this.options.predictSelector);
             this.$pickup = this.$el.find(this.options.pickupSelector);
-            this._validatePhone();
+
+            this.$predict && this._validatePhone();
         },
 
         /**
@@ -88,20 +93,25 @@ define(function(require) {
          * @private
          */
         _validatePhone: function() {
-            const self = this;
-            const error = this.$predict.find(this.options.predict.errorSelector);
+            const error = this.$predict.find(this.options.predict.errorSelector),
+                  $inputPhone = this.$predict.find(this.options.predict.phoneSelector),
+                  hiddenValue = $(this.options.hiddenInputs.deliveryPhone).val();
 
-            self.$predict.find(self.options.predict.phoneSelector).on('keyup', (e) => {
+            $inputPhone.on('keyup', (e) => {
                 const input = e.target,
+                      $input = $(input),
                       value = input.value,
                       regex = /(0|\+33|0033)[6-7][0-9]{8}/g;
 
                 if (value.match(regex) && value.length === 10) {
                     error.hide();
-                    input.removeClass('error');
+                    $input.removeClass('error')
+                    $input.addClass('valid');
+                    this._setDeliveryPhone(value);
                 } else {
                     error.show();
-                    input.addClass('error');
+                    $input.removeClass('valid');
+                    $input.addClass('error');
                 }
             })
         },
@@ -119,6 +129,17 @@ define(function(require) {
                                    .addClass('active')
                                    .siblings()
                                    .removeClass('active');
+        },
+
+        /**
+         *
+         * Set delivery phone value
+         * @param number
+         * @private
+         */
+        _setDeliveryPhone: function(number) {
+            const $input = $(this.options.hiddenInputs.deliveryPhone);
+            $input.val(number);
         }
     });
 
