@@ -56,7 +56,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
      *
      * @var string TARGET_FOLDER
      */
-    public const TARGET_FOLDER = '/smash/';
+    public const TARGET_FOLDER = '/export/';
     /**
      * The local FS sub folder for the files successfully exported to station
      *
@@ -266,6 +266,9 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
                 )
             );
 
+            if (!$this->filesystem->exists($this->getStationFtpUrl(self::TARGET_FOLDER))) {
+                $this->filesystem->mkdir($this->getStationFtpUrl(self::TARGET_FOLDER));
+            }
             $this->filesystem->copy(
                 self::LOCAL_FOLDER . $fileName,
                  $this->getStationFtpUrl(self::TARGET_FOLDER . $fileName)
@@ -291,7 +294,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     }
 
     /**
-     * Description getFtpUrl function
+     * Returns the FTP url for the target file
      *
      * @param string $targetPath
      *
@@ -316,7 +319,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     }
 
     /**
-     * Description getPackages function
+     * Gets the different packages needed to ship the order
      *
      * @param Order           $order
      * @param ShippingService $shippingService
