@@ -22,6 +22,13 @@ define(function(require) {
                 phoneSelector: '[name="predict_phone"]',
                 errorSelector: '[data-error]'
             },
+            filledInputs: {
+                zipCode: '#dpd_fr_shipping_address_zipcode',
+                addressCity: '#dpd_fr_shipping_address_city',
+                addressStreet: '#dpd_fr_shipping_address_street',
+                addressPhone: '#dpd_fr_shipping_address_phone',
+                googleMapsApi: '#dpd_fr_google_maps_api_key'
+            },
             hiddenInputs: {
                 deliveryPhone: '[name*="delivery_phone"]',
                 relayId: '[name*="dpd_fr_relay_id"]'
@@ -95,9 +102,9 @@ define(function(require) {
         _validatePhone: function() {
             const error = this.$predict.find(this.options.predict.errorSelector),
                   $inputPhone = this.$predict.find(this.options.predict.phoneSelector),
-                  hiddenValue = $(this.options.hiddenInputs.deliveryPhone).val();
+                  filledPhoneValue = $(this.options.filledInputs.addressPhone).val();
 
-            $inputPhone.on('keyup', (e) => {
+            $inputPhone.on('keyup change', (e) => {
                 const input = e.target,
                       $input = $(input),
                       value = input.value,
@@ -105,15 +112,16 @@ define(function(require) {
 
                 if (value.match(regex) && value.length === 10) {
                     error.hide();
-                    $input.removeClass('error')
-                    $input.addClass('valid');
+                    $input.addClass('valid').removeClass('error');
                     this._setDeliveryPhone(value);
                 } else {
                     error.show();
-                    $input.removeClass('valid');
-                    $input.addClass('error');
+                    $input.addClass('error').removeClass('valid');
                 }
-            })
+            });
+
+            filledPhoneValue && $inputPhone.val(filledPhoneValue);
+            $inputPhone.trigger('change');
         },
 
         /**

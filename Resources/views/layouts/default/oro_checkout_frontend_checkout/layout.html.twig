@@ -1,3 +1,13 @@
+{% block _shipping_methods_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-options': {
+            view: 'dnddpdfranceshipping/js/app/views/shipping-methods-view'
+        },
+    }) %}
+
+    {{ parent_block_widget(block, {attr: attr}) }}
+{% endblock %}
+
 {% block _shipping_methods_template_methods_widget %}
     <span class="label label--full">{{ 'oro.shipping.methods.select_method'|trans }}<sup class="checkout-form__asterix" aria-hidden="true">*</sup></span>
     <% _.each(methods, function(method, key) { %>
