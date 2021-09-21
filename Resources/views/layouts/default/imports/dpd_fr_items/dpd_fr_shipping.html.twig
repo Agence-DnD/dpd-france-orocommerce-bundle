@@ -11,6 +11,7 @@
         {% set city = checkout.shippingAddress.city %}
         {% set street = checkout.shippingAddress.street %}
         {% set phone = checkout.shippingAddress.phone %}
+        {% set google_maps_api_key = mapsApiKey %}
     {% endif %}
     <input type='hidden' value="{{ postalCode }}" id="dpd_fr_shipping_address_zipcode"/>
     <input type='hidden' value="{{ city }}" id="dpd_fr_shipping_address_city"/>

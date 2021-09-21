@@ -35,12 +35,23 @@ class IntegrationSettingsProvider
         $this->settingsProvider = $settingsProvider;
     }
 
-    public function getData(): ParameterBag
+    /**
+     * Returns the DPD FR integration settings
+     *
+     * @return ParameterBag
+     */
+    public function getSettings(): ParameterBag
     {
-        $settings = $this->settingsProvider->getSettings();
+        return $this->settingsProvider->getSettings();
+    }
 
-        dump($settings);
-
-        return $settings;
+    /**
+     * Returns google maps api key
+     *
+     * @return mixed
+     */
+    public function getMapsApiKey(): string
+    {
+        return $this->getSettings()->get('google_maps_api_key') ?? '';
     }
 }

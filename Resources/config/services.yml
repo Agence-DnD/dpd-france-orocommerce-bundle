@@ -116,7 +116,7 @@ services:
         public: false
 
     dnd_dpd_france_shipping.layout.data_provider.integration_settings:
-        class: 'Dnd\Bundle\DpdFranceShippingBundle\Layout\DataProvider\IntegrationSettingsProvider'
+        class: Dnd\Bundle\DpdFranceShippingBundle\Layout\DataProvider\IntegrationSettingsProvider
         arguments:
             - '@dnd_dpd_france_shipping.provider.settings'
         tags:
