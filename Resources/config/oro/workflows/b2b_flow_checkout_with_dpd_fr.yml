@@ -654,6 +654,7 @@ workflows:
                                         NotBlank: null
                         # @ADD DND START
                         delivery_phone:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options: null
                         dpd_fr_relay_id:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType

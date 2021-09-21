@@ -114,3 +114,10 @@ services:
     dnd_dpd_france_shipping.factory.dpd_shipping_package_options:
         class: Dnd\Bundle\DpdFranceShippingBundle\Factory\DpdShippingPackageOptionsFactory
         public: false
+
+    dnd_dpd_france_shipping.layout.data_provider.integration_settings:
+        class: 'Dnd\Bundle\DpdFranceShippingBundle\Layout\DataProvider\IntegrationSettingsProvider'
+        arguments:
+            - '@dnd_dpd_france_shipping.provider.settings'
+        tags:
+            - { name: layout.data_provider, alias: dnd_dpd_france_shipping_integration_settings }

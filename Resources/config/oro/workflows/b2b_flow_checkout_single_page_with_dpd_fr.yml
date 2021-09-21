@@ -1222,8 +1222,6 @@ workflows:
                         dpd_fr_relay_id:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options: null
-                        dpd_fr_zipcode:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                         # @ADD DND END
                         payment_method:
                             options: null
@@ -1465,12 +1463,12 @@ workflows:
                                 constraints:
                                     -
                                         NotBlank: null
-                        #SMASH
+                        # @ADD DND START
                         delivery_phone:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                         dpd_fr_relay_id:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                        #SMASH
+                        # @ADD DND END
                         payment_method:
                             options: null
                         payment_validate:
@@ -1598,11 +1596,6 @@ workflows:
                 property_path: checkout.dpd_fr_relay_id
                 type: null
                 options: {  }
-            dpd_fr_zipcode:
-                type: string
-                property_path: null
-                options:
-                    virtual: true
             # @ADD DND END
             billing_address_has_shipping:
                 type: boolean
