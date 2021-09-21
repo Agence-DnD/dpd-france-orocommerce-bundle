@@ -5,10 +5,15 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Provider;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PudoException;
+use SimpleXMLElement;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 /**
  * Class PudoProvider
@@ -22,11 +27,17 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class PudoProvider
 {
     /**
+     * MyPUDO webservice endpoint to retrieve PUDO details
+     *
+     * @var string ENDPOINT_DETAILS
+     */
+    public const ENDPOINT_DETAILS = '/mypudo/mypudo.asmx/GetPudoDetails';
+    /**
      * MyPUDO webservice endpoint to retrieve PUDO list
      *
-     * @var string ENDPOINT
+     * @var string ENDPOINT_LIST
      */
-    public const ENDPOINT = '/mypudo/mypudo.asmx/GetPudoList';
+    public const ENDPOINT_LIST = '/mypudo/mypudo.asmx/GetPudoList';
     /**
      * MyPUDO webservice host URL
      *
@@ -77,14 +88,21 @@ class PudoProvider
     /**
      * Description getUrl function
      *
+     * @param string|null $mode
+     *
      * @return string
      */
-    private static function getUrl(): string
+    private static function getUrl(?string $mode = 'list'): string
     {
+        $endpoint = self::ENDPOINT_LIST;
+        if ($mode === 'details') {
+            $endpoint = self::ENDPOINT_DETAILS;
+        }
+
         return implode('', [
             'https://',
             self::HOST_URL,
-            self::ENDPOINT,
+            $endpoint,
         ]);
     }
 
@@ -121,7 +139,7 @@ class PudoProvider
     }
 
     /**
-     * Description getPudoList function
+     * Fetches the list of relay points for a given set of parameters
      *
      * @param string      $checkoutId
      * @param string|null $city
@@ -146,6 +164,25 @@ class PudoProvider
             'timeout'      => self::TIMEOUT,
         ]);
 
+        return $this->handleResponse($response);
+    }
+
+    /**
+     * Handles WS Response, parses it in case of success, throws an error in case of failure
+     *
+     * @param ResponseInterface $response
+     * @param bool              $parseXML
+     *
+     * @return mixed[]|SimpleXMLElement
+     * @throws PudoException
+     * @throws TransportExceptionInterface
+     * @throws \JsonException
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     */
+    private function handleResponse(ResponseInterface $response, bool $parseXML = true)
+    {
         if (Response::HTTP_OK !== $response->getStatusCode()) {
             throw new PudoException(
                 sprintf(
@@ -156,7 +193,37 @@ class PudoProvider
             );
         }
 
-        return $this->parseXML($response->getContent());
+        return $parseXML ? $this->parseXML($response->getContent()) : simplexml_load_string($response->getContent());
+    }
+
+    /**
+     * Fetches the details for a given pudo
+     *
+     * @param string $pudoID
+     *
+     * @return SimpleXMLElement
+     * @throws PudoException
+     * @throws TransportExceptionInterface
+     * @throws \JsonException
+     */
+    public function getPudoDetails(string $pudoID): SimpleXMLElement
+    {
+        /** @var Response $response */
+        $response = $this->client->request(Request::METHOD_GET, self::getUrl('details'), [
+            'http_version' => 1.1,
+            'headers'      => [
+                'Content-Type' => "application/x-www-form-urlencoded",
+
+            ],
+            'query' => [
+                'pudo_id' => $pudoID,
+                'carrier' => self::CARRIER,
+                'key'     => self::SECURITY_KEY,
+            ],
+            'timeout'      => self::TIMEOUT,
+        ]);
+
+        return $this->handleResponse($response, false);
     }
 
     /**

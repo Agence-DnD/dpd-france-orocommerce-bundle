@@ -26,6 +26,8 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 class RelayController extends AbstractController
 {
     /**
+     * Returns a list of nearby pudos
+     *
      * @Route("/relays", name="dpd_france_relay_list", methods={"GET", "POST"})
      *
      * @param Request      $request
@@ -54,6 +56,40 @@ class RelayController extends AbstractController
             /** @var mixed[] $response */
             $response = [
                 'relays' => $pudoProvider->getPudoList($checkoutId, $city, $postalCode, $address),
+            ];
+            /** @var int $status */
+            $status   = Response::HTTP_OK;
+        } catch (\InvalidArgumentException $e) {
+            $response = [
+                'error' => $e->getMessage(),
+            ];
+            $status   = Response::HTTP_BAD_REQUEST;
+        } catch (TransportExceptionInterface | \Exception $e) {
+            $response = [
+                'error' => $e->getMessage(),
+            ];
+            $status   = Response::HTTP_INTERNAL_SERVER_ERROR;
+        }
+
+        return new JsonResponse($response, $status);
+    }
+
+    /**
+     * Returns all them details about a pudo
+     *
+     * @Route("/relay/{pudoId}", name="dpd_france_relay_details", methods={"GET"})
+     *
+     * @param string          $pudoId
+     * @param PudoProvider $pudoProvider
+     *
+     * @return JsonResponse
+     */
+    public function detailsAction(string $pudoId, PudoProvider $pudoProvider): JsonResponse
+    {
+        try {
+            /** @var mixed[] $response */
+            $response = [
+                'details' => $pudoProvider->getPudoDetails($pudoId),
             ];
             /** @var int $status */
             $status   = Response::HTTP_OK;

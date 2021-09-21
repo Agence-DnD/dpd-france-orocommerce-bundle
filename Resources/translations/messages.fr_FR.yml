@@ -35,6 +35,9 @@ dnd_dpd_france_shipping:
             label: DPD France
         transport:
             label: DPD France
+    pudo:
+        address.label: Addresse
+        name.label: Point Relais
     transport:
         classic_method_name:
             label: Label service DPD Classic

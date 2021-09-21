@@ -121,3 +121,10 @@ services:
             - '@dnd_dpd_france_shipping.provider.settings'
         tags:
             - { name: layout.data_provider, alias: dnd_dpd_france_shipping_integration_settings }
+
+    dnd_dpd_france_shipping.layout.data_provider.order_details:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Layout\DataProvider\OrderDetailsProvider
+        arguments:
+            - '@Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider'
+        tags:
+            - { name: layout.data_provider, alias: dnd_dpd_france_shipping_order_details }

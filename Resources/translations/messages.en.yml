@@ -35,6 +35,9 @@ dnd_dpd_france_shipping:
             label: DPD France
         transport:
             label: DPD France
+    pudo:
+        address.label: Address
+        name.label: Pickup point
     transport:
         classic_method_name:
             label: Label DPD Classic service
