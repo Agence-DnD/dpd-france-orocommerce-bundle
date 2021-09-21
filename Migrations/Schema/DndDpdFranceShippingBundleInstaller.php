@@ -8,9 +8,6 @@ use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_0\DndDpdFranceShippi
 use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_1\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_1;
 use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_2\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_2;
 use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_3\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_3;
-use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_4\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_4;
-use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_5\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_5;
-use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_6\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_6;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
@@ -32,7 +29,7 @@ class DndDpdFranceShippingBundleInstaller implements Installation
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_6';
+        return 'v1_3';
     }
 
     /**
@@ -50,10 +47,7 @@ class DndDpdFranceShippingBundleInstaller implements Installation
         DndDpdFranceShippingBundle_v1_2::createDndDpdFrShippingServiceTable($schema);
         DndDpdFranceShippingBundle_v1_2::createDndDpdFrTransportShipServiceTable($schema);
         DndDpdFranceShippingBundle_v1_2::addDndDpdFrTransportShipServiceForeignKeys($schema);
-        DndDpdFranceShippingBundle_v1_3::updateDndDpdFrShippingServiceTable($schema);
-        DndDpdFranceShippingBundle_v1_4::updateOroOrderTable($schema);
-        DndDpdFranceShippingBundle_v1_5::updateOroOrderTable($schema);
-        DndDpdFranceShippingBundle_v1_5::updateOroCheckoutTable($schema);
-        DndDpdFranceShippingBundle_v1_6::addGoogleMapsApiKeyTransportColumn($schema);
+        DndDpdFranceShippingBundle_v1_3::updateOroOrderTable($schema);
+        DndDpdFranceShippingBundle_v1_3::updateOroCheckoutTable($schema);
     }
 }

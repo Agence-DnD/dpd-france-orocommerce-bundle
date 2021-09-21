@@ -76,6 +76,7 @@ class DndDpdFranceShippingBundle implements Migration
         $transportTable->addColumn('dpd_fr_agency_code', Types::STRING, ['notnull' => false, 'length' => 255]);
         $transportTable->addColumn('dpd_fr_contract_number', Types::STRING, ['notnull' => false, 'length' => 255]);
         $transportTable->addColumn('dpd_fr_max_qty', Types::INTEGER, ['notnull' => false]);
+        $transportTable->addColumn('dpd_fr_google_maps_api_key', Types::STRING, ['notnull' => false, 'length' => 255]);
     }
 
     /**
