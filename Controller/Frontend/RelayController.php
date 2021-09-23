@@ -58,7 +58,7 @@ class RelayController extends AbstractController
                 'relays' => $pudoProvider->getPudoList($checkoutId, $city, $postalCode, $address),
             ];
             /** @var int $status */
-            $status   = Response::HTTP_OK;
+            $status = Response::HTTP_OK;
         } catch (\InvalidArgumentException $e) {
             $response = [
                 'error' => $e->getMessage(),
@@ -79,7 +79,7 @@ class RelayController extends AbstractController
      *
      * @Route("/relay/{pudoId}", name="dpd_france_relay_details", methods={"GET"})
      *
-     * @param string          $pudoId
+     * @param string       $pudoId
      * @param PudoProvider $pudoProvider
      *
      * @return JsonResponse
@@ -92,7 +92,7 @@ class RelayController extends AbstractController
                 'details' => $pudoProvider->getPudoDetails($pudoId),
             ];
             /** @var int $status */
-            $status   = Response::HTTP_OK;
+            $status = Response::HTTP_OK;
         } catch (\InvalidArgumentException $e) {
             $response = [
                 'error' => $e->getMessage(),

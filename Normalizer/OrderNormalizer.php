@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Normalizer;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\NormalizerException;
-use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -138,7 +137,7 @@ class OrderNormalizer implements NormalizerInterface
      * @param mixed[] $context
      *
      * @return mixed[]
-     * @throws NormalizerException|PackageException
+     * @throws NormalizerException
      */
     public function normalize($order, $format = null, array $context = []): array
     {
@@ -150,7 +149,7 @@ class OrderNormalizer implements NormalizerInterface
         foreach ($context['packages'] as $package) {
             $this->packageCount++;
             $arraysToMerge = [
-                $this->getGeneralFields($order, $package, $context['settings']),
+                $this->getGeneralFields($order, $package),
                 $this->getRecipientFields($order),
                 $this->getSenderFields($order),
                 $this->getShipmentFields($order, $package, $context['settings']),
@@ -177,8 +176,7 @@ class OrderNormalizer implements NormalizerInterface
      */
     private function getGeneralFields(
         Order $order,
-        DpdShippingPackageOptionsInterface $package,
-        ParameterBag $settings
+        DpdShippingPackageOptionsInterface $package
     ): array {
         return [
             $this->getElement(

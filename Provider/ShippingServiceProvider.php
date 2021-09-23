@@ -48,7 +48,7 @@ class ShippingServiceProvider
         DoctrineHelper $doctrineHelper,
         SettingsProvider $settingsProvider
     ) {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->doctrineHelper   = $doctrineHelper;
         $this->settingsProvider = $settingsProvider;
     }
 

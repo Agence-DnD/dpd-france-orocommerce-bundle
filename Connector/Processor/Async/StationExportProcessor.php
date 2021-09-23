@@ -271,7 +271,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
             }
             $this->filesystem->copy(
                 self::LOCAL_FOLDER . $fileName,
-                 $this->getStationFtpUrl(self::TARGET_FOLDER . $fileName)
+                $this->getStationFtpUrl(self::TARGET_FOLDER . $fileName)
             );
 
             $this->filesystem->copy(

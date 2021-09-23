@@ -66,7 +66,7 @@ class StationExportProvider
         $this->logger           = $logger;
         $this->producer         = $producer;
         $this->settingsProvider = $settingsProvider;
-        $this->translator = $translator;
+        $this->translator       = $translator;
     }
 
     /**
@@ -83,15 +83,21 @@ class StationExportProvider
         /** @var mixed[] $result */
         $result = [
             'successful' => false,
-            'error' => [],
+            'error'      => [],
         ];
         try {
             if (!$this->isOrderExportable($order, $forced)) {
-                $result['error'] = $this->translator->trans("dnd_dpd_france_shipping.action.message.order.station_export.error.requirements");
+                $result['error'] = $this->translator->trans(
+                    "dnd_dpd_france_shipping.action.message.order.station_export.error.requirements"
+                );
+
                 return $result;
             }
         } catch (\InvalidArgumentException $e) {
-            $result['error'] = $this->translator->trans('dnd_dpd_france_shipping.action.message.order.station_export.error.missing_integration');
+            $result['error'] = $this->translator->trans(
+                'dnd_dpd_france_shipping.action.message.order.station_export.error.missing_integration'
+            );
+
             return $result;
         }
         /** @var string $topic */
@@ -101,6 +107,7 @@ class StationExportProvider
         }
         $this->producer->send($topic, JSON::encode(['orderId' => $order->getId()]));
         $result['successful'] = true;
+
         return $result;
     }
 
@@ -114,10 +121,9 @@ class StationExportProvider
      */
     public function isOrderExportable(Order $order, bool $forced): bool
     {
-        if (
-            $order->getSynchronizedDpd() === null &&
-            DpdFranceShippingMethodProvider::isDpdFrShippingMethod($order->getShippingMethod())
-        ) {
+        if ($order->getSynchronizedDpd() === null && DpdFranceShippingMethodProvider::isDpdFrShippingMethod(
+                $order->getShippingMethod()
+            )) {
             if ($forced) {
                 return true;
             }

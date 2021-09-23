@@ -73,7 +73,7 @@ class ShippingMethodsListener
          * @var string  $shippingMethodName
          * @var mixed[] $methodTypes
          */
-        foreach ($methodCollection->getAllMethodsTypesViews() as $shippingMethodName => &$methodTypes) {
+        foreach ($methodCollection->getAllMethodsTypesViews() as $shippingMethodName => $methodTypes) {
             if (DpdFranceShippingMethodProvider::isDpdFrShippingMethod($shippingMethodName)) {
                 /**
                  * @var string  $methodTypeId

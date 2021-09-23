@@ -150,10 +150,13 @@ class PudoProvider
      * @throws PudoException
      * @throws TransportExceptionInterface
      * @throws \JsonException
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
      */
     public function getPudoList(string $checkoutId, ?string $city, ?string $postalCode, ?string $address): array
     {
-        /** @var Response $response */
+        /** @var ResponseInterface $response */
         $response = $this->client->request(Request::METHOD_POST, self::getUrl(), [
             'http_version' => 1.1,
             'headers'      => [
@@ -204,18 +207,21 @@ class PudoProvider
      * @return SimpleXMLElement
      * @throws PudoException
      * @throws TransportExceptionInterface
-     * @throws \JsonException
+     * @throws JsonException
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
      */
     public function getPudoDetails(string $pudoID): SimpleXMLElement
     {
-        /** @var Response $response */
+        /** @var ResponseInterface $response */
         $response = $this->client->request(Request::METHOD_GET, self::getUrl('details'), [
             'http_version' => 1.1,
             'headers'      => [
                 'Content-Type' => "application/x-www-form-urlencoded",
 
             ],
-            'query' => [
+            'query'        => [
                 'pudo_id' => $pudoID,
                 'carrier' => self::CARRIER,
                 'key'     => self::SECURITY_KEY,
