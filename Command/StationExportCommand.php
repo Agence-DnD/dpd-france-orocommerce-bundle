@@ -13,6 +13,10 @@ use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Dnd\Bundle\DpdFranceShippingBundle\Normalizer\OrderNormalizer;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\SettingsProvider;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Doctrine\ORM\TransactionRequiredException;
 use http\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
@@ -129,7 +133,8 @@ class StationExportCommand extends Command
                 'id',
                 InputArgument::REQUIRED,
                 'Order ID'
-            )->setHelp(
+            )
+            ->setHelp(
                 <<<'HELP'
 The <info>%command.name%</info> command helps you test Station export.
 
@@ -140,27 +145,40 @@ HELP
     }
 
     /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @noinspection PhpMissingParentCallCommonInspection
-     * @throws \Doctrine\DBAL\Exception
+     * Description execute function
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @return int|void
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** @var mixed $orderId */
         $orderId = $input->getArgument('id');
 
+        /** @var EntityManager $orderManager */
         $orderManager = $this->doctrineHelper->getEntityManagerForClass(Order::class);
-        $order        = $orderManager->find(Order::class, $orderId);
+
+        try {
+            /** @var Order $order */
+            $order = $orderManager->find(Order::class, (string)$orderId);
+        } catch (OptimisticLockException | TransactionRequiredException | ORMException $e) {
+            $output->writeln('Could not load requested order');
+            $output->write($e->getMessage());
+        }
 
         if (!$order instanceof Order) {
             $output->writeln('Could not find requested order');
-            return;
+
+            return 0;
         }
         /** @var ShippingService $shippingService */
         $shippingService = $this->shippingServiceProvider->getServiceForMethodTypeIdentifier(
             $order->getShippingMethodType()
         );
-        /** @var array $data */
         try {
+            /** @var string[] $data */
             $data = $this->normalizer->normalize($order, 'dpd_fr_station', [
                 'shipping_service' => $shippingService,
                 'settings'         => $this->getSettings(),
@@ -169,11 +187,14 @@ HELP
         } catch (NormalizerException | ExceptionInterface | PackageException $e) {
             $output->writeln('Something wrong happened with the order.');
             $output->write($e->getMessage());
-            return;
+
+            return 0;
         }
+        /** @var Table $table */
         $table = new Table($output);
         $table->setHeaders(['code', 'position', 'length', 'value'])->setRows($data);
         $table->render();
+        return 0;
     }
 
     /**
