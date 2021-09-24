@@ -190,6 +190,13 @@ HELP
 
             return 0;
         }
+
+        $output->writeln(
+            sprintf('The order should be sent in %d package%s.',
+                count($this->packages),
+                count($this->packages) > 1 ? 's' : ''
+            )
+        );
         /** @var Table $table */
         $table = new Table($output);
         $table->setHeaders(['code', 'position', 'length', 'value'])->setRows($data);
