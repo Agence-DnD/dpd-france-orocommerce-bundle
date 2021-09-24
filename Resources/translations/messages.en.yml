@@ -1,8 +1,25 @@
 oro:
+    order:
+        dpd_fr_relay_id:
+            label: DPD FR Relay ID
+        delivery_phone:
+            label: Delivery phone
+        synchronized_dpd:
+            label: DPD Station Sync. date
     product:
         max_qty_for_dpd_fr.label: DPD France Max qty
         max_qty_for_dpd_fr.description: Max qty allowed of this product that can be shipped with DPDFrance
 dnd_dpd_france_shipping:
+    action:
+        order:
+            station_export: DPD Station Export
+        message:
+            order:
+                station_export:
+                    success: 'Order #%id% has been queued for DPD Station export.'
+                    error:
+                        requirements: This order doesn't meet DPD export requirements
+                        missing_integration: No integration exists for DPD France
     method:
         price.label: Price
     form:
@@ -18,13 +35,32 @@ dnd_dpd_france_shipping:
             label: DPD France
         transport:
             label: DPD France
+    pudo:
+        address.label: Address
+        name.label: Pickup point
     transport:
+        classic_method_name:
+            label: Label DPD Classic service
+        predict_method_name:
+            label: Label DPD Predict service
+        pickup_method_name:
+            label: Label DPD Relay service
+        classic_method_description:
+            label: Description DPD Classic service
+        predict_method_description:
+            label: Description DPD Predict service
+        pickup_method_description:
+            label: Description DPD Relay service
         agency_code:
             label: Agency code
+        google_maps_api_key:
+            label: Google Maps API key
+            tooltip: Required to display relays on a map
         contract_number:
             label: Contract number
         max_qty:
             label: Max quantity
+            tooltip: Can be overriden by setting a shipping service specific value in dnd_dpd_fr_shipping_service table
         order_statuses_sent_to_station:
             label: Order statuses sent to station
         station_ftp_host:

@@ -53,7 +53,7 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
      *
      * @var string TRACKING_URL_PATTERN
      */
-    public const TRACKING_URL_PATTERN = '%s://www.dpd.fr/tracer_%d_%d%d';
+    public const TRACKING_URL_PATTERN = '%s://www.dpd.fr/tracer_%s_%d%d';
     /**
      * Description $icon field
      *
@@ -189,7 +189,7 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
         /** @var ShippingService $service */
         $service = $this->transportSettings->getShippingService($this->getIdentifier());
 
-        return $service->getIcon();
+        return $service !== null ? $service->getIcon() : '';
     }
 
     /**
@@ -220,7 +220,7 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
         $numbers = explode('_', $number);
 
         if (count($numbers) === 3) {
-            return sprintf(self::TRACKING_URL_PATTERN, 'https', (int)$numbers[0], (int)$numbers[1], (int)$numbers[2]);
+            return sprintf(self::TRACKING_URL_PATTERN, 'https', $numbers[0], (int)$numbers[1], (int)$numbers[2]);
         }
 
         return null;

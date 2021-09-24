@@ -72,11 +72,19 @@ class ShippingService
     /**
      * The maximum amount of packages
      *
-     * @ORM\Column(name="parcel_max_amount", type="float")
+     * @ORM\Column(name="parcel_max_amount", type="integer", nullable=true)
      *
-     * @var float $parcelMaxAmount
+     * @var int|null $parcelMaxAmount
      */
-    protected float $parcelMaxAmount;
+    protected ?int $parcelMaxAmount = null;
+    /**
+     * The maximum cumulated value for every package
+     *
+     * @ORM\Column(name="parcel_max_value", type="float")
+     *
+     * @var float $parcelMaxValue
+     */
+    protected float $parcelMaxValue;
 
     /**
      * @return string
@@ -209,9 +217,9 @@ class ShippingService
     /**
      * Description getParcelMaxAmount function
      *
-     * @return float
+     * @return int|null
      */
-    public function getParcelMaxAmount(): float
+    public function getParcelMaxAmount(): ?int
     {
         return $this->parcelMaxAmount;
     }
@@ -219,13 +227,35 @@ class ShippingService
     /**
      * Description setParcelMaxAmount function
      *
-     * @param float $parcelMaxAmount
+     * @param int|null $parcelMaxAmount
      *
      * @return void
      */
-    public function setParcelMaxAmount(float $parcelMaxAmount): void
+    public function setParcelMaxAmount(?int $parcelMaxAmount): void
     {
         $this->parcelMaxAmount = $parcelMaxAmount;
+    }
+
+    /**
+     * Description getParcelMaxValue function
+     *
+     * @return float|null
+     */
+    public function getParcelMaxValue(): ?float
+    {
+        return $this->parcelMaxValue;
+    }
+
+    /**
+     * Description setParcelMaxValue function
+     *
+     * @param float $parcelMaxValue
+     *
+     * @return void
+     */
+    public function setParcelMaxValue(float $parcelMaxValue): void
+    {
+        $this->parcelMaxValue = $parcelMaxValue;
     }
 
     /**
@@ -235,6 +265,6 @@ class ShippingService
      */
     public function __toString()
     {
-        return (string)$this->getLabel();
+        return $this->getLabel();
     }
 }

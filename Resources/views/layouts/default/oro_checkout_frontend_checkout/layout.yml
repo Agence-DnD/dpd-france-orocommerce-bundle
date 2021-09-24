@@ -1,0 +1,8 @@
+layout:
+    imports:
+        -   id: dpd_fr_items
+            namespace: checkout
+            root: shipping_methods
+    actions:
+        - '@setBlockTheme':
+            themes: 'DndDpdFranceShippingBundle:layouts:default/oro_checkout_frontend_checkout/layout.html.twig'

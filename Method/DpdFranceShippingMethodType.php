@@ -136,7 +136,7 @@ class DpdFranceShippingMethodType implements ShippingMethodTypeInterface
         /** @var float $methodSurcharge */
         $methodSurcharge = $this->getSurchargeFromOptions($methodOptions);
         /** @var float $typeSurcharge */
-        $typeSurcharge   = $this->getSurchargeFromOptions($typeOptions);
+        $typeSurcharge = $this->getSurchargeFromOptions($typeOptions);
 
         return Price::create($methodSurcharge + $typeSurcharge, $context->getCurrency());
     }

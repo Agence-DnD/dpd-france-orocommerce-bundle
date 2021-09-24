@@ -24,6 +24,34 @@ services:
             - '@dnd_dpd_france_shipping.identifier_generator.method'
             - '@dnd_dpd_france_shipping.factory.type'
 
+    dnd_dpd_france_shipping.provider.settings:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Provider\SettingsProvider
+        autowire: true
+        arguments:
+            $channelRepository: '@oro_integration.repository.channel'
+            $contextMediator : '@oro_integration.provider.connector_context_mediator'
+
+    Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider:
+        autowire: true
+        public: true
+
+    dnd_dpd_france_shipping.provider.shipping_service:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider
+        autowire: true
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@dnd_dpd_france_shipping.provider.settings'
+
+    dnd_dpd_france_shipping.provider.station_export:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Provider\StationExportProvider
+        public: true
+        autowire: true
+        arguments:
+            - '@monolog.logger.dnd_dpd_france_shipping'
+            - '@oro_message_queue.client.message_producer'
+            - '@dnd_dpd_france_shipping.provider.settings'
+            - '@translator'
+
     dnd_dpd_france_shipping.method.provider:
         class: 'Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider'
         arguments:
@@ -48,15 +76,55 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_checkout.provider.shipping_context'
             - '@dnd_dpd_france_shipping.factory.package'
-            - '@logger'
+            - '@monolog.logger.dnd_dpd_france_shipping'
+            - '@dnd_dpd_france_shipping.provider.shipping_service'
 
     dnd_dpd_france_shipping.builder.package:
         class: Dnd\Bundle\DpdFranceShippingBundle\Builder\ShippingPackagesBuilder
         arguments:
-            - '@oro_shipping.factory.shipping_package_options'
+            - '@dnd_dpd_france_shipping.factory.dpd_shipping_package_options'
             - '@oro_shipping.provider.measure_units.conversion'
+            - '@dnd_dpd_france_shipping.provider.settings'
 
     dnd_dpd_france_shipping.factory.package:
         class: Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory
         arguments:
             - '@dnd_dpd_france_shipping.builder.package'
+
+    dnd_dpd_france_shipping.normalizer.order:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Normalizer\OrderNormalizer
+        arguments:
+            - '@oro_shipping.shipping_origin.provider'
+
+    dnd_dpd_france_shipping.processor.async.station_export:
+            class: Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async\StationExportProcessor
+            arguments:
+                - '@oro_entity.doctrine_helper'
+                - '@dnd_dpd_france_shipping.normalizer.order'
+                - '@dnd_dpd_france_shipping.provider.settings'
+                - '@monolog.logger.dnd_dpd_france_shipping'
+                - '@dnd_dpd_france_shipping.provider.shipping_service'
+                - '@oro_order.shipping_line_item.converter_basic'
+                - '@dnd_dpd_france_shipping.factory.package'
+                - "@oro_security.encoder.default"
+            tags:
+                - { name: 'oro_message_queue.client.message_processor', topicName: !php/const Dnd\Bundle\DpdFranceShippingBundle\Async\Topics::SHIPMENT_EXPORT_TO_DPD_STATION }
+                - { name: 'oro_message_queue.client.message_processor', topicName: !php/const Dnd\Bundle\DpdFranceShippingBundle\Async\Topics::SHIPMENT_EXPORT_TO_DPD_STATION_FORCED }
+
+    dnd_dpd_france_shipping.factory.dpd_shipping_package_options:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Factory\DpdShippingPackageOptionsFactory
+        public: false
+
+    dnd_dpd_france_shipping.layout.data_provider.integration_settings:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Layout\DataProvider\IntegrationSettingsProvider
+        arguments:
+            - '@dnd_dpd_france_shipping.provider.settings'
+        tags:
+            - { name: layout.data_provider, alias: dnd_dpd_france_shipping_integration_settings }
+
+    dnd_dpd_france_shipping.layout.data_provider.order_details:
+        class: Dnd\Bundle\DpdFranceShippingBundle\Layout\DataProvider\OrderDetailsProvider
+        arguments:
+            - '@Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider'
+        tags:
+            - { name: layout.data_provider, alias: dnd_dpd_france_shipping_order_details }

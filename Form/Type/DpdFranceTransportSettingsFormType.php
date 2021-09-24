@@ -13,6 +13,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
@@ -96,6 +97,7 @@ class DpdFranceTransportSettingsFormType extends AbstractType
     {
         $this->addStationFields($builder, $options);
         $this->addGeneralFields($builder, $options);
+        $this->addServicesNamesAndDescriptionFields($builder, $options);
     }
 
     /**
@@ -152,6 +154,7 @@ class DpdFranceTransportSettingsFormType extends AbstractType
             'required' => true,
         ])->add('maxQty', IntegerType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.max_qty.label',
+            'tooltip'  => 'dnd_dpd_france_shipping.transport.max_qty.tooltip',
             'required' => true,
         ])->add('shippingServices', EntityType::class, [
             'class'        => ShippingService::class,
@@ -159,6 +162,41 @@ class DpdFranceTransportSettingsFormType extends AbstractType
             'label'        => 'dnd_dpd_france_shipping.integration.settings.shipping_services.label',
             'required'     => true,
             'multiple'     => true,
+        ])->add('googleMapsApiKey', TextType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.google_maps_api_key.label',
+            'tooltip'  => 'dnd_dpd_france_shipping.transport.google_maps_api_key.tooltip',
+            'required' => true,
+        ]);
+    }
+
+    /**
+     * Description addServicesNamesAndDescriptionFields function
+     *
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     *
+     * @return void
+     */
+    private function addServicesNamesAndDescriptionFields(FormBuilderInterface $builder, array $options): void
+    {
+        $builder->add('classicMethodName', TextType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.classic_method_name.label',
+            'required' => true,
+        ])->add('classicMethodDesc', TextareaType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.classic_method_description.label',
+            'required' => true,
+        ])->add('predictMethodName', TextType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.predict_method_name.label',
+            'required' => true,
+        ])->add('predictMethodDesc', TextareaType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.predict_method_description.label',
+            'required' => true,
+        ])->add('pickupMethodName', TextType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.pickup_method_name.label',
+            'required' => true,
+        ])->add('pickupMethodDesc', TextareaType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.pickup_method_description.label',
+            'required' => true,
         ]);
     }
 

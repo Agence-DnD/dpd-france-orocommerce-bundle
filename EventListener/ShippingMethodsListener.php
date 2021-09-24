@@ -6,6 +6,7 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\EventListener;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Condition\ShippableWithDpdFrance;
 use Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider;
+use Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
@@ -28,15 +29,25 @@ class ShippingMethodsListener
      * @var ShippableWithDpdFrance $shippableWithDpdFranceCondition
      */
     protected ShippableWithDpdFrance $shippableWithDpdFranceCondition;
+    /**
+     * Description $shippingServiceProvider field
+     *
+     * @var ShippingServiceProvider $shippingServiceProvider
+     */
+    protected ShippingServiceProvider $shippingServiceProvider;
 
     /**
      * ShippingMethodsListener constructor
      *
-     * @param ShippableWithDpdFrance $shippableWithDpdFranceCondition
+     * @param ShippableWithDpdFrance  $shippableWithDpdFranceCondition
+     * @param ShippingServiceProvider $shippingServiceProvider
      */
-    public function __construct(ShippableWithDpdFrance $shippableWithDpdFranceCondition)
-    {
+    public function __construct(
+        ShippableWithDpdFrance $shippableWithDpdFranceCondition,
+        ShippingServiceProvider $shippingServiceProvider
+    ) {
         $this->shippableWithDpdFranceCondition = $shippableWithDpdFranceCondition;
+        $this->shippingServiceProvider         = $shippingServiceProvider;
     }
 
     /**
@@ -57,6 +68,7 @@ class ShippingMethodsListener
         if (!$sourceEntity instanceof Checkout || $sourceEntity->getSourceEntity() instanceof QuoteDemand) {
             return;
         }
+
         /**
          * @var string  $shippingMethodName
          * @var mixed[] $methodTypes
@@ -68,6 +80,22 @@ class ShippingMethodsListener
                  * @var mixed[] $methodTypesView
                  */
                 foreach ($methodTypes as $methodTypeId => $methodTypesView) {
+                    /** @var mixed[] $methodTypeView */
+                    $methodTypeView                = $methodCollection->getMethodTypeView(
+                        $shippingMethodName,
+                        $methodTypeId
+                    );
+                    $methodTypeView['logo']        = $this->shippingServiceProvider->getShippingServiceLogo(
+                        $methodTypeId
+                    );
+                    $methodTypeView['description'] = $this->shippingServiceProvider->getShippingServiceDesc(
+                        $methodTypeId
+                    );
+                    $methodTypeView['name']        = $this->shippingServiceProvider->getShippingServiceLabel(
+                        $methodTypeId
+                    );
+                    $methodCollection->removeMethodTypeView($shippingMethodName, $methodTypeId);
+                    $methodCollection->addMethodTypeView($shippingMethodName, $methodTypeId, $methodTypeView);
                     if ($this->shippableWithDpdFranceCondition->isValid($methodTypesView, $sourceEntity) !== true) {
                         $methodCollection->removeMethodTypeView($shippingMethodName, $methodTypeId);
                     }

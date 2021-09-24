@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Method\Identifier;
 
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 
 /**
  * Class DpdFranceMethodTypeIdentifierGenerator

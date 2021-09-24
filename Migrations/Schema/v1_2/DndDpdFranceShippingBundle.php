@@ -7,6 +7,7 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_2;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -38,7 +39,7 @@ class DndDpdFranceShippingBundle implements Migration
     }
 
     /**
-     * Description createDndDpdFrShippingServiceTable function
+     * Create a table to store DPD FR service settings
      *
      * @param Schema $schema
      *
@@ -52,12 +53,17 @@ class DndDpdFranceShippingBundle implements Migration
         $table->addColumn('code', 'string', ['notnull' => true, 'length' => 30]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('icon', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('parcel_max_perimeter', Types::FLOAT, ['notnull' => false]);
+        $table->addColumn('parcel_max_length', Types::FLOAT, ['notnull' => false]);
+        $table->addColumn('parcel_max_weight', Types::FLOAT, ['notnull' => false]);
+        $table->addColumn('parcel_max_amount', Types::INTEGER, ['notnull' => false]);
+        $table->addColumn('parcel_max_value', Types::FLOAT, ['notnull' => false]);
         $table->setPrimaryKey(['code']);
         $table->addUniqueIndex(['code']);
     }
 
     /**
-     * Description createDndDpdFrTransportShipServiceTable function
+     * Create a table to link dpd fr shipping service and dpd fr transport
      *
      * @param Schema $schema
      *
@@ -73,7 +79,7 @@ class DndDpdFranceShippingBundle implements Migration
     }
 
     /**
-     * Description addDndDpdFrTransportShipServiceForeignKeys function
+     * Adds the foreign keys to the dnd_dpd_fr_transport_ship_service table
      *
      * @param Schema $schema
      *

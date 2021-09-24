@@ -44,6 +44,12 @@ abstract class AbstractShippingServiceFixture extends AbstractFixture
      * @var integer DEFAULT_PARCEL_MAX_AMOUNT
      */
     public const DEFAULT_PARCEL_MAX_AMOUNT = 5;
+    /**
+     * Default value for the parcel max cumulated value
+     *
+     * @var integer DEFAULT_PARCEL_MAX_VALUE
+     */
+    public const DEFAULT_PARCEL_MAX_VALUE = 22000;
 
     /**
      * Description loadShippingServices function
@@ -86,7 +92,10 @@ abstract class AbstractShippingServiceFixture extends AbstractFixture
                 $shippingService['parcel_max_weight'] ?? self::DEFAULT_PARCEL_MAX_WEIGHT
             );
             $entity->setParcelMaxAmount(
-                $shippingService['parcel_max_amount'] ?? self::DEFAULT_PARCEL_MAX_AMOUNT
+                $shippingService['parcel_max_amount'] ?? null
+            );
+            $entity->setParcelMaxValue(
+                $shippingService['parcel_max_value'] ?? self::DEFAULT_PARCEL_MAX_VALUE
             );
             $manager->persist($entity);
 

@@ -1,0 +1,10 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Dnd\Bundle\DpdFranceShippingBundle\Controller\Frontend\RelayController:
+        calls:
+            - [setContainer, ['@Psr\Container\ContainerInterface']]
+        tags:
+            - { name: container.service_arguments }

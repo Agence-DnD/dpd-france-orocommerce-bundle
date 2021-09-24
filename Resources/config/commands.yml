@@ -1,0 +1,11 @@
+services:
+    Dnd\Bundle\DpdFranceShippingBundle\Command\StationExportCommand:
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@dnd_dpd_france_shipping.provider.shipping_service'
+            - '@dnd_dpd_france_shipping.normalizer.order'
+            - '@dnd_dpd_france_shipping.provider.settings'
+            - '@oro_order.shipping_line_item.converter_basic'
+            - '@dnd_dpd_france_shipping.factory.package'
+        tags:
+            - { name: console.command }

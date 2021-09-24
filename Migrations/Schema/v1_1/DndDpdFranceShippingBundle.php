@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection ALL */
 
 declare(strict_types=1);
 
@@ -21,6 +21,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  * @copyright 2004-present Agence Dn'D
  * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
+ * @noinspection SpellCheckingInspection
+ * @noinspection SpellCheckingInspection
  */
 class DndDpdFranceShippingBundle implements Migration
 {
