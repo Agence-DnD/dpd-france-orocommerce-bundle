@@ -292,6 +292,7 @@ class DpdFranceTransportSettings extends Transport
                 'dpd_fr_agency_code'                    => $this->getAgencyCode(),
                 'dpd_fr_contract_number'                => $this->getContractNumber(),
                 'dpd_fr_max_qty'                        => $this->getMaxQty(),
+                'google_maps_api_key'                   => $this->getGoogleMapsApiKey(),
 
                 //METHODS NAME & DESCRIPTION SETTINGS
                 'dpd_fr_classic_method_name'            => $this->getClassicMethodName(),

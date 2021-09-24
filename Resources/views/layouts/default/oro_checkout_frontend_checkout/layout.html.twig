@@ -1,11 +1,45 @@
 {% block _shipping_methods_widget %}
+    {% import 'OroFrontendBundle:layouts/blank:utils.html.twig' as utils %}
+    {% set currentShippingMethod = currentShippingMethod|default(null) %}
+    {% set currentShippingMethodType = currentShippingMethodType|default(null) %}
+
+    {% set shippingMethodsTemplate %}
+        {% spaceless %}
+            {{ block_widget(block) }}
+        {% endspaceless %}
+    {% endset %}
+
     {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
-            view: 'dnddpdfranceshipping/js/app/views/shipping-methods-view'
+            view: 'oroshipping/js/app/views/shipping-methods-view',
+            data: {
+                methods: methods,
+                currentShippingMethod: currentShippingMethod,
+                currentShippingMethodType: currentShippingMethodType
+            },
+            template: utils.underscoreRaw('<%#' ~ shippingMethodsTemplate ~ '#%>')
         },
+        'data-shipping-method-forms': '',
+        'role': 'group',
+        'aria-labelledby': 'shipping-methods-form-label'
     }) %}
 
-    {{ parent_block_widget(block, {attr: attr}) }}
+    <div class="{{ class_prefix }}-form" data-content="shipping_method_form">
+        <div class="grid__row grid__row--offset-none">
+            <div {{ block('block_attributes') }}></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block _shipping_methods_template_widget %}
+    <% if (!_.isEmpty(methods)) { %>
+        {{ block_widget(block) }}
+    <% } else { %>
+        <div class="notification notification--alert" role="alert">
+            <span class="notification__text">{{ 'oro.shipping.methods.no_method'|trans }}</span>
+        </div>
+    <% } %>
 {% endblock %}
 
 {% block _shipping_methods_template_methods_widget %}

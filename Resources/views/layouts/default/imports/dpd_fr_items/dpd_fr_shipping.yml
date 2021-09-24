@@ -10,6 +10,8 @@ layout:
                             checkout: '=data["checkout"]'
                             form: '=data["oro_checkout_single_page_transition_form"].getTransitionFormView(data["workflowItem"])'
                             workflowItem: '=data["workflowItem"]'
+                            vars:
+                                mapsApiKey: '=data["dnd_dpd_france_shipping_integration_settings"].getMapsApiKey()'
 
                 tree:
                     __root:

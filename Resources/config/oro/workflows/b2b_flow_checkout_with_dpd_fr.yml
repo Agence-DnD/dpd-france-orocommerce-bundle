@@ -654,6 +654,7 @@ workflows:
                                         NotBlank: null
                         # @ADD DND START
                         delivery_phone:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options: null
                         dpd_fr_relay_id:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
@@ -1352,6 +1353,7 @@ workflows:
                                             - $consents_available
                                             - true
                             type: warning
+                            message: oro.checkout.workflow.condition.required_consents_should_be_checked.message
                 preconditions:
                     '@equal':
                         - $.result.isConsentsAccepted
