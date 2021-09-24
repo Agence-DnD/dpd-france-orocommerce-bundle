@@ -8,6 +8,8 @@ operations:
         acl_resource: oro_order_update
         button_options:
             icon: fa-cube
+        preconditions:
+            '@equal': [ $internalStatus.id, 'shipped' ]
         actions:
             - '@call_service_method':
                     service: dnd_dpd_france_shipping.provider.station_export
