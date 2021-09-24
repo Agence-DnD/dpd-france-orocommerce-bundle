@@ -834,8 +834,9 @@ class OrderNormalizer implements NormalizerInterface
         $output = '';
         switch ($format) {
             case self::TYPE_NUMERIC:
-                /** @var float $value */ $value = round((float)$value, 2);
-                $output                         = str_pad((string)$value, $length, '0', STR_PAD_LEFT);
+                /** @var float $value */
+                $value  = round((float)$value, 2);
+                $output = str_pad((string)$value, $length, '0', STR_PAD_LEFT);
                 break;
             case self::TYPE_FILLER:
                 $output = str_repeat(' ', $length);

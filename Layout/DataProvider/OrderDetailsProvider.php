@@ -88,7 +88,10 @@ class OrderDetailsProvider
     {
         /** @var SimpleXMLElement|null $pudoObject */
         $pudoObject = $this->getPudoObject($pudoID);
-        return $pudoObject !== null ? $pudoObject->NAME->__toString() ?? '': '';
+        if ($pudoObject === null) {
+            return '';
+        }
+        return $pudoObject->NAME->__toString() ?? '';
     }
 
 

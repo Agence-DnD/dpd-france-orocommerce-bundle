@@ -108,6 +108,12 @@ class DpdFranceTransportSettings extends Transport
      */
     public const DEFAULT_PICKUP_METHOD_DESC = 'Description de la méthode DPD Relais';
     /**
+     * The default value for google maps api key
+     *
+     * @var string DEFAULT_GOOGLE_MAPS_API_KEY
+     */
+    public const DEFAULT_GOOGLE_MAPS_API_KEY = '<your google maps api key>';
+    /**
      * The settings for the DPD France transport
      *
      * @var ParameterBag|null $settings
@@ -118,25 +124,25 @@ class DpdFranceTransportSettings extends Transport
      *
      * @ORM\Column(name="dpd_fr_station_ftp_port", type="integer")
      *
-     * @var int $stationFtpPort
+     * @var int|null $stationFtpPort
      */
-    protected int $stationFtpPort;
+    protected ?int $stationFtpPort = null;
     /**
      * Description $stationFtpHost field
      *
      * @ORM\Column(name="dpd_fr_station_ftp_host", type="string", length=255)
      *
-     * @var string $stationFtpPort
+     * @var string|null $stationFtpPort
      */
-    protected string $stationFtpHost;
+    protected ?string $stationFtpHost = null;
     /**
      * Description $stationFtpUser field
      *
      * @ORM\Column(name="dpd_fr_station_ftp_user", type="string", length=255)
      *
-     * @var string $stationFtpUser
+     * @var string|null $stationFtpUser
      */
-    protected string $stationFtpUser;
+    protected ?string $stationFtpUser = null;
     /**
      * Description $stationFtpPassword field
      *
@@ -158,73 +164,73 @@ class DpdFranceTransportSettings extends Transport
      *
      * @ORM\Column(name="dpd_fr_agency_code", type="string", length=255)
      *
-     * @var string $agencyCode
+     * @var string|null $agencyCode
      */
-    protected string $agencyCode;
+    protected ?string $agencyCode = null;
     /**
      * Description $contractNumber field
      *
      * @ORM\Column(name="dpd_fr_contract_number", type="string", length=255)
      *
-     * @var string $contractNumber
+     * @var string|null $contractNumber
      */
-    protected string $contractNumber;
+    protected ?string $contractNumber = null;
     /**
      * Description $maxQty field
      *
      * @ORM\Column(name="dpd_fr_max_qty", type="integer")
      *
-     * @var int $maxQty
+     * @var int|null $maxQty
      */
-    protected int $maxQty;
+    protected ?int $maxQty = null;
     /**
      * Name of DpdFrance classic method
      *
      * @ORM\Column(name="dpd_fr_classic_method_name", type="string", length=255)
      *
-     * @var string $classicMethodName
+     * @var string|null $classicMethodName
      */
-    protected string $classicMethodName;
+    protected ?string $classicMethodName = null;
     /**
      * Description of DpdFrance classic method
      *
      * @ORM\Column(name="dpd_fr_classic_method_desc", type="text")
      *
-     * @var string $classicMethodDesc
+     * @var string|null $classicMethodDesc
      */
-    protected string $classicMethodDesc;
+    protected ?string $classicMethodDesc = null;
     /**
      * Name of DpdFrance predict method
      *
      * @ORM\Column(name="dpd_fr_predict_method_name", type="string", length=255)
      *
-     * @var string $predictMethodName
+     * @var string|null $predictMethodName
      */
-    protected string $predictMethodName;
+    protected ?string $predictMethodName = null;
     /**
      * Description of DpdFrance predict method
      *
      * @ORM\Column(name="dpd_fr_predict_method_desc", type="text")
      *
-     * @var string $predictMethodDesc
+     * @var string|null $predictMethodDesc
      */
-    protected string $predictMethodDesc;
+    protected ?string $predictMethodDesc = null;
     /**
      * Name of DpdFrance pickup method
      *
      * @ORM\Column(name="dpd_fr_pickup_method_name", type="string", length=255)
      *
-     * @var string $pickupMethodName
+     * @var string|null $pickupMethodName
      */
-    protected string $pickupMethodName;
+    protected ?string $pickupMethodName = null;
     /**
      * Description of DpdFrance pickup method
      *
      * @ORM\Column(name="dpd_fr_pickup_method_desc", type="text")
      *
-     * @var string $pickupMethodDesc
+     * @var string|null $pickupMethodDesc
      */
-    protected string $pickupMethodDesc;
+    protected ?string $pickupMethodDesc = null;
     /**
      * @var Collection|ShippingService[]
      *
@@ -248,9 +254,9 @@ class DpdFranceTransportSettings extends Transport
      *
      * @ORM\Column(name="dpd_fr_google_maps_api_key", type="string", length=255)
      *
-     * @var string $googleMapsApiKey
+     * @var string|null $googleMapsApiKey
      */
-    protected string $googleMapsApiKey;
+    protected ?string $googleMapsApiKey = null;
 
     /**
      * DpdFranceTransportSettings constructor
@@ -269,6 +275,7 @@ class DpdFranceTransportSettings extends Transport
         $this->predictMethodDesc  = self::DEFAULT_PREDICT_METHOD_DESC;
         $this->pickupMethodName   = self::DEFAULT_PICKUP_METHOD_NAME;
         $this->pickupMethodDesc   = self::DEFAULT_PICKUP_METHOD_DESC;
+        $this->googleMapsApiKey   = self::DEFAULT_GOOGLE_MAPS_API_KEY;
         $this->shippingServices   = new ArrayCollection();
     }
 
@@ -312,9 +319,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getSettings function
      *
-     * @return ParameterBag
+     * @return ParameterBag|null
      */
-    public function getSettings(): ParameterBag
+    public function getSettings(): ?ParameterBag
     {
         return $this->settings;
     }
@@ -322,11 +329,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setSettings function
      *
-     * @param ParameterBag $settings
+     * @param ParameterBag|null $settings
      *
      * @return void
      */
-    public function setSettings(ParameterBag $settings): void
+    public function setSettings(?ParameterBag $settings): void
     {
         $this->settings = $settings;
     }
@@ -334,9 +341,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getStationFtpPort function
      *
-     * @return int
+     * @return int|null
      */
-    public function getStationFtpPort(): int
+    public function getStationFtpPort(): ?int
     {
         return $this->stationFtpPort;
     }
@@ -344,11 +351,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setStationFtpPort function
      *
-     * @param int $stationFtpPort
+     * @param int|null $stationFtpPort
      *
      * @return void
      */
-    public function setStationFtpPort(int $stationFtpPort): void
+    public function setStationFtpPort(?int $stationFtpPort): void
     {
         $this->stationFtpPort = $stationFtpPort;
     }
@@ -356,9 +363,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getStationFtpHost function
      *
-     * @return string
+     * @return string|null
      */
-    public function getStationFtpHost(): string
+    public function getStationFtpHost(): ?string
     {
         return $this->stationFtpHost;
     }
@@ -366,11 +373,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setStationFtpHost function
      *
-     * @param string $stationFtpHost
+     * @param string|null $stationFtpHost
      *
      * @return void
      */
-    public function setStationFtpHost(string $stationFtpHost): void
+    public function setStationFtpHost(?string $stationFtpHost): void
     {
         $this->stationFtpHost = $stationFtpHost;
     }
@@ -378,9 +385,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getStationFtpUser function
      *
-     * @return string
+     * @return string|null
      */
-    public function getStationFtpUser(): string
+    public function getStationFtpUser(): ?string
     {
         return $this->stationFtpUser;
     }
@@ -388,11 +395,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setStationFtpUser function
      *
-     * @param string $stationFtpUser
+     * @param string|null $stationFtpUser
      *
      * @return void
      */
-    public function setStationFtpUser(string $stationFtpUser): void
+    public function setStationFtpUser(?string $stationFtpUser): void
     {
         $this->stationFtpUser = $stationFtpUser;
     }
@@ -432,11 +439,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setOrderStatusesSentToStation function
      *
-     * @param string $orderStatusesSentToStation
+     * @param string|null $orderStatusesSentToStation
      *
      * @return void
      */
-    public function setOrderStatusesSentToStation(string $orderStatusesSentToStation): void
+    public function setOrderStatusesSentToStation(?string $orderStatusesSentToStation): void
     {
         $this->orderStatusesSentToStation = $orderStatusesSentToStation;
     }
@@ -444,9 +451,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getAgencyCode function
      *
-     * @return string
+     * @return string|null
      */
-    public function getAgencyCode(): string
+    public function getAgencyCode(): ?string
     {
         return $this->agencyCode;
     }
@@ -454,11 +461,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setAgencyCode function
      *
-     * @param string $agencyCode
+     * @param string|null $agencyCode
      *
      * @return void
      */
-    public function setAgencyCode(string $agencyCode): void
+    public function setAgencyCode(?string $agencyCode): void
     {
         $this->agencyCode = $agencyCode;
     }
@@ -466,9 +473,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getContractNumber function
      *
-     * @return string
+     * @return string|null
      */
-    public function getContractNumber(): string
+    public function getContractNumber(): ?string
     {
         return $this->contractNumber;
     }
@@ -476,11 +483,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setContractNumber function
      *
-     * @param string $contractNumber
+     * @param string|null $contractNumber
      *
      * @return void
      */
-    public function setContractNumber(string $contractNumber): void
+    public function setContractNumber(?string $contractNumber): void
     {
         $this->contractNumber = $contractNumber;
     }
@@ -498,11 +505,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setMaxQty function
      *
-     * @param mixed $maxQty
+     * @param int|null $maxQty
      *
      * @return void
      */
-    public function setMaxQty($maxQty): void
+    public function setMaxQty(?int $maxQty): void
     {
         $this->maxQty = $maxQty;
     }
@@ -510,9 +517,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getClassicMethodName function
      *
-     * @return string
+     * @return string|null
      */
-    public function getClassicMethodName(): string
+    public function getClassicMethodName(): ?string
     {
         return $this->classicMethodName;
     }
@@ -520,11 +527,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setClassicMethodName function
      *
-     * @param string $classicMethodName
+     * @param string|null $classicMethodName
      *
      * @return void
      */
-    public function setClassicMethodName(string $classicMethodName): void
+    public function setClassicMethodName(?string $classicMethodName): void
     {
         $this->classicMethodName = $classicMethodName;
     }
@@ -532,9 +539,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getClassicMethodDesc function
      *
-     * @return string
+     * @return string|null
      */
-    public function getClassicMethodDesc(): string
+    public function getClassicMethodDesc(): ?string
     {
         return $this->classicMethodDesc;
     }
@@ -542,11 +549,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setClassicMethodDesc function
      *
-     * @param string $classicMethodDesc
+     * @param string|null $classicMethodDesc
      *
      * @return void
      */
-    public function setClassicMethodDesc(string $classicMethodDesc): void
+    public function setClassicMethodDesc(?string $classicMethodDesc): void
     {
         $this->classicMethodDesc = $classicMethodDesc;
     }
@@ -554,9 +561,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getPredictMethodName function
      *
-     * @return string
+     * @return string|null
      */
-    public function getPredictMethodName(): string
+    public function getPredictMethodName(): ?string
     {
         return $this->predictMethodName;
     }
@@ -564,11 +571,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setPredictMethodName function
      *
-     * @param string $predictMethodName
+     * @param string|null $predictMethodName
      *
      * @return void
      */
-    public function setPredictMethodName(string $predictMethodName): void
+    public function setPredictMethodName(?string $predictMethodName): void
     {
         $this->predictMethodName = $predictMethodName;
     }
@@ -576,9 +583,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getPredictMethodDesc function
      *
-     * @return string
+     * @return string|null
      */
-    public function getPredictMethodDesc(): string
+    public function getPredictMethodDesc(): ?string
     {
         return $this->predictMethodDesc;
     }
@@ -586,11 +593,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setPredictMethodDesc function
      *
-     * @param string $predictMethodDesc
+     * @param string|null $predictMethodDesc
      *
      * @return void
      */
-    public function setPredictMethodDesc(string $predictMethodDesc): void
+    public function setPredictMethodDesc(?string $predictMethodDesc): void
     {
         $this->predictMethodDesc = $predictMethodDesc;
     }
@@ -598,9 +605,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getPickupMethodName function
      *
-     * @return string
+     * @return string|null
      */
-    public function getPickupMethodName(): string
+    public function getPickupMethodName(): ?string
     {
         return $this->pickupMethodName;
     }
@@ -608,11 +615,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setPickupMethodName function
      *
-     * @param string $pickupMethodName
+     * @param string|null $pickupMethodName
      *
      * @return void
      */
-    public function setPickupMethodName(string $pickupMethodName): void
+    public function setPickupMethodName(?string $pickupMethodName): void
     {
         $this->pickupMethodName = $pickupMethodName;
     }
@@ -620,9 +627,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getPickupMethodDesc function
      *
-     * @return string
+     * @return string|null
      */
-    public function getPickupMethodDesc(): string
+    public function getPickupMethodDesc(): ?string
     {
         return $this->pickupMethodDesc;
     }
@@ -630,11 +637,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setPickupMethodDesc function
      *
-     * @param string $pickupMethodDesc
+     * @param string|null $pickupMethodDesc
      *
      * @return void
      */
-    public function setPickupMethodDesc(string $pickupMethodDesc): void
+    public function setPickupMethodDesc(?string $pickupMethodDesc): void
     {
         $this->pickupMethodDesc = $pickupMethodDesc;
     }
@@ -658,7 +665,7 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getLabel function
      *
-     * @param string $identifier
+     * @param string|null $identifier
      *
      * @return string|null
      */
@@ -689,7 +696,7 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getDescription function
      *
-     * @param string $identifier
+     * @param string|null $identifier
      *
      * @return string|null
      */
@@ -769,9 +776,9 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description getGoogleMapsApiKey function
      *
-     * @return string
+     * @return string|null
      */
-    public function getGoogleMapsApiKey(): string
+    public function getGoogleMapsApiKey(): ?string
     {
         return $this->googleMapsApiKey;
     }
@@ -779,11 +786,11 @@ class DpdFranceTransportSettings extends Transport
     /**
      * Description setGoogleMapsApiKey function
      *
-     * @param string $googleMapsApiKey
+     * @param string|null $googleMapsApiKey
      *
      * @return void
      */
-    public function setGoogleMapsApiKey(string $googleMapsApiKey): void
+    public function setGoogleMapsApiKey(?string $googleMapsApiKey): void
     {
         $this->googleMapsApiKey = $googleMapsApiKey;
     }

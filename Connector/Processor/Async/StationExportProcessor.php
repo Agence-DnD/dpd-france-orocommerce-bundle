@@ -500,6 +500,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     {
         /** @var string[] $trackingLinks */
         $trackingLinks = [];
+        /** @var int $pkgAmount */
         $pkgAmount     = count($this->packages);
         for ($i = 0; $i < $pkgAmount; $i++) {
             //'%s://www.dpd.fr/tracer_%s_%d%d';

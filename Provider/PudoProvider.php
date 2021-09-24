@@ -94,6 +94,7 @@ class PudoProvider
      */
     private static function getUrl(?string $mode = 'list'): string
     {
+        /** @var string $endpoint */
         $endpoint = self::ENDPOINT_LIST;
         if ($mode === 'details') {
             $endpoint = self::ENDPOINT_DETAILS;
