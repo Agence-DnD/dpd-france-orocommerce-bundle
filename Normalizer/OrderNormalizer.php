@@ -145,23 +145,17 @@ class OrderNormalizer implements NormalizerInterface
         $data = [];
         $this->checkContext($context);
 
+        $this->packageCount = count($context['packages']);
         /** @var DpdShippingPackageOptionsInterface $package */
         foreach ($context['packages'] as $package) {
-            $this->packageCount++;
-            $arraysToMerge = [
-                $this->getGeneralFields($order, $package),
-                $this->getRecipientFields($order),
-                $this->getSenderFields($order),
-                $this->getShipmentFields($order, $package, $context['settings']),
-                $this->getReturnFields(),
-                $this->getLineEnd()
-            ];
-
-            $data = array_merge([], ...$arraysToMerge);
-
+            $data[] = $this->getGeneralFields($order, $package);
+            $data[] = $this->getRecipientFields($order);
+            $data[] = $this->getSenderFields($order);
+            $data[] = $this->getShipmentFields($order, $package, $context['settings']);
+            $data[] = $this->getReturnFields();
+            $data[] = $this->getLineEnd();
         }
-
-        return $data;
+        return array_merge([], ...$data);
     }
 
     /**
@@ -185,7 +179,7 @@ class OrderNormalizer implements NormalizerInterface
                 1,
                 35,
                 'Référence client N°1',
-                $order->getId() . $this->packageCount > 1 ? $this->packageCount : null
+                'BL' . $order->getId()
             ),
             $this->makeFiller(36, 2),
             $this->getElement(
@@ -506,7 +500,7 @@ class OrderNormalizer implements NormalizerInterface
                 1072,
                 35,
                 'Numéro de consolidation',
-                implode('_', [$order->getId(), date('Ymd_His'), $this->packageCount])
+                $this->packageCount > 1 ? 'BL' . $order->getId() : ''
             ),
             $this->makeFiller(1107, 10),
             $this->getElement(
@@ -565,7 +559,7 @@ class OrderNormalizer implements NormalizerInterface
                 1566,
                 2,
                 'Consolidation /type',
-                0
+                $this->packageCount > 1 ? 1 : 0
             ),
             $this->makeFiller(1568, 1),
             $this->getElement(
