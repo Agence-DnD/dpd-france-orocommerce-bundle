@@ -107,9 +107,9 @@ class SettingsProvider
      *
      * @param string $serviceIdentifier
      *
-     * @return string
+     * @return string|null
      */
-    public function getServiceLabel(string $serviceIdentifier): string
+    public function getServiceLabel(string $serviceIdentifier): ?string
     {
         return $this->getSettings()->get($serviceIdentifier . '_method_name');
     }
@@ -119,9 +119,9 @@ class SettingsProvider
      *
      * @param string $serviceIdentifier
      *
-     * @return string
+     * @return string|null
      */
-    public function getServiceDesc(string $serviceIdentifier): string
+    public function getServiceDesc(string $serviceIdentifier): ?string
     {
         return $this->getSettings()->get($serviceIdentifier . '_method_desc');
     }
