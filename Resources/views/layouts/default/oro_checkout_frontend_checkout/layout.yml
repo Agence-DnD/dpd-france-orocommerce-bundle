@@ -5,4 +5,9 @@ layout:
             root: shipping_methods
     actions:
         - '@setBlockTheme':
-            themes: 'DndDpdFranceShippingBundle:layouts:default/oro_checkout_frontend_checkout/layout.html.twig'
+              themes: 'DndDpdFranceShippingBundle:layouts:default/oro_checkout_frontend_checkout/layout.html.twig'
+
+        - '@setOption':
+              id: shipping_methods
+              optionName: attr.class
+              optionValue: 'grid__column grid__column--offset-y grid__column--12 grid__column--gutter-l-none'

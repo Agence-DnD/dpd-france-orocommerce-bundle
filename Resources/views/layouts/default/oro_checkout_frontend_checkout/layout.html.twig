@@ -5,22 +5,31 @@
             <% _.each(method.types, function(type, key) { %>
                 <% if (type.price) { %>
                     <% var selected = currentShippingMethodType === type.identifier && currentShippingMethod === method.identifier %>
-                    <div class="{{ class_prefix }}-form__radio" data-item-container>
-                        <label class="custom-radio <%- selected ? 'checked' : '' %>" data-radio>
+                    <div class="{{ class_prefix }}-form__radio dnddpd-method" data-item-container>
+                        <label class="custom-radio dnddpd-method-radio <%- selected ? 'checked' : '' %>" data-radio>
                             <input class="custom-radio__control"
                                    type="radio" name="shippingMethodType" value="<%= type.identifier %>-<%= method.identifier %>"
                                    data-shipping-type="<%= type.identifier %>"
                                    data-shipping-method="<%= method.identifier %>"
                                    data-shipping-price="<%= type.price.value %>"
                                    data-choice="<%= type.identifier %>"
-                                   data-logo="<%= type.logo %>"
                                    <% if (selected) { %>checked="checked"<% } %>
                             />
-                            <span class="custom-radio__text">
-                                <%= _.__('oro.shipping.method_type.backend.method_type_and_price.label', {
-                                    'translatedMethodType': _.escape(type.label),
-                                    'price': formatter.formatCurrency(type.price.value, type.price.currency)
-                                }) %>
+                            <span class="custom-radio__text dnddpd-method-radio__text">
+                                <span class="dnddpd-method__icon-wrapper">
+                                    <% if (type.logo) { %>
+                                        <img width="70" class="dnddpd-method__icon" src="{{ asset('<%= type.logo %>') }}" />
+                                    <% } else { %>
+                                        <img width="32" class="dnddpd-method__icon" src="/bundles/dnddpdfranceshipping/img/shipping.png" />
+                                    <% } %>
+                                </span>
+                                <span class="dnddpd-method__content">
+                                    <strong class="dnddpd-method__name"><%= _.escape(type.label) %></strong>
+                                    <% if (type.description) { %>
+                                        <p class="dnddpd-method__description"><%= type.description %></p>
+                                    <% } %>
+                                </span>
+                                <span class="dnddpd-method__price"><%= formatter.formatCurrency(type.price.value, type.price.currency) %></span>
                             </span>
                         </label>
                     </div>

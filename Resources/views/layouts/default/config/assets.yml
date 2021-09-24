@@ -1,0 +1,6 @@
+styles:
+    inputs:
+        - 'bundles/dnddpdfranceshipping/default/scss/variables/dnddpd-method-config.scss'
+        - 'bundles/dnddpdfranceshipping/default/scss/styles.scss'
+
+    output: 'css/styles.css'
