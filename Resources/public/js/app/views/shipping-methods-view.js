@@ -71,7 +71,8 @@ define(function(require) {
                 currentShippingMethod: data.currentShippingMethod,
                 currentShippingMethodType: data.currentShippingMethodType,
                 formatter: NumberFormatter,
-                methodDetails: this._methodDetails
+                methodDetails: this._methodDetails,
+                filledInputs: this.options.filledInputs
             }));
             this.$el.html($el);
             this.$predict = this.$el.find(this.options.predictSelector);
@@ -87,10 +88,16 @@ define(function(require) {
          * @private
          */
         _methodDetails: function(identifier) {
+            const filledInputs = this.filledInputs;
+
             if (identifier === "dpd_fr_predict") {
                 return predict();
             } else if (identifier === "dpd_fr_pickup") {
-                return pickup();
+                return pickup({
+                    zipCode: filledInputs.zipCode,
+                    city: filledInputs.addressCity,
+                    address: filledInputs.addressStreet
+                });
             }
         },
 

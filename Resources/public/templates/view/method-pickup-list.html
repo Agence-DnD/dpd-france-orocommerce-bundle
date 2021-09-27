@@ -1,0 +1,29 @@
+<% if (pickups) { %>
+    <ul class="">
+        <% _.each(pickups, function(pickup, key) { %>
+            <li data-pickup-id="<%= pickup.PUDO_ID %>">
+                <label class="custom-radio">
+                    <input class="custom-radio__control"
+                           type="radio" name="pickup"
+                    />
+                    <span class="custom-radio__text">
+                        <img src="https://via.placeholder.com/50" alt="">
+                        <span class="pickup__content">
+                            <span class="pickup__name"><%= pickup.NAME %></span>
+                            <address>
+                                <span><%= pickup.ADDRESS1 %></span>
+                                <span><%= pickup.ADDRESS2 %></span>
+                                <span><%= pickup.ADDRESS3 %></span>
+                                <span><%= pickup.ZIPCODE %> <%= pickup.CITY %></span>
+                            </address>
+                        </span>
+                        <span class="pickup__distance"><%= formatDistance(pickup.DISTANCE) %></span>
+                    </span>
+                </label>
+                <a href="#" data-pickup-more="<%= pickup.PUDO_ID %>" class="pickup__more">Plus de détails</a>
+            </li>
+        <% }); %>
+    </ul>
+<% } else { %>
+    <p><%-_.__('dnd.dpdfrance.pickup.noresults') %></p>
+<% } %>
