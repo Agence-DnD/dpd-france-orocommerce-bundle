@@ -9,4 +9,4 @@ layout:
         - '@setOption':
               id: shipping_methods
               optionName: attr.class
-              optionValue: 'grid__column grid__column--offset-y grid__column--12 grid__column--gutter-l-none'
+              optionValue: 'grid__column grid__column--offset-y grid__column--12 grid__column--gutter-l-none grid__column--gutter-r-none'

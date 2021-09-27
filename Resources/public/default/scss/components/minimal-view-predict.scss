@@ -1,0 +1,58 @@
+/**
+ * @theme     default
+ * @package   dnddpdfranceshipping
+ * @author    Agence Dn'D <contact@dnd.fr>
+ * @copyright 2004-present Agence Dn'D
+ * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      https://www.dnd.fr/
+ */
+
+.minimal-view-predict {
+    .dnddpd-method {
+        &-radio {
+            &__text {
+                flex-wrap: wrap;
+            }
+        }
+
+        &__content {
+            margin-right: 0;
+            width: calc(100% - 115px);
+        }
+
+        &__price {
+            width: 100%;
+            margin: 5px 0 0 115px;
+        }
+
+        &-predict {
+            &__image {
+                display: none;
+            }
+
+            &__content {
+                width: 100%;
+            }
+
+            &__bottom {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            &__phone {
+                margin-left: 0;
+            }
+        }
+    }
+}
+
+
+@include breakpoint('tablet-small') {
+    .minimal-view-predict {
+        .dnddpd-method {
+            &__price {
+                margin: 0 0 0 23px;
+            }
+        }
+    }
+}

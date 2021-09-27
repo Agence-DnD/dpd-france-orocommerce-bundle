@@ -4,6 +4,7 @@ styles:
         - 'bundles/dnddpdfranceshipping/default/scss/variables/dnddpd-method-predict-config.scss'
 
         - 'bundles/dnddpdfranceshipping/default/scss/components/dnddpd-method-predict.scss'
+        - 'bundles/dnddpdfranceshipping/default/scss/components/minimal-view-predict.scss'
         - 'bundles/dnddpdfranceshipping/default/scss/styles.scss'
 
     output: 'css/styles.css'
