@@ -1,16 +1,16 @@
 <% if (pickups) { %>
-    <ul class="">
+    <ul>
         <% _.each(pickups, function(pickup, key) { %>
-            <li data-pickup-id="<%= pickup.PUDO_ID %>">
+            <li class="dnddpd-method-pickup__item" data-pickup-id="<%= pickup.PUDO_ID %>">
                 <label class="custom-radio">
                     <input class="custom-radio__control"
                            type="radio" name="pickup"
                     />
                     <span class="custom-radio__text">
-                        <img src="https://via.placeholder.com/50" alt="">
                         <span class="pickup__content">
+                            <img class="pickup__icon" src="/bundles/dnddpdfranceshipping/img/pickup/pointrelais.png" loading="lazy" alt="">
                             <span class="pickup__name"><%= pickup.NAME %></span>
-                            <address>
+                            <addres class="pickup__address">
                                 <span><%= pickup.ADDRESS1 %></span>
                                 <span><%= pickup.ADDRESS2 %></span>
                                 <span><%= pickup.ADDRESS3 %></span>
@@ -18,9 +18,9 @@
                             </address>
                         </span>
                         <span class="pickup__distance"><%= formatDistance(pickup.DISTANCE) %></span>
+                        <a href="#" data-pickup-more="<%= pickup.PUDO_ID %>" class="pickup__more">Plus de détails</a>
                     </span>
                 </label>
-                <a href="#" data-pickup-more="<%= pickup.PUDO_ID %>" class="pickup__more">Plus de détails</a>
             </li>
         <% }); %>
     </ul>

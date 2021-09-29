@@ -11,14 +11,13 @@
         <span>Les relais Pickup suivants sont disponibles autour de cet adresse de livraison saisie</span>
     </div>
     <div class="dnddpd-method-pickup__search">
-        <p>Rechercher des relais Pickup autour d'une autre adresse</p>
-        <form action="#"
-              id="pickup-search">
-            <input id="pickup-address" type="text" class="input" />
-            <input id="pickup-zipcode" type="number" class="input" />
-            <input id="pickup-city" type="text" class="input" />
-            <button id="pickup-search-btn" type="submit" class="btn btn--info btn--block">Rechercher</button>
-            <button id="reset-search-reset" class="btn btn--info btn--block">Réinitialiser</button>
+        <p class="dnddpd-method-pickup__search-toggle" id="pickup-search-toggle">Rechercher des relais Pickup autour d'une autre adresse</p>
+        <form id="pickup-search" class="form">
+            <input id="pickup-address" type="text" class="input dnddpd-method-pickup__search-input address" />
+            <input id="pickup-zipcode" type="number" class="input dnddpd-method-pickup__search-input zipcode" />
+            <input id="pickup-city" type="text" class="input dnddpd-method-pickup__search-input city" />
+            <button id="pickup-search-btn" type="submit" class="dnddpd-method-pickup__search-btn btn btn-primary">Rechercher</button>
+            <button id="reset-search-reset" class="dnddpd-method-pickup__search-btn btn btn-secondary">Réinitialiser</button>
         </form>
     </div>
     <div class="dnddpd-method-pickup__list" data-pickup-list></div>
