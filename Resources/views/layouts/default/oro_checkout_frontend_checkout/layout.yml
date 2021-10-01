@@ -2,7 +2,7 @@ layout:
     imports:
         -   id: dpd_fr_items
             namespace: checkout
-            root: shipping_methods
+            root: checkout_form
     actions:
         - '@setBlockTheme':
               themes: 'DndDpdFranceShippingBundle:layouts:default/oro_checkout_frontend_checkout/layout.html.twig'
@@ -11,3 +11,8 @@ layout:
               id: shipping_methods
               optionName: attr.class
               optionValue: 'grid__column grid__column--offset-y grid__column--12 grid__column--gutter-l-none'
+
+        -   '@move':
+                id: dpd_fr_items
+                parentId: checkout_form
+                siblingId: checkout_form_fields
