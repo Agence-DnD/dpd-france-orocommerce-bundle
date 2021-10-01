@@ -1,8 +1,12 @@
 {% block __dpd_fr_items__shipping_dpd_widget %}
     <div>
         <div class="grid__row grid__row--offset-none">
-            {{ form_widget(form.delivery_phone) }}
-            {{ form_widget(form.dpd_fr_relay_id) }}
+            {% if form.delivery_phone is defined %}
+                {{ form_widget(form.delivery_phone) }}
+            {% endif %}
+            {% if form.dpd_fr_relay_id is defined %}
+                {{ form_widget(form.dpd_fr_relay_id) }}
+            {% endif %}
         </div>
     </div>
     {% set postalCode, city, street, phone, google_maps_api_key = '', '', '', '', '' %}
@@ -18,5 +22,4 @@
     <input type='hidden' value="{{ street }}" id="dpd_fr_shipping_address_street"/>
     <input type='hidden' value="{{ phone }}" id="dpd_fr_shipping_address_phone"/>
     <input type='hidden' value="{{ google_maps_api_key }}" id="dpd_fr_google_maps_api_key"/>
-
 {% endblock %}
