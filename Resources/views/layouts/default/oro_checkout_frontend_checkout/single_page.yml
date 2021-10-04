@@ -3,6 +3,6 @@ layout:
         - '@setOption':
               id: shipping_methods_wrapper
               optionName: attr.class
-              optionValue: 'minimal-view-predict'
+              optionValue: 'minimal-view'
 
     conditions: 'context["workflowStepName"]=="checkout" && !context["widget_container"]'

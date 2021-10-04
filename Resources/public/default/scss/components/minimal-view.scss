@@ -7,8 +7,9 @@
  * @link      https://www.dnd.fr/
  */
 
-.minimal-view-predict {
+.minimal-view {
     .dnddpd-method {
+        // global
         &-radio {
             &__text {
                 flex-wrap: wrap;
@@ -25,6 +26,7 @@
             margin: 5px 0 0 115px;
         }
 
+        // predict
         &-predict {
             &__image {
                 display: none;
@@ -43,13 +45,19 @@
                 margin-left: 0;
             }
         }
+
+        // pickup
+        &-pickup {
+            @include minimal-pickup-style;
+        }
     }
 }
 
 
 @include breakpoint('tablet-small') {
-    .minimal-view-predict {
+    .minimal-view {
         .dnddpd-method {
+            // global
             &__price {
                 margin: 0 0 0 23px;
             }

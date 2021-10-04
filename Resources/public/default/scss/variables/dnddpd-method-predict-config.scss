@@ -7,7 +7,7 @@
  * @link      https://www.dnd.fr/
  */
 
-$dnddpd-method-predict-top-background-color: #dc0032;
+$dnddpd-method-predict-top-background-color: $dnddpd-primary-color;
 $dnddpd-method-predict-top-color: #fff;
 $dnddpd-method-predict-top-padding: 5px 15px;
 
@@ -19,7 +19,7 @@ $dnddpd-method-predict-body-strong-font-size: 16px;
 $dnddpd-method-predict-body-strong-color: #000;
 $dnddpd-method-predict-body-strong-font-weight: 700;
 
-$dnddpd-method-predict-body-list-dot-color: #dc0032;
+$dnddpd-method-predict-body-list-dot-color: $dnddpd-primary-color;
 
 $dnddpd-method-predict-logo-footer-margin: 20px 0 0 auto;
 
@@ -29,17 +29,17 @@ $dnddpd-method-predict-bottom-padding: 10px 15px;
 
 $dnddpd-method-predict-phone-margin: 10px;
 
-$dnddpd-method-predict-phone-input-error-box-shadow: 0 1px 7px 0 #dc0032;
+$dnddpd-method-predict-phone-input-error-box-shadow: 0 1px 7px 0 $dnddpd-primary-color;
 $dnddpd-method-predict-phone-input-valid-box-shadow: 0 1px 7px 0 #64C864;
 $dnddpd-method-predict-phone-input-valid-background-image: url($global-url + '/dnddpdfranceshipping/img/check.svg');
 $dnddpd-method-predict-phone-input-valid-background-position: right center;
 $dnddpd-method-predict-phone-input-valid-background-size: 30px;
 
-$dnddpd-method-predict-phone-error-border: 2px solid #dc0032;
+$dnddpd-method-predict-phone-error-border: 2px solid $dnddpd-primary-color;
 $dnddpd-method-predict-phone-error-background-color: #fff;
 $dnddpd-method-predict-phone-error-margin: 10px 0;
 $dnddpd-method-predict-phone-error-padding: 10px;
-$dnddpd-method-predict-phone-error-color: #dc0032;
+$dnddpd-method-predict-phone-error-color: $dnddpd-primary-color;
 $dnddpd-method-predict-phone-error-font-weight: 700;
 
 $dnddpd-method-predict-phone-error-icon-font-weight: 900;

@@ -7,7 +7,7 @@
  * @link      https://www.dnd.fr/
  */
 
-$dnddpd-method-pickup-top-background-color: #dc0032;
+$dnddpd-method-pickup-top-background-color: $dnddpd-primary-color;
 $dnddpd-method-pickup-top-color: #fff;
 $dnddpd-method-pickup-top-padding: 5px 15px;
 
@@ -15,6 +15,37 @@ $dnddpd-method-pickup-bottom-background-color: #f5f5f5;
 $dnddpd-method-pickup-bottom-color: #000;
 $dnddpd-method-pickup-bottom-padding: 10px 15px;
 
-$dnddpd-method-pickup-list-padding: 10px 15px;
+$dnddpd-method-pickup-form-margin: 15px -5px 0;
+$dnddpd-method-pickup-input-margin: 0 5px 10px;
+$dnddpd-method-pickup-input-max-width: 100%;
+$dnddpd-method-pickup-input-address-width: 310px;
+$dnddpd-method-pickup-input-zipcode-width: 100px;
+$dnddpd-method-pickup-input-city-width: 200px;
+$dnddpd-method-pickup-btn-width: 200px;
+
+$dnddpd-method-pickup-btn-margin: 0 5px 10px;
+$dnddpd-method-pickup-btn-primary-background-color: $dnddpd-primary-color;
+$dnddpd-method-pickup-btn-primary-color: #fff;
+$dnddpd-method-pickup-btn-primary-border: none;
+
+$dnddpd-method-pickup-btn-secondary-background-color: #808285;
+$dnddpd-method-pickup-btn-secondary-color: #fff;
+$dnddpd-method-pickup-btn-secondary-border: 1px solid #808285;
+
+$dnddpd-method-pickup-noresults-padding: 10px 15px;
+
+$dnddpd-method-pickup-item-padding: 20px 15px;
+$dnddpd-method-pickup-item-border-top: 1px solid #f5f5f5;
+
+$dnddpd-method-pickup-name-font-weight: 700;
+$dnddpd-method-pickup-name-margin: 0 0 5px;
+
+$dnddpd-method-pickup-address-line-height: 1.3;
+
+$dnddpd-method-pickup-distance-margin: 0 20px;
+$dnddpd-method-pickup-distance-width: 10%;
+
+$dnddpd-method-pickup-content-padding-left: 70px;
+$dnddpd-method-pickup-content-min-height: 40px;
 
 $dnddpd-method-pickup-more-link-color: #808285;

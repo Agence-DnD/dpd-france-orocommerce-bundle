@@ -6,12 +6,6 @@
  * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
-.single-page-checkout-view__column {
-    width: 100% !important; // @todo remove
-}
-.single-page-checkout-view__column::after{
-    display: none;
-}
 
 .dnddpd-method-pickup {
     &__top {
@@ -33,54 +27,55 @@
         }
 
         .form {
-            margin: 15px -5px 0;
+            margin: $dnddpd-method-pickup-form-margin;
         }
 
         &-input {
-            margin: 0 5px 10px;
-            max-width: 100%;
+            margin: $dnddpd-method-pickup-input-margin;
+            max-width: $dnddpd-method-pickup-input-max-width;
 
             &.address {
-                width: 310px;
+                width: $dnddpd-method-pickup-input-address-width;
                 display: block;
-                line-height: 1.3;
             }
 
             &.zipcode {
-                width: 100px;
+                width: $dnddpd-method-pickup-input-zipcode-width;
             }
 
             &.city {
-                width: 200px;
+                width: $dnddpd-method-pickup-input-city-width;
             }
         }
 
         &-btn {
-            margin: 0 5px 10px;
+            margin: $dnddpd-method-pickup-btn-margin;
 
             &.btn-primary {
-                background-color: #dc0032;
-                color: #fff;
-                border: none;
+                background-color: $dnddpd-method-pickup-btn-primary-background-color;
+                color: $dnddpd-method-pickup-btn-primary-color;
+                border: $dnddpd-method-pickup-btn-primary-border;
             }
 
             &.btn-secondary {
-                background-color: #808285;
-                color: #fff;
-                border: 1px solid #808285;
+                background-color: $dnddpd-method-pickup-btn-secondary-background-color;
+                color: $dnddpd-method-pickup-btn-secondary-color;
+                border: $dnddpd-method-pickup-btn-secondary-border;
             }
         }
     }
 
     &__list {
-        //padding: $dnddpd-method-pickup-list-padding;
+        .no-results {
+            padding: $dnddpd-method-pickup-noresults-padding;
+        }
     }
 
     &__item {
-        padding: 20px 15px;
+        padding: $dnddpd-method-pickup-item-padding;
 
         + .dnddpd-method-pickup__item {
-            border-top: 1px solid #f5f5f5;
+            border-top: $dnddpd-method-pickup-item-border-top;
         }
 
         .custom-radio {
@@ -93,29 +88,30 @@
                 cursor: pointer;
             }
         }
-
         .pickup {
             &__name {
-                font-weight: 700;
+                font-weight: $dnddpd-method-pickup-name-font-weight;
                 display: block;
-                margin: 0 0 5px;
+                margin: $dnddpd-method-pickup-name-margin;
             }
 
             &__address {
+                line-height: $dnddpd-method-pickup-address-line-height
+
                 span {
                     display: block;
                 }
             }
 
             &__distance {
-                margin: 0 20px;
-                width: 10%;
+                margin: $dnddpd-method-pickup-distance-margin;
+                width: $dnddpd-method-pickup-distance-width;
             }
 
             &__content {
                 position: relative;
-                padding-left: 70px;
-                min-height: 40px;
+                padding-left: $dnddpd-method-pickup-content-padding-left;
+                min-height: $dnddpd-method-pickup-content-min-height;
                 flex: auto;
             }
 
@@ -136,58 +132,6 @@
 
 @include breakpoint('tablet-small') {
     .dnddpd-method-pickup {
-        &__item {
-            .custom-radio {
-                &__text {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    position: relative;
-                    padding-left: 15px;
-
-                    &::before {
-                        position: absolute;
-                        left: 0;
-                        top: 0;
-                    }
-                }
-            }
-
-            .pickup {
-                &__icon {
-                    transform: none;
-                    top: -11px;
-                }
-
-                &__distance {
-                    width: 100%;
-                    margin: 10px 0;
-                }
-
-                &__distance,
-                &__more {
-                    margin-left: 70px;
-                }
-            }
-        }
-
-        &__search {
-            &-input {
-                &.address {
-                    width: calc(100% - 10px);
-                }
-
-                &.zipcode {
-                    width: 130px;
-                }
-
-                &.city {
-                    width: calc(100% - 150px);
-                }
-            }
-
-            &-btn {
-                width: calc(100% - 10px);
-            }
-        }
+        @include minimal-pickup-style;
     }
 }
