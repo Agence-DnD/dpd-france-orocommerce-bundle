@@ -79,7 +79,7 @@
         margin: $dnddpd-method-predict-phone-margin;
 
         .input {
-            &.error {
+            &.not-valid {
                 box-shadow: $dnddpd-method-predict-phone-input-error-box-shadow;
             }
 

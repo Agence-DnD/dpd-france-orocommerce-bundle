@@ -1,24 +1,16 @@
-<div class="dnddpd-method__details dnddpd-method-pickup"
-     data-pickup
-     data-page-component-module="dnddpdfranceshipping/js/app/views/dnddpd-method-pickup"
-     data-page-component-options="<%- JSON.stringify({
-        zipCode: zipCode,
-        address: address,
-        city: city
-     }) %>"
->
+<div class="dnddpd-method-pickup">
     <div class="dnddpd-method-pickup__top">
         <span>Les relais Pickup suivants sont disponibles autour de cet adresse de livraison saisie</span>
     </div>
     <div class="dnddpd-method-pickup__search">
         <p class="dnddpd-method-pickup__search-toggle" id="pickup-search-toggle">Rechercher des relais Pickup autour d'une autre adresse</p>
-        <form id="pickup-search" class="form">
-            <input id="pickup-address" type="text" class="input dnddpd-method-pickup__search-input address" />
-            <input id="pickup-zipcode" type="number" class="input dnddpd-method-pickup__search-input zipcode" />
-            <input id="pickup-city" type="text" class="input dnddpd-method-pickup__search-input city" />
-            <button id="pickup-search-btn" type="submit" class="dnddpd-method-pickup__search-btn btn btn-primary">Rechercher</button>
+        <div id="pickup-search" class="form">
+            <input id="pickup-address" type="text" value="<%= address %>" class="input dnddpd-method-pickup__search-input address" />
+            <input id="pickup-zipcode" type="number" value="<%= postalCode %>" class="input dnddpd-method-pickup__search-input zipcode" />
+            <input id="pickup-city" type="text" value="<%= city %>" class="input dnddpd-method-pickup__search-input city" />
+            <button id="pickup-search-btn" class="dnddpd-method-pickup__search-btn btn btn-primary">Rechercher</button>
             <button id="reset-search-reset" class="dnddpd-method-pickup__search-btn btn btn-secondary">Réinitialiser</button>
-        </form>
+        </div>
     </div>
     <div class="dnddpd-method-pickup__list" data-pickup-list></div>
 </div>
