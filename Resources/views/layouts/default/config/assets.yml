@@ -1,6 +1,16 @@
 styles:
     inputs:
         - 'bundles/dnddpdfranceshipping/default/scss/variables/dnddpd-method-config.scss'
+        - 'bundles/dnddpdfranceshipping/default/scss/variables/dnddpd-method-pickup-config.scss'
+        - 'bundles/dnddpdfranceshipping/default/scss/variables/dnddpd-method-predict-config.scss'
+
+        - 'bundles/dnddpdfranceshipping/default/scss/settings/global-settings.scss'
+
+        - 'bundles/dnddpdfranceshipping/default/scss/components/dnddpd-method-pickup.scss'
+        - 'bundles/dnddpdfranceshipping/default/scss/components/dnddpd-method-pickup-modal.scss'
+        - 'bundles/dnddpdfranceshipping/default/scss/components/dnddpd-method-predict.scss'
+
+        - 'bundles/dnddpdfranceshipping/default/scss/components/minimal-view.scss'
         - 'bundles/dnddpdfranceshipping/default/scss/styles.scss'
 
     output: 'css/styles.css'

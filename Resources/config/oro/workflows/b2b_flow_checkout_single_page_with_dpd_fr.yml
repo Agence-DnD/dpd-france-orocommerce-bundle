@@ -1463,12 +1463,8 @@ workflows:
                                 constraints:
                                     -
                                         NotBlank: null
-                        # @ADD DND START
                         delivery_phone:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                        dpd_fr_relay_id:
-                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                        # @ADD DND END
+                            options: null
                         payment_method:
                             options: null
                         payment_validate:

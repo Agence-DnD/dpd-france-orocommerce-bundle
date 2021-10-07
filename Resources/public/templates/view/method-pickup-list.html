@@ -1,0 +1,29 @@
+<% if (pickups) { %>
+    <ul>
+        <% _.each(pickups, function(pickup, key) { %>
+            <li class="dnddpd-method-pickup__item" data-pickup-id="<%= pickup.PUDO_ID %>">
+                <label class="custom-radio">
+                    <input class="custom-radio__control"
+                           type="radio" name="pickup"
+                    />
+                    <span class="custom-radio__text">
+                        <span class="pickup__content">
+                            <img class="pickup__icon" src="/bundles/dnddpdfranceshipping/img/pickup/pointrelais.png" loading="lazy" alt="">
+                            <span class="pickup__name"><%= pickup.NAME %></span>
+                            <addres class="pickup__address">
+                                <span><%= pickup.ADDRESS1 %></span>
+                                <span><%= pickup.ADDRESS2 %></span>
+                                <span><%= pickup.ADDRESS3 %></span>
+                                <span><%= pickup.ZIPCODE %> <%= pickup.CITY %></span>
+                            </address>
+                        </span>
+                        <span class="pickup__distance"><%= formatDistance(pickup.DISTANCE) %></span>
+                        <a href="#" data-pickup-more="<%= pickup.PUDO_ID %>" class="pickup__more">Plus de détails</a>
+                    </span>
+                </label>
+            </li>
+        <% }); %>
+    </ul>
+<% } else { %>
+    <p><%-_.__('dnd_dpd_france_shipping.pickup.no_results') %></p>
+<% } %>
