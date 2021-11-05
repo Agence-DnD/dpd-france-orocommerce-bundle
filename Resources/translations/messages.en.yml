@@ -3,7 +3,7 @@ oro:
         dpd_fr_relay_id:
             label: DPD FR Relay ID
         delivery_phone:
-            label: Delivery phone
+            label: DPD Predict Phone Number
         synchronized_dpd:
             label: DPD Station Sync. date
     product:
@@ -40,17 +40,17 @@ dnd_dpd_france_shipping:
         name.label: Pickup point
     transport:
         classic_method_name:
-            label: Label DPD Classic service
+            label: DPD Classic service label
         predict_method_name:
-            label: Label DPD Predict service
+            label: DPD Predict service label
         pickup_method_name:
-            label: Label DPD Relay service
+            label: DPD Relay service label
         classic_method_description:
-            label: Description DPD Classic service
+            label: DPD Classic service description
         predict_method_description:
-            label: Description DPD Predict service
+            label: DPD Predict service description
         pickup_method_description:
-            label: Description DPD Relay service
+            label: DPD Relay service description
         agency_code:
             label: Agency code
         google_maps_api_key:
