@@ -95,9 +95,9 @@ class DpdFranceTransportSettingsFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $this->addStationFields($builder, $options);
         $this->addGeneralFields($builder, $options);
         $this->addServicesNamesAndDescriptionFields($builder, $options);
+        $this->addStationFields($builder, $options);
     }
 
     /**
@@ -162,10 +162,6 @@ class DpdFranceTransportSettingsFormType extends AbstractType
             'label'        => 'dnd_dpd_france_shipping.integration.settings.shipping_services.label',
             'required'     => true,
             'multiple'     => true,
-        ])->add('googleMapsApiKey', TextType::class, [
-            'label'    => 'dnd_dpd_france_shipping.transport.google_maps_api_key.label',
-            'tooltip'  => 'dnd_dpd_france_shipping.transport.google_maps_api_key.tooltip',
-            'required' => true,
         ]);
     }
 
@@ -197,6 +193,10 @@ class DpdFranceTransportSettingsFormType extends AbstractType
         ])->add('pickupMethodDesc', TextareaType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.pickup_method_description.label',
             'required' => true,
+        ])->add('googleMapsApiKey', TextType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.google_maps_api_key.label',
+            'tooltip'  => 'dnd_dpd_france_shipping.transport.google_maps_api_key.tooltip',
+            'required' => false,
         ]);
     }
 
