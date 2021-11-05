@@ -124,7 +124,7 @@ class DpdFranceTransportSettingsFormType extends AbstractType
             'required' => true,
         ])->add('orderStatusesSentToStation', EnumChoiceType::class, [
             'enum_code' => 'order_internal_status',
-            'multiple'  => true,
+            'multiple'  => false,
             'expanded'  => false,
             'required'  => true,
             'label'     => 'dnd_dpd_france_shipping.transport.order_statuses_sent_to_station.label',
