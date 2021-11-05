@@ -63,6 +63,8 @@ dnd_dpd_france_shipping:
             tooltip: Peut être surchargé en spécifiant une valeur pour chaque service dans la table dnd_dpd_fr_shipping_service
         contract_number:
             label: Numéro de contrat
+        station_enabled:
+            label: Activer export station
         station_ftp_host:
             label: Hôte FTP de Station
         station_ftp_password:

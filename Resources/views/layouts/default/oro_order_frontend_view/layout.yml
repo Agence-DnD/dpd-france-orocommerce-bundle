@@ -10,6 +10,7 @@ layout:
                     text: '=data["order"].getDeliveryPhone()'
                     label: 'oro.order.delivery_phone.label'
                     additional_block_prefixes: ['order_body_column_element']
+
         - '@add':
                 id: order_dpd_france_pudo_name
                 blockType: text
@@ -19,7 +20,6 @@ layout:
                     visible: '=data["order"].getDpdFrRelayId()!=null'
                     label: 'dnd_dpd_france_shipping.pudo.name.label'
                     text: '=data["dnd_dpd_france_shipping_order_details"].getPudoName(data["order"].getDpdFrRelayId())'
-                    #text: '=data["dnd_dpd_france_shipping_order_details"].getPudoName("P32809")' #TODO REMOVE ME
                     additional_block_prefixes: [ 'order_body_column_element' ]
 
         - '@add':

@@ -47,6 +47,8 @@ class OrderListener
      */
     public function postUpdate(Order $order): void
     {
-        $this->stationExportProvider->queueIfExportable($order);
+        if ($this->stationExportProvider->isStationExportEnabled()) {
+            $this->stationExportProvider->queueIfExportable($order);
+        }
     }
 }

@@ -2,6 +2,7 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'dpd_fr_shipping.html.twig'
+
         -   '@addTree':
                 items:
                     __shipping_dpd:
