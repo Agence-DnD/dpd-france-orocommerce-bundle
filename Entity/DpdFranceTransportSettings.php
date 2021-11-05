@@ -108,12 +108,6 @@ class DpdFranceTransportSettings extends Transport
      */
     public const DEFAULT_PICKUP_METHOD_DESC = 'Description de la méthode DPD Relais';
     /**
-     * The default value for google maps api key
-     *
-     * @var string DEFAULT_GOOGLE_MAPS_API_KEY
-     */
-    public const DEFAULT_GOOGLE_MAPS_API_KEY = '<your google maps api key>';
-    /**
      * The settings for the DPD France transport
      *
      * @var ParameterBag|null $settings
@@ -275,7 +269,7 @@ class DpdFranceTransportSettings extends Transport
         $this->predictMethodDesc  = self::DEFAULT_PREDICT_METHOD_DESC;
         $this->pickupMethodName   = self::DEFAULT_PICKUP_METHOD_NAME;
         $this->pickupMethodDesc   = self::DEFAULT_PICKUP_METHOD_DESC;
-        $this->googleMapsApiKey   = self::DEFAULT_GOOGLE_MAPS_API_KEY;
+        $this->googleMapsApiKey   = '';
         $this->shippingServices   = new ArrayCollection();
     }
 
