@@ -1,6 +1,7 @@
 dnd_dpd_france_shipping:
     pickup:
         no_results: 'Aucun résultats de correspond à votre recherche'
+        empty_fields: 'Veuillez renseigner les champs Code postal et Ville afin de pouvoir rechercher un point relais.'
         days:
             day1: 'Lundi'
             day2: 'Mardi'
