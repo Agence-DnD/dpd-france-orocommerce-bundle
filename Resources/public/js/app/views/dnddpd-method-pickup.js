@@ -186,7 +186,8 @@ const DndDpdMethodPickup = BaseView.extend({
         this.modal = new Modal({
             className: 'modal oro-modal-normal dnddpd-pickup-details-modal',
             title: false,
-            allowCancel: false,
+            cancelButtonClass: 'hidden',
+            allowCancel: true,
             allowOk: false,
             content: content
         });
