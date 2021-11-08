@@ -26,7 +26,9 @@ const DndDpdMethodPickup = BaseView.extend({
             citySelector: '#pickup-city',
         },
 
-        noResults: __('dnd_dpd_france_shipping.pickup.no_results')
+        noResults: __('dnd_dpd_france_shipping.pickup.no_results'),
+
+        emptyFields: __('dnd_dpd_france_shipping.pickup.empty_fields')
     },
 
     template: pickupDetails,
@@ -254,6 +256,8 @@ const DndDpdMethodPickup = BaseView.extend({
                     console.log(error);
                 }, this),
             });
+        } else {
+            this._emptyFields();
         }
     },
 
@@ -264,6 +268,16 @@ const DndDpdMethodPickup = BaseView.extend({
      */
     _noResults: function() {
         this.$pickupList.html(`<p class="no-results">${this.options.noResults}</p>`);
+        this.hideLoadingMask();
+    },
+
+    /**
+     * render error msg
+     *
+     * @private
+     */
+    _emptyFields: function() {
+        this.$pickupList.html(`<p class="no-results error">${this.options.emptyFields}</p>`);
         this.hideLoadingMask();
     },
 

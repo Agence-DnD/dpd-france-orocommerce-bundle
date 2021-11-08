@@ -82,6 +82,10 @@
     &__list {
         .no-results {
             padding: $dnddpd-method-pickup-noresults-padding;
+
+            &.error {
+                color: $dnddpd-method-pickup-error-color;
+            }
         }
     }
 
