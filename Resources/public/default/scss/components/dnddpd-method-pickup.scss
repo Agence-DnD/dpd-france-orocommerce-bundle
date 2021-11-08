@@ -24,6 +24,20 @@
             cursor: pointer;
             font-size: 14px;
             margin: 0;
+            display: flex;
+            align-items: center;
+
+            &-icon {
+                margin: 0 0 0 5px;
+                transition: transform 0.2s ease;
+                font-size: $dnddpd-method-pickup-form-toggle-icon-font-size;
+            }
+        }
+
+        &.open {
+            .icon {
+                transform: rotate(180deg);
+            }
         }
 
         .form {

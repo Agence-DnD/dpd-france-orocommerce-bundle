@@ -17,6 +17,7 @@ const DndDpdMethodPickup = BaseView.extend({
 
         form: {
             id: '#pickup-search',
+            searchWrapper: '#pickup-search-wrapper',
             toggle: '#pickup-search-toggle',
             submitBtn: '#pickup-search-btn',
             resetBtn: '#pickup-search-btn',
@@ -85,6 +86,7 @@ const DndDpdMethodPickup = BaseView.extend({
         this.render();
         this.loadingMaskView = new LoadingMaskView({container: this.$el});
         this.$searchForm = $(this.options.form.id);
+        this.$searchWrapper = $(this.options.form.searchWrapper);
         this.$searchSubmitBtn = $(this.options.form.submitBtn);
         this.$searchResetBtn = $(this.options.form.resetBtn);
         this.$toggleSearch = $(this.options.form.toggle);
@@ -137,6 +139,7 @@ const DndDpdMethodPickup = BaseView.extend({
      */
     _onSearchToggleClick: function() {
         this.$searchForm.toggle();
+        this.$searchWrapper.toggleClass('open');
     },
 
     /**
