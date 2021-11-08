@@ -44,6 +44,16 @@ On the admin section, go to System > Shipping rules > Create shipping rule
 
 Select the proper currency / website combination for your store, set a base price for the services and an eventual extra fee per service in additional options section.
 
+Set the following expression in your shopping rule if you want to use the maxQtyForDpdFr product attribute to enforce limitations at product level.
+
+```
+lineItems.all(
+    (lineItem.product.maxQtyForDpdFr < 0)
+    or
+    (lineItem.product.maxQtyForDpdFr > lineItem.quantity)
+)
+```
+
 #### Activate the checkout workflow "With DPD France"
 
 The two native checkout workflows have been cloned into their "...with DPD France" declinations. Activate the one corresponding with the previously active.
