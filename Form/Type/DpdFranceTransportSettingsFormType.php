@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Form\Type;
 
-use Dnd\Bundle\DpdFranceShippingBundle\Entity\DpdFranceTransportSettings;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Form\DataTransformer\OrderStatusTransformer;
 use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceTransportInterface;
@@ -18,10 +17,10 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
@@ -115,47 +114,56 @@ class DpdFranceTransportSettingsFormType extends AbstractType
     private function addStationFields(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('stationEnabled', CheckboxType::class, [
-            'label'    => 'dnd_dpd_france_shipping.transport.station_enabled.label',
-            'required' => false,
+            'label'       => 'dnd_dpd_france_shipping.transport.station_enabled.label',
+            'required'    => false,
+        ])->add('stationFtpHost', TextType::class, [
+            'label'       => 'dnd_dpd_france_shipping.transport.station_ftp_host.label',
+            'required'    => false,
+            'constraints' => [
+                new NotBlank([
+                    'groups' => ['STATION_ENABLED_VALIDATION_GROUP_REQUIRED'],
+                ]),
+            ],
+        ])->add('stationFtpUser', TextType::class, [
+            'label'       => 'dnd_dpd_france_shipping.transport.station_ftp_user.label',
+            'required'    => false,
+            'constraints' => [
+                new NotBlank([
+                    'groups' => ['STATION_ENABLED_VALIDATION_GROUP_REQUIRED'],
+                ]),
+            ],
+        ])->add('stationFtpPassword', OroEncodedPlaceholderPasswordType::class, [
+            'label'       => 'dnd_dpd_france_shipping.transport.station_ftp_password.label',
+            'required'    => false,
+            'constraints' => [
+                new NotBlank([
+                    'groups' => ['STATION_ENABLED_VALIDATION_GROUP_REQUIRED'],
+                ]),
+            ],
+        ])->add('stationFtpPort', IntegerType::class, [
+            'label'       => 'dnd_dpd_france_shipping.transport.station_ftp_port.label',
+            'required'    => false,
+            'constraints' => [
+                new NotBlank([
+                    'groups' => ['STATION_ENABLED_VALIDATION_GROUP_REQUIRED'],
+                ]),
+            ],
+        ])->add('orderStatusesSentToStation', EnumChoiceType::class, [
+            'enum_code'   => 'order_internal_status',
+            'multiple'    => false,
+            'expanded'    => false,
+            'required'    => false,
+            'constraints' => [
+                new NotBlank([
+                    'groups' => ['STATION_ENABLED_VALIDATION_GROUP_REQUIRED'],
+                ]),
+            ],
+            'label'       => 'dnd_dpd_france_shipping.transport.order_statuses_sent_to_station.label',
+            'attr'        => [
+                'class' => 'order_internal_status',
+            ]
         ]);
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            /** @var DpdFranceTransportSettings $column */
-            $column = $event->getData();
-            if ($column->isStationEnabled()) {
-                $event->getForm()->add('stationFtpHost', TextType::class, [
-                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_host.label',
-                    'required' => true,
-                    'mapped'   => true,
-                ])->add('stationFtpUser', TextType::class, [
-                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_user.label',
-                    'required' => true,
-                    'mapped'   => true,
-                ])->add('stationFtpPassword', OroEncodedPlaceholderPasswordType::class, [
-                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_password.label',
-                    'required' => true,
-                    'mapped'   => true,
-                ])->add('stationFtpPort', IntegerType::class, [
-                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_port.label',
-                    'required' => true,
-                    'mapped'   => true,
-                ])->add('orderStatusesSentToStation', EnumChoiceType::class, [
-                    'enum_code' => 'order_internal_status',
-                    'multiple'  => false,
-                    'expanded'  => false,
-                    'required'  => true,
-                    'mapped'    => true,
-                    'label'     => 'dnd_dpd_france_shipping.transport.order_statuses_sent_to_station.label',
-                    'attr'      => [
-                        'class' => 'order_internal_status',
-                    ],
-                ]);
-            }
-        });
-
-        if ($builder->get('stationEnabled')->getData() === true) {
-            $builder->get('orderStatusesSentToStation')->addModelTransformer($this->orderStatusTransformer);
-        }
+        $builder->get('orderStatusesSentToStation')->addModelTransformer($this->orderStatusTransformer)->getForm();
     }
 
     /**
@@ -171,18 +179,20 @@ class DpdFranceTransportSettingsFormType extends AbstractType
         $builder->add('agencyCode', TextType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.agency_code.label',
             'required' => true,
+            'constraints' => [new NotBlank()]
         ])->add('contractNumber', TextType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.contract_number.label',
             'required' => true,
+            'constraints' => [new NotBlank()]
         ])->add('maxQty', IntegerType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.max_qty.label',
             'tooltip'  => 'dnd_dpd_france_shipping.transport.max_qty.tooltip',
             'required' => true,
+            'constraints' => [new NotBlank()]
         ])->add('shippingServices', EntityType::class, [
             'class'        => ShippingService::class,
             'choice_label' => 'label',
             'label'        => 'dnd_dpd_france_shipping.integration.settings.shipping_services.label',
-            'required'     => true,
             'multiple'     => true,
         ]);
     }
@@ -200,21 +210,27 @@ class DpdFranceTransportSettingsFormType extends AbstractType
         $builder->add('classicMethodName', TextType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.classic_method_name.label',
             'required' => true,
+            'constraints' => [new NotBlank()]
         ])->add('classicMethodDesc', TextareaType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.classic_method_description.label',
             'required' => true,
+            'constraints' => [new NotBlank()]
         ])->add('predictMethodName', TextType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.predict_method_name.label',
             'required' => true,
+            'constraints' => [new NotBlank()]
         ])->add('predictMethodDesc', TextareaType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.predict_method_description.label',
             'required' => true,
+            'constraints' => [new NotBlank()]
         ])->add('pickupMethodName', TextType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.pickup_method_name.label',
             'required' => true,
+            'constraints' => [new NotBlank()]
         ])->add('pickupMethodDesc', TextareaType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.pickup_method_description.label',
             'required' => true,
+            'constraints' => [new NotBlank()]
         ])->add('googleMapsApiKey', TextType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.google_maps_api_key.label',
             'tooltip'  => 'dnd_dpd_france_shipping.transport.google_maps_api_key.tooltip',
@@ -232,6 +248,15 @@ class DpdFranceTransportSettingsFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass ?: $this->transport->getSettingsEntityFQCN(),
             'mapped'     => true,
+            'validation_groups' => function (FormInterface $form) {
+                $groups = ['Default'];
+                $data   = $form->getData();
+                if ($data->isStationEnabled()) { // then we want station fields to be required
+                    $groups[] = 'STATION_ENABLED_VALIDATION_GROUP_REQUIRED';
+                }
+
+                return $groups;
+            },
         ]);
     }
 
