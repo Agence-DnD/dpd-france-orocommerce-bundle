@@ -30,24 +30,36 @@ const DndDpdMethodPredict = BaseView.extend({
         this.options = _.defaults(options || {}, this.options);
         DndDpdMethodPredict.__super__.initialize.call(this, options);
 
+        this.$hiddenDeliveryPhone = $(this.options.hiddenInputs.deliveryPhone);
+
         this.render();
         this.loadingMaskView = new LoadingMaskView({container: this.$el});
         this.$deliveryPhone = $(this.options.phoneSelector);
-        this.$hiddenDeliveryPhone = $(this.options.hiddenInputs.deliveryPhone);
         this.$error = $(this.options.errorSelector);
+        this.$checkoutForm = $(this.options.formSelector);
+        this._afterRender();
+        this.validateForm();
     },
 
     /**
      * Render method details
      */
     render: function() {
-        const phone = $(this.options.filledInputs.addressPhone).val();
+        const savedPhone = this.$hiddenDeliveryPhone.val();
+        const phone = savedPhone ? savedPhone : $(this.options.filledInputs.addressPhone).val();
 
         const $el = $(this.template({
             phone: phone
         }));
 
         this.$el.html($el);
+    },
+
+    /**
+     * trigger phone after render
+     */
+    _afterRender: function() {
+        this.$deliveryPhone.trigger('keyup');
     },
 
     /**
@@ -71,7 +83,18 @@ const DndDpdMethodPredict = BaseView.extend({
         } else {
             this.$error.show();
             $input.addClass('not-valid').removeClass('valid');
+            this._setDeliveryPhone('');
         }
+
+        this.validateForm();
+    },
+
+    /**
+     * validate checkout form
+     */
+    validateForm: function() {
+        const submitBtn = this.$checkoutForm.find('[type="submit"]');
+        submitBtn.prop("disabled", !this.$checkoutForm.valid());
     },
 
     /**
