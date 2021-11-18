@@ -4,64 +4,42 @@
 
 ### Documentation:
 
+`Agence Dn'D - DPD France Shipping Bundle` adds "DPD Classic", "DPD Predict" and "DPD Relais" shipping methods to OroCommerce.
+
+Also, it adds the possibility to export command to "DPD Station" service by FTP.
+
+See the full documentaton [here](doc/documentation.md).
 
 ### Installation:
-### Require the module
-```composer require agencednd/dpd-france-orocommerce-bundle```
 
-### Flush the cache
-```bin/console cache:clear```
+First, you need to follow our OroCommerce module install guide: [Install Guide](https://agencednd.atlassian.net/wiki/spaces/MI/pages/2145681458/Installation+des+modules+Marketplace+interne+OroCommerce)
 
-### Run the migrations
+After that, you can require the module with composer:
+```bash
+composer require agencednd/dpd-france-orocommerce-bundle
 ```
+
+Flush the cache:
+```bash
+bin/console cache:clear
+```
+
+Run the migrations:
+```bash
 bin/console oro:migration:load --force
 bin/console oro:migration:data:load --bundles=DndDpdFranceShippingBundle
 ```
 
-### Reinstall the assets to copy bundle public folder (for integration logo)
-```bin/console assets:install```
-
-
-### Load the modified workflows and reload the translations
-
+Reinstall the assets to copy bundle public folder (for integration logo):
+```bash
+bin/console assets:install
 ```
+
+Load the modified workflows and reload the translations:
+```bash
 bin/console oro:workflow:definitions:load
 php bin/console oro:translation:load
 ```
-
-
-### Configuration:
-Method/DpdFranceShippingMethod.php
-#### Create a DPD France shipping integration
-
-On the admin section, go to System > Integrations > Manage integrations > Create Integration
-
-Select DPD France integration type and fill in the requested configurations.
-
-#### Create shipping rules
-
-On the admin section, go to System > Shipping rules > Create shipping rule
-
-Select the proper currency / website combination for your store, set a base price for the services and an eventual extra fee per service in additional options section.
-
-Set the following expression in your shopping rule if you want to use the maxQtyForDpdFr product attribute to enforce limitations at product level.
-
-```
-lineItems.all(
-    (lineItem.product.maxQtyForDpdFr < 0)
-    or
-    (lineItem.product.maxQtyForDpdFr > lineItem.quantity)
-)
-```
-
-#### Activate the checkout workflow "With DPD France"
-
-The two native checkout workflows have been cloned into their "...with DPD France" declinations. Activate the one corresponding with the previously active.
-
-### Flush the cache, again
-
-```bin/console cache:clear```
-
 
 ### Requirements:
 
