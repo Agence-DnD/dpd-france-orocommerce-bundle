@@ -1,0 +1,34 @@
+layout:
+    actions:
+        - '@add':
+                id: order_dpd_france_delivery_phone
+                blockType: text
+                parentId: order_body_column_left
+                siblingId: order_shipping_address
+                options:
+                    visible: '=data["order"].getDeliveryPhone()!=null'
+                    text: '=data["order"].getDeliveryPhone()'
+                    label: 'oro.order.delivery_phone.label'
+                    additional_block_prefixes: ['order_body_column_element']
+
+        - '@add':
+                id: order_dpd_france_pudo_name
+                blockType: text
+                parentId: order_body_column_left
+                siblingId: order_shipping_address
+                options:
+                    visible: '=data["order"].getDpdFrRelayId()!=null'
+                    label: 'dnd_dpd_france_shipping.pudo.name.label'
+                    text: '=data["dnd_dpd_france_shipping_order_details"].getPudoName(data["order"].getDpdFrRelayId())'
+                    additional_block_prefixes: [ 'order_body_column_element' ]
+
+        - '@add':
+                id: order_dpd_france_pudo_address
+                blockType: text
+                parentId: order_body_column_left
+                siblingId: order_dpd_france_pudo_name
+                options:
+                    visible: '=data["order"].getDpdFrRelayId()!=null'
+                    label: 'dnd_dpd_france_shipping.pudo.address.label'
+                    text: '=data["dnd_dpd_france_shipping_order_details"].getPudoAddress(data["order"].getDpdFrRelayId())'
+                    additional_block_prefixes: [ 'order_body_column_element' ]

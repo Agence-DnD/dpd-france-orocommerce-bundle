@@ -1,0 +1,5 @@
+dynamic-imports:
+    orocheckout:
+        - dnddpdfranceshipping/js/app/views/dnddpd-method-pickup
+        - dnddpdfranceshipping/js/app/views/dnddpd-method-predict
+        - dnddpdfranceshipping/js/app/views/shipping-methods-view

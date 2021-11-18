@@ -1,0 +1,6 @@
+dnd_dpd_france_shipping:
+    resource:     "@DndDpdFranceShippingBundle/Controller/Frontend/RelayController.php"
+    type:         annotation
+    prefix:       /
+    options:
+        frontend: true

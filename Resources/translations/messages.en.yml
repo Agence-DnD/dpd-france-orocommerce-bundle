@@ -1,13 +1,75 @@
-dnd_dpd_france_shipping.integration.transport.mapping:
-    weight:
-        label: Weight attribute
-        tooltip: code of the attribute holding your product weight
-    length:
-        label: Length attribute
-        tooltip: code of the attribute holding your product length
-    width:
-        label: Width attribute
-        tooltip: code of the attribute holding your product width
-    height:
-        label: Height attribute
-        tooltip: code of the attribute holding your product height
+oro:
+    order:
+        dpd_fr_relay_id:
+            label: DPD FR Relay ID
+        delivery_phone:
+            label: DPD Predict Phone Number
+        synchronized_dpd:
+            label: DPD Station Sync. date
+    product:
+        max_qty_for_dpd_fr.label: DPD France Max qty
+        max_qty_for_dpd_fr.description: Max qty allowed of this product that can be shipped with DPDFrance
+dnd_dpd_france_shipping:
+    action:
+        order:
+            station_export: DPD Station Export
+        message:
+            order:
+                station_export:
+                    success: 'Order #%id% has been queued for DPD Station export.'
+                    error:
+                        requirements: This order doesn't meet DPD export requirements
+                        missing_integration: No integration exists for DPD France
+    method:
+        price.label: Price
+    form:
+        shipping_method_config_options:
+            surcharge:
+                tooltip: Additional cost for the service
+                label: Price
+        options_type.label: DPD France Shipping Rate
+        select_attribute.label: Choose attribute...
+    integration:
+        settings.shipping_services.label: 'Shipping Services'
+        channel:
+            label: DPD France
+        transport:
+            label: DPD France
+    pudo:
+        address.label: Address
+        name.label: Pickup point
+    transport:
+        classic_method_name:
+            label: DPD Classic service label
+        predict_method_name:
+            label: DPD Predict service label
+        pickup_method_name:
+            label: DPD Relay service label
+        classic_method_description:
+            label: DPD Classic service description
+        predict_method_description:
+            label: DPD Predict service description
+        pickup_method_description:
+            label: DPD Relay service description
+        agency_code:
+            label: Agency code
+        google_maps_api_key:
+            label: Google Maps API key
+            tooltip: Required to display relays on a map
+        contract_number:
+            label: Contract number
+        max_qty:
+            label: Max quantity
+            tooltip: Can be overriden by setting a shipping service specific value in dnd_dpd_fr_shipping_service table
+        order_statuses_sent_to_station:
+            label: Order statuses sent to station
+        station_enabled:
+            label: Enable station export
+        station_ftp_host:
+            label: Station FTP Host
+        station_ftp_password:
+            label: Station FTP Password
+        station_ftp_port:
+            label: Station FTP Port
+        station_ftp_user:
+            label: Station FTP User

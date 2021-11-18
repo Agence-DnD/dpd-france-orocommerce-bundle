@@ -1,0 +1,98 @@
+/**
+ * @theme     default
+ * @package   dnddpdfranceshipping
+ * @author    Agence Dn'D <contact@dnd.fr>
+ * @copyright 2004-present Agence Dn'D
+ * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      https://www.dnd.fr/
+ */
+
+.pickup-modal {
+    &__content {
+        display: flex;
+    }
+
+    &__box {
+        flex: 1;
+        padding: 30px;
+
+        &-head {
+            text-align: center;
+            margin: 0 0 25px;
+
+            &-icon {
+                width: 50px;
+                height: auto;
+            }
+
+            &-title {
+                font-size: 18px;
+            }
+        }
+
+        &-content {
+            line-height: 1.5;
+        }
+
+        address {
+            span {
+                display: block;
+            }
+        }
+    }
+
+    &__address-name {
+        font-weight: 700;
+        margin: 0 0 5px;
+        display: block;
+    }
+
+    &__list {
+        .label {
+            color: #dc0032;
+            min-width: 110px;
+
+            &::after {
+                content: ':';
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+.dnddpd-pickup-details-modal {
+    .modal-dialog {
+        max-width: 1050px;
+        margin: auto;
+
+        .close-dialog {
+            background-color: $dnddpd-method-pickup-modal-close-background-color;
+            color: $dnddpd-method-pickup-modal-close-color;
+            margin: 10px;
+        }
+
+        &__body {
+            padding: 0;
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .pickup-modal {
+        &__content {
+            display: block;
+        }
+
+        &__list {
+            .label {
+                min-width: auto;
+            }
+        }
+    }
+
+    .dnddpd-pickup-details-modal {
+        .modal-dialog {
+            margin: 0;
+        }
+    }
+}

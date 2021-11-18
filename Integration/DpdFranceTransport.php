@@ -1,57 +1,92 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Dnd\Bundle\DpdFranceShippingBundle\Integration;
 
-use Dnd\Bundle\DpdFranceShippingBundle\Entity\DpdFranceTransport as DpdFranceTransportSettings;
-use Dnd\Bundle\DpdFranceShippingBundle\Form\Type\DpdFranceTransportSettingsType;
+use Dnd\Bundle\DpdFranceShippingBundle\Entity\DpdFranceTransportSettings;
+use Dnd\Bundle\DpdFranceShippingBundle\Form\Type\DpdFranceTransportSettingsFormType;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
-use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-class DpdFranceTransport implements TransportInterface
+/**
+ * Class DpdFranceTransport
+ *
+ * @package   Dnd\Bundle\DpdFranceShippingBundle\Integration
+ * @author    Agence Dn'D <contact@dnd.fr>
+ * @copyright 2004-present Agence Dn'D
+ * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @link      https://www.dnd.fr/
+ */
+class DpdFranceTransport implements DpdFranceTransportInterface
 {
-
     /**
-     * @var LoggerInterface
+     * Description $transportEntity field
+     *
+     * @var DpdFranceTransportSettings $transportEntity
      */
-    protected $logger;
-
+    protected DpdFranceTransportSettings $transportEntity;
     /**
-     * @param LoggerInterface           $logger
+     * Description $settings field
+     *
+     * @var ParameterBag|null $settings
      */
-    public function __construct(
-        LoggerInterface $logger
-    ) {
-        $this->logger = $logger;
-    }
+    protected ?ParameterBag $settings;
 
     /**
      * {@inheritdoc}
      */
-    public function getLabel()
+    public function getLabel(): string
     {
-        return 'oro.dpd.transport.label';
+        return 'dnd_dpd_france_shipping.integration.transport.label';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSettingsFormType()
+    public function getSettingsFormType(): string
     {
-        return DpdFranceTransportSettingsType::class;
+        return DpdFranceTransportSettingsFormType::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getSettingsEntityFQCN()
+    public function getSettingsEntityFQCN(): string
     {
         return DpdFranceTransportSettings::class;
     }
 
-    public function init(Transport $transportEntity)
+    /**
+     * {@inheritdoc}
+     *
+     * @return DpdFranceTransportSettings
+     */
+    public function getTransportEntity(): DpdFranceTransportSettings
     {
-        // @TODO Implement init() method.
+        return $this->transportEntity;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @return ParameterBag
+     */
+    public function getSettings(): ParameterBag
+    {
+        return $this->settings;
+    }
+
+    /**
+     * Description init function
+     *
+     * @param Transport $transportEntity
+     *
+     * @return void
+     */
+    public function init(Transport $transportEntity): void
+    {
+        $this->transportEntity = $transportEntity;
+        $this->settings        = $this->transportEntity->getSettingsBag();
     }
 }

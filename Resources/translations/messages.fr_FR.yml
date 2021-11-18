@@ -1,13 +1,75 @@
-dnd_dpd_france_shipping.integration.transport.mapping:
-    weight:
-        label: Attribut poids
-        tooltip: Code de l'attribut représentant le poids de votre produit
-    length:
-        label: Attribut longueur
-        tooltip: Code de l'attribut représentant la longueur de votre produit
-    width:
-        label: Attribut largeur
-        tooltip: Code de l'attribut représentant la largeur de votre produit
-    height:
-        label: Attribut hauteur
-        tooltip: Code de l'attribut représentant la hauteur de votre produit
+oro:
+    order:
+        dpd_fr_relay_id:
+            label: ID de point relais DPD
+        delivery_phone:
+            label: Numéro de téléphone de livraison DPD Predict
+        synchronized_dpd:
+            label: Date de synchro DPD Station
+    product:
+        max_qty_for_dpd_fr.label: Qté max DPD France
+        max_qty_for_dpd_fr.description: Quantité maximale possible en expédition DPDFrance pour ce produit
+dnd_dpd_france_shipping:
+    action:
+        order:
+            station_export: Exporter vers DPD Station
+        message:
+            order:
+                station_export:
+                    success: 'La commande #%id% va être exportée dans DPD Station.'
+                    error:
+                        requirements: Cette commande ne remplit pas les conditions pour être exportée dans DPD station.
+                        missing_integration: L'intégration DPD France n'a pas été parametrée.
+    method:
+        price.label: Prix
+    form:
+        shipping_method_config_options:
+            surcharge:
+                tooltip: Surcoût pour le service
+                label: Prix
+        options_type.label: Taux livraison DPD France
+        select_attribute.label: Choisir un attribut...
+    integration:
+        settings.shipping_services.label: Services d'expédition
+        channel:
+            label: DPD France
+        transport:
+            label: DPD France
+    pudo:
+        address.label: Addresse
+        name.label: Point Relais
+    transport:
+        classic_method_name:
+            label: Label service DPD Classic
+        predict_method_name:
+            label: Label service DPD Predict
+        relay_method_name:
+            label: Label service DPD Relay
+        classic_method_description:
+            label: Description service DPD Classic
+        predict_method_description:
+            label: Description service DPD Predict
+        relay_method_description:
+            label: Description service DPD Relais
+        agency_code:
+            label: Code d'agence
+        google_maps_api_key:
+            label: Clé d'API Google Maps
+            tooltip: Utilisé pour afficher les points relais sur une carte
+        order_statuses_sent_to_station:
+            label: Statuts de commande transmis à Station
+        max_qty:
+            label: Quantité maximale
+            tooltip: Peut être surchargé en spécifiant une valeur pour chaque service dans la table dnd_dpd_fr_shipping_service
+        contract_number:
+            label: Numéro de contrat
+        station_enabled:
+            label: Activer export station
+        station_ftp_host:
+            label: Hôte FTP de Station
+        station_ftp_password:
+            label: Mot de passe FTP de Station
+        station_ftp_port:
+            label: Port FTP de Station
+        station_ftp_user:
+            label: Utilisateur FTP de Station

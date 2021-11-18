@@ -1,0 +1,12 @@
+dnd_dpd_france_shipping:
+    pickup:
+        no_results: 'No results match your search'
+        empty_fields: 'Please fill in the Zip code and City fields to be able to search for a relay point.'
+        days:
+            day1: 'Monday'
+            day2: 'Mardi'
+            day3: 'Wednesday'
+            day4: 'Thursday'
+            day5: 'Friday'
+            day6: 'Saturday'
+            day7: 'Sunday'

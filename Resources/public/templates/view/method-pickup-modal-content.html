@@ -1,0 +1,57 @@
+<div class="pickup-modal" data-content>
+    <div id="pickup-modal-map" class="pickup-modal__map" style="height: 300px;" data-markup-url="/bundles/dnddpdfranceshipping/img/pickup/markup.png"></div>
+    <div class="pickup-modal__content">
+        <div class="pickup-modal__box pickup-modal__address">
+            <div class="pickup-modal__box-head">
+                <img class="pickup-modal__box-head-icon" src="/bundles/dnddpdfranceshipping/img/pickup/pointrelais.png" alt="" loading="lazy">
+                <p class="pickup-modal__box-head-title">Votre relais Pickup</p>
+            </div>
+            <div class="pickup-modal__box-content">
+                <strong class="pickup-modal__address-name"><%= name %></strong>
+                <address>
+                    <span><%= address1 %></span>
+                    <span><%= address2 %></span>
+                    <span><%= address3 %></span>
+                    <span><%= zipCode %> <%= city %></span>
+                </address>
+            </div>
+        </div>
+        <div class="pickup-modal__box pickup-modal__address">
+            <div class="pickup-modal__box-head">
+                <img class="pickup-modal__box-head-icon" src="/bundles/dnddpdfranceshipping/img/pickup/horaires.png" alt="" loading="lazy">
+                <p class="pickup-modal__box-head-title">Horaires d'ouverture</p>
+            </div>
+            <div class="pickup-modal__box-content">
+                <ul class="pickup-modal__list">
+                <% _.each(hours, function(day, key) { %>
+                    <li>
+                        <span class="label"><%= pickupDays[key - 1] %></span>
+                        <% _.each(day, function(hour, key) { %>
+                            <% if (key === 1) { %> & <% } %>
+                            <%= hour.START_TM %> <%= hour.END_TM %>
+                        <% }); %>
+                    </li>
+                <% }); %>
+                </ul>
+            </div>
+        </div>
+        <div class="pickup-modal__box pickup-modal__informations">
+            <div class="pickup-modal__box-head">
+                <img class="pickup-modal__box-head-icon" src="/bundles/dnddpdfranceshipping/img/pickup/info.png" alt="" loading="lazy">
+                <p class="pickup-modal__box-head-title">Informations</p>
+            </div>
+            <div class="pickup-modal__box-content">
+                <ul class="pickup-modal__list">
+                    <li>
+                        <span class="label">Distance en km</span>
+                        <%= distance %>
+                    </li>
+                    <li>
+                        <span class="label">Identifiant relais</span>
+                        <%= identifier %>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

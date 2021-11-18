@@ -1,0 +1,24 @@
+services:
+    dnd_dpd_france_shipping.form.data_transformer.order_status_transformer:
+        class: 'Dnd\Bundle\DpdFranceShippingBundle\Form\DataTransformer\OrderStatusTransformer'
+        public: true
+        autowire: true
+        arguments:
+            $enumValueProvider: '@oro_entity_extend.enum_value_provider'
+
+    dnd_dpd_france_shipping.form.type.transport_settings:
+        class: 'Dnd\Bundle\DpdFranceShippingBundle\Form\Type\DpdFranceTransportSettingsFormType'
+        autowire: true
+        arguments:
+            $transport: '@dnd_dpd_france_shipping.integration.transport.type'
+            $em: '@doctrine.orm.entity_manager'
+            $orderStatusTransformer: '@dnd_dpd_france_shipping.form.data_transformer.order_status_transformer'
+        tags:
+            - { name: form.type, alias: dnd_dpd_france_shipping_transport_settings_type }
+
+    dnd_dpd_france_shipping.form.type.dpd_france_shipping_options:
+        class: 'Dnd\Bundle\DpdFranceShippingBundle\Form\Type\DpdFranceShippingMethodOptionsType'
+        arguments:
+            - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }
