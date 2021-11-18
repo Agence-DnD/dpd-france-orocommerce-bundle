@@ -43,7 +43,7 @@ oro:
                 shipping_method_type:
                     label: 'Shipping method type'
                 delivery_phone:
-                    label: 'Delivery phone'
+                    label: 'DPD Predict Phone Number'
                 dpd_fr_relay_id:
                     label: 'DPD France Relay ID'
                 billing_address_has_shipping:

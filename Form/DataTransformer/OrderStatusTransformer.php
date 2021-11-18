@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Form\DataTransformer;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Extend\Entity\EV_Order_Internal_Status;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Symfony\Component\Form\DataTransformerInterface;
 
@@ -44,46 +42,33 @@ class OrderStatusTransformer implements DataTransformerInterface
      *
      * @param string|null $value
      *
-     * @return ArrayCollection
+     * @return EV_Order_Internal_Status|null
      */
-    public function transform($value): ArrayCollection
+    public function transform($value): ?EV_Order_Internal_Status
     {
-        /** @var string[] $ids */
-        $ids = explode(',', $value ?? '');
         /** @var mixed[] $availableStatuses */
         $availableStatuses = $this->enumValueProvider->getEnumChoicesByCode('order_internal_status');
-        /** @var ArrayCollection $items */
-        $items = new ArrayCollection();
         /**
          * @var string $name
          * @var string $id
          */
         foreach ($availableStatuses as $name => $id) {
-            if (!in_array($id, $ids, true)) {
-                continue;
+            if ($value === $id) {
+                return new EV_Order_Internal_Status($id, $name);
             }
-            $items->add(new EV_Order_Internal_Status($id, $name));
         }
-
-        return $items;
+        return null;
     }
 
     /**
      * {@inheritdoc}
      *
-     * @param mixed[] $values
+     * @param EV_Order_Internal_Status|null $value
      *
-     * @return string
+     * @return string|null
      */
-    public function reverseTransform($values): string
+    public function reverseTransform($value): ?string
     {
-        /** @var string[] $ids */
-        $ids = [];
-        /** @var AbstractEnumValue $value */
-        foreach ($values as $value) {
-            $ids[] = $value->getId();
-        }
-
-        return implode(',', $ids ?? []);
+        return $value !== null ? $value->getId() : null;
     }
 }

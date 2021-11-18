@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Form\Type;
 
+use Dnd\Bundle\DpdFranceShippingBundle\Entity\DpdFranceTransportSettings;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Form\DataTransformer\OrderStatusTransformer;
 use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceTransportInterface;
@@ -12,10 +13,13 @@ use Oro\Bundle\EntityExtendBundle\Form\Type\EnumChoiceType;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
@@ -95,9 +99,9 @@ class DpdFranceTransportSettingsFormType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $this->addStationFields($builder, $options);
         $this->addGeneralFields($builder, $options);
         $this->addServicesNamesAndDescriptionFields($builder, $options);
+        $this->addStationFields($builder, $options);
     }
 
     /**
@@ -110,30 +114,48 @@ class DpdFranceTransportSettingsFormType extends AbstractType
      */
     private function addStationFields(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('stationFtpHost', TextType::class, [
-            'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_host.label',
-            'required' => true,
-        ])->add('stationFtpUser', TextType::class, [
-            'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_user.label',
-            'required' => true,
-        ])->add('stationFtpPassword', OroEncodedPlaceholderPasswordType::class, [
-            'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_password.label',
-            'required' => true,
-        ])->add('stationFtpPort', IntegerType::class, [
-            'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_port.label',
-            'required' => true,
-        ])->add('orderStatusesSentToStation', EnumChoiceType::class, [
-            'enum_code' => 'order_internal_status',
-            'multiple'  => true,
-            'expanded'  => false,
-            'required'  => true,
-            'label'     => 'dnd_dpd_france_shipping.transport.order_statuses_sent_to_station.label',
-            'attr'      => [
-                'class' => 'order_internal_status',
-            ],
+        $builder->add('stationEnabled', CheckboxType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.station_enabled.label',
+            'required' => false,
         ]);
 
-        $builder->get('orderStatusesSentToStation')->addModelTransformer($this->orderStatusTransformer);
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            /** @var DpdFranceTransportSettings $column */
+            $column = $event->getData();
+            if ($column->isStationEnabled()) {
+                $event->getForm()->add('stationFtpHost', TextType::class, [
+                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_host.label',
+                    'required' => true,
+                    'mapped'   => true,
+                ])->add('stationFtpUser', TextType::class, [
+                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_user.label',
+                    'required' => true,
+                    'mapped'   => true,
+                ])->add('stationFtpPassword', OroEncodedPlaceholderPasswordType::class, [
+                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_password.label',
+                    'required' => true,
+                    'mapped'   => true,
+                ])->add('stationFtpPort', IntegerType::class, [
+                    'label'    => 'dnd_dpd_france_shipping.transport.station_ftp_port.label',
+                    'required' => true,
+                    'mapped'   => true,
+                ])->add('orderStatusesSentToStation', EnumChoiceType::class, [
+                    'enum_code' => 'order_internal_status',
+                    'multiple'  => false,
+                    'expanded'  => false,
+                    'required'  => true,
+                    'mapped'    => true,
+                    'label'     => 'dnd_dpd_france_shipping.transport.order_statuses_sent_to_station.label',
+                    'attr'      => [
+                        'class' => 'order_internal_status',
+                    ],
+                ]);
+            }
+        });
+
+        if ($builder->get('stationEnabled')->getData() === true) {
+            $builder->get('orderStatusesSentToStation')->addModelTransformer($this->orderStatusTransformer);
+        }
     }
 
     /**
@@ -162,10 +184,6 @@ class DpdFranceTransportSettingsFormType extends AbstractType
             'label'        => 'dnd_dpd_france_shipping.integration.settings.shipping_services.label',
             'required'     => true,
             'multiple'     => true,
-        ])->add('googleMapsApiKey', TextType::class, [
-            'label'    => 'dnd_dpd_france_shipping.transport.google_maps_api_key.label',
-            'tooltip'  => 'dnd_dpd_france_shipping.transport.google_maps_api_key.tooltip',
-            'required' => true,
         ]);
     }
 
@@ -197,6 +215,10 @@ class DpdFranceTransportSettingsFormType extends AbstractType
         ])->add('pickupMethodDesc', TextareaType::class, [
             'label'    => 'dnd_dpd_france_shipping.transport.pickup_method_description.label',
             'required' => true,
+        ])->add('googleMapsApiKey', TextType::class, [
+            'label'    => 'dnd_dpd_france_shipping.transport.google_maps_api_key.label',
+            'tooltip'  => 'dnd_dpd_france_shipping.transport.google_maps_api_key.tooltip',
+            'required' => false,
         ]);
     }
 
@@ -209,6 +231,7 @@ class DpdFranceTransportSettingsFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass ?: $this->transport->getSettingsEntityFQCN(),
+            'mapped'     => true,
         ]);
     }
 

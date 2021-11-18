@@ -108,17 +108,19 @@ class DpdFranceTransportSettings extends Transport
      */
     public const DEFAULT_PICKUP_METHOD_DESC = 'Description de la méthode DPD Relais';
     /**
-     * The default value for google maps api key
-     *
-     * @var string DEFAULT_GOOGLE_MAPS_API_KEY
-     */
-    public const DEFAULT_GOOGLE_MAPS_API_KEY = '<your google maps api key>';
-    /**
      * The settings for the DPD France transport
      *
      * @var ParameterBag|null $settings
      */
     protected ?ParameterBag $settings = null;
+    /**
+     * Description $stationEnabled field
+     *
+     * @ORM\Column(name="dpd_fr_station_enabled", type="boolean")
+     *
+     * @var bool|null $stationEnabled
+     */
+    protected ?bool $stationEnabled = false;
     /**
      * Description $stationFtpPort field
      *
@@ -264,6 +266,7 @@ class DpdFranceTransportSettings extends Transport
      */
     public function __construct()
     {
+        $this->stationEnabled     = false;
         $this->stationFtpPort     = self::DEFAULT_STATION_FTP_PORT;
         $this->stationFtpHost     = self::DEFAULT_STATION_FTP_HOST;
         $this->stationFtpUser     = self::DEFAULT_STATION_FTP_USER;
@@ -275,7 +278,7 @@ class DpdFranceTransportSettings extends Transport
         $this->predictMethodDesc  = self::DEFAULT_PREDICT_METHOD_DESC;
         $this->pickupMethodName   = self::DEFAULT_PICKUP_METHOD_NAME;
         $this->pickupMethodDesc   = self::DEFAULT_PICKUP_METHOD_DESC;
-        $this->googleMapsApiKey   = self::DEFAULT_GOOGLE_MAPS_API_KEY;
+        $this->googleMapsApiKey   = '';
         $this->shippingServices   = new ArrayCollection();
     }
 
@@ -794,4 +797,27 @@ class DpdFranceTransportSettings extends Transport
     {
         $this->googleMapsApiKey = $googleMapsApiKey;
     }
+
+    /**
+     * Description isStationEnabled function
+     *
+     * @return bool
+     */
+    public function isStationEnabled(): bool
+    {
+        return (bool) $this->stationEnabled;
+    }
+
+    /**
+     * Description setStationEnabled function
+     *
+     * @param bool $stationEnabled
+     *
+     * @return void
+     */
+    public function setStationEnabled(bool $stationEnabled): void
+    {
+        $this->stationEnabled = $stationEnabled;
+    }
+
 }

@@ -17,6 +17,7 @@ const DndDpdMethodPickup = BaseView.extend({
 
         form: {
             id: '#pickup-search',
+            searchWrapper: '#pickup-search-wrapper',
             toggle: '#pickup-search-toggle',
             submitBtn: '#pickup-search-btn',
             resetBtn: '#pickup-search-btn',
@@ -25,7 +26,9 @@ const DndDpdMethodPickup = BaseView.extend({
             citySelector: '#pickup-city',
         },
 
-        noResults: __('dnd_dpd_france_shipping.pickup.no_results')
+        noResults: __('dnd_dpd_france_shipping.pickup.no_results'),
+
+        emptyFields: __('dnd_dpd_france_shipping.pickup.empty_fields')
     },
 
     template: pickupDetails,
@@ -85,14 +88,19 @@ const DndDpdMethodPickup = BaseView.extend({
         this.render();
         this.loadingMaskView = new LoadingMaskView({container: this.$el});
         this.$searchForm = $(this.options.form.id);
+        this.$searchWrapper = $(this.options.form.searchWrapper);
         this.$searchSubmitBtn = $(this.options.form.submitBtn);
         this.$searchResetBtn = $(this.options.form.resetBtn);
         this.$toggleSearch = $(this.options.form.toggle);
         this.$pickupList = $(this.options.pickupListSelector);
         this.$hiddenRelayId = $(this.options.hiddenInputs.relayId);
+        this.$checkoutForm = $(this.options.formSelector);
+        this.validator = this.$checkoutForm.validate();
 
         this._initForm();
         this._formatUrl();
+        this._afterRender();
+        this.validateForm();
     },
 
     /**
@@ -137,6 +145,7 @@ const DndDpdMethodPickup = BaseView.extend({
      */
     _onSearchToggleClick: function() {
         this.$searchForm.toggle();
+        this.$searchWrapper.toggleClass('open');
     },
 
     /**
@@ -166,6 +175,13 @@ const DndDpdMethodPickup = BaseView.extend({
     },
 
     /**
+     * validate
+     */
+    _afterRender: function() {
+        this.validateForm();
+    },
+
+    /**
      * set pickup id
      *
      * @param id
@@ -186,7 +202,8 @@ const DndDpdMethodPickup = BaseView.extend({
         this.modal = new Modal({
             className: 'modal oro-modal-normal dnddpd-pickup-details-modal',
             title: false,
-            allowCancel: false,
+            cancelButtonClass: 'hidden',
+            allowCancel: true,
             allowOk: false,
             content: content
         });
@@ -249,7 +266,13 @@ const DndDpdMethodPickup = BaseView.extend({
                     this.results = [];
                     console.log(error);
                 }, this),
+                complete: _.bind(function(error) {
+                    this.validateForm();
+                }, this),
             });
+        } else {
+            this._emptyFields();
+            this.validateForm();
         }
     },
 
@@ -264,6 +287,16 @@ const DndDpdMethodPickup = BaseView.extend({
     },
 
     /**
+     * render error msg
+     *
+     * @private
+     */
+    _emptyFields: function() {
+        this.$pickupList.html(`<p class="no-results error">${this.options.emptyFields}</p>`);
+        this.hideLoadingMask();
+    },
+
+    /**
      * Render Pickups
      *
      * @param response
@@ -271,9 +304,20 @@ const DndDpdMethodPickup = BaseView.extend({
      */
     _renderPickupList: function(response) {
         this.results = response.relays.PUDO_ITEMS.PUDO_ITEM;
+        const currentPickupId = this.$hiddenRelayId.val(),
+            isExist = this.results.filter(function(pickup) {
+                return pickup.PUDO_ID === currentPickupId;
+            });
+
+        // remove saved pickup if it no longer exists in the new search
+        if (currentPickupId && isExist.length === 0) {
+            this._setPickupId('');
+        }
+
         const $pickupList = $(pickupList({
             pickups: this.results,
-            formatDistance: this._formatDistance
+            formatDistance: this._formatDistance,
+            currentPickupId: this.$hiddenRelayId.val()
         }));
 
         this.$pickupList.html($pickupList);
@@ -283,6 +327,7 @@ const DndDpdMethodPickup = BaseView.extend({
             const id = event.target.closest('[data-pickup-id]').getAttribute('data-pickup-id');
 
             this._setPickupId(id);
+            this.validateForm();
         }.bind(this));
 
         this._onSearchToggleClick();
@@ -363,6 +408,14 @@ const DndDpdMethodPickup = BaseView.extend({
             icon: this.map.markupUrl,
             map: this.googleMap
         });
+    },
+
+    /**
+     * validate checkout form
+     */
+    validateForm: function() {
+        const submitBtn = this.$checkoutForm.find('[type="submit"]');
+        submitBtn.prop("disabled", !this.$checkoutForm.valid());
     },
 
     /**

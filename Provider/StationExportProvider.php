@@ -112,6 +112,16 @@ class StationExportProvider
     }
 
     /**
+     * Description isStationExportEnabled function
+     *
+     * @return bool
+     */
+    public function isStationExportEnabled(): bool
+    {
+        return $this->settingsProvider->getSettings()->get('dpd_fr_station_enabled');
+    }
+
+    /**
      * Checks whether the order is a valid candidate for Station export or not
      *
      * @param Order $order

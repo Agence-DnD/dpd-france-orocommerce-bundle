@@ -65,6 +65,12 @@
         max-width: 1050px;
         margin: auto;
 
+        .close-dialog {
+            background-color: $dnddpd-method-pickup-modal-close-background-color;
+            color: $dnddpd-method-pickup-modal-close-color;
+            margin: 10px;
+        }
+
         &__body {
             padding: 0;
         }

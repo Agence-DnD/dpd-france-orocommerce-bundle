@@ -8,6 +8,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_0\DndDpdFranceShippi
 use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_1\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_1;
 use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_2\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_2;
 use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_3\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_3;
+use Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_4\DndDpdFranceShippingBundle as DndDpdFranceShippingBundle_v1_4;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
@@ -29,7 +30,7 @@ class DndDpdFranceShippingBundleInstaller implements Installation
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -49,5 +50,6 @@ class DndDpdFranceShippingBundleInstaller implements Installation
         DndDpdFranceShippingBundle_v1_2::addDndDpdFrTransportShipServiceForeignKeys($schema);
         DndDpdFranceShippingBundle_v1_3::updateOroOrderTable($schema);
         DndDpdFranceShippingBundle_v1_3::updateOroCheckoutTable($schema);
+        DndDpdFranceShippingBundle_v1_4::addStationFTPTransportColumns($schema);
     }
 }

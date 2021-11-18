@@ -5,7 +5,7 @@ import NumberFormatter from 'orolocale/js/formatter/number';
 import mediator from 'oroui/js/mediator';
 import DndDpdMethodPickup from 'dnddpdfranceshipping/js/app/views/dnddpd-method-pickup';
 import DndDpdMethodPredict from 'dnddpdfranceshipping/js/app/views/dnddpd-method-predict';
-
+import validate from 'jquery.validate';
 
 const ShippingMethodsView = BaseView.extend({
     autoRender: true,
@@ -14,6 +14,8 @@ const ShippingMethodsView = BaseView.extend({
         template: '',
 
         methodContainerSelector: '.dnddpd-method',
+
+        formSelector: 'form[name="oro_workflow_transition"]',
 
         filledInputs: {
             zipCode: '#dpd_fr_shipping_address_zipcode',
@@ -83,6 +85,9 @@ const ShippingMethodsView = BaseView.extend({
         }));
         this.$el.html($el);
         this._methodDetails();
+        this.$checkoutForm = $(this.options.formSelector);
+        this.validator = this.$checkoutForm.validate();
+        this._addValidatorRules();
     },
 
     /**
@@ -92,13 +97,15 @@ const ShippingMethodsView = BaseView.extend({
         this.subview('checkoutShippingMethodPickup', new DndDpdMethodPickup({
             el: this.$el.find(`[data-method-detail="${this.options.pickupId}"]`),
             filledInputs: this.options.filledInputs,
-            hiddenInputs: this.options.hiddenInputs
+            hiddenInputs: this.options.hiddenInputs,
+            formSelector: this.options.formSelector
         }));
 
         this.subview('checkoutShippingMethodPredict', new DndDpdMethodPredict({
             el: this.$el.find(`[data-method-detail="${this.options.predictId}"]`),
             filledInputs: this.options.filledInputs,
-            hiddenInputs: this.options.hiddenInputs
+            hiddenInputs: this.options.hiddenInputs,
+            formSelector: this.options.formSelector
         }));
     },
 
@@ -115,17 +122,33 @@ const ShippingMethodsView = BaseView.extend({
         .addClass('active')
         .siblings()
         .removeClass('active');
+
+        this.subview('checkoutShippingMethodPredict').validateForm();
+        this.subview('checkoutShippingMethodPickup').validateForm();
     },
 
     /**
-     * Set delivery phone value
+     * Add validations rules
      *
-     * @param number
      * @private
      */
-    _setDeliveryPhone: function(number) {
-        const $input = $(this.options.hiddenInputs.deliveryPhone);
-        $input.val(number);
+    _addValidatorRules: function() {
+        const self = this;
+
+        Object.assign(this.validator.settings, {
+            rules: {
+                'oro_workflow_transition[delivery_phone]': {
+                    required: function() {
+                        return $(`[data-choice="${self.options.predictId}"]`).is(':checked')
+                    }
+                },
+                'oro_workflow_transition[dpd_fr_relay_id]': {
+                    required: function() {
+                        return $(`[data-choice="${self.options.pickupId}"]`).is(':checked')
+                    }
+                }
+            }
+        });
     }
 });
 

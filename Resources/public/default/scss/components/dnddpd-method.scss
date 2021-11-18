@@ -62,6 +62,12 @@
     }
 }
 
+.dnddpd-fields {
+    .validation-failed {
+        display: none;
+    }
+}
+
 @include breakpoint('tablet-small') {
     .dnddpd-method {
         padding: $dnddpd-method-tablet-padding;
