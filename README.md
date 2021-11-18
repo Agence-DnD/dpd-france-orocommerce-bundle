@@ -31,7 +31,7 @@ php bin/console oro:translation:load
 
 
 ### Configuration:
-Method/DpdFranceShippingMethod.php
+
 #### Create a DPD France shipping integration
 
 On the admin section, go to System > Integrations > Manage integrations > Create Integration
