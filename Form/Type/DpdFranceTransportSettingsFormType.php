@@ -251,7 +251,7 @@ class DpdFranceTransportSettingsFormType extends AbstractType
             'validation_groups' => function (FormInterface $form) {
                 $groups = ['Default'];
                 $data   = $form->getData();
-                if ($data->isStationEnabled()) { // then we want station fields to be required
+                if ($data !== null && $data->isStationEnabled()) { // then we want station fields to be required
                     $groups[] = 'STATION_ENABLED_VALIDATION_GROUP_REQUIRED';
                 }
 
