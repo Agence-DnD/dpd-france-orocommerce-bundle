@@ -12,7 +12,26 @@ Select the `DPD France` integration type and fill in the requested configuration
 
 #### Configure DPD France Shipping Integration
 
-
+* Type
+* Name
+* Agency code
+* Contract number
+* Max quantity
+* Shipping Services
+* DPD Classic service label
+* DPD Classic service description
+* DPD Predict service label
+* DPD Predict service description
+* DPD Relay service label
+* DPD Relay service description
+* Google Maps API key
+* Enable station export
+* Station FTP Host
+* Station FTP User
+* Station FTP Password
+* Station FTP Port
+* Order statuses sent to station
+* Default owner
 
 #### Create shipping rules
 
