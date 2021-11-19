@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Form\Type;
 
+use Dnd\Bundle\DpdFranceShippingBundle\Entity\DpdFranceTransportSettings;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Form\DataTransformer\OrderStatusTransformer;
 use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceTransportInterface;
@@ -248,10 +249,12 @@ class DpdFranceTransportSettingsFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass ?: $this->transport->getSettingsEntityFQCN(),
             'mapped'     => true,
-            'validation_groups' => function (FormInterface $form) {
+            'validation_groups' => function (FormInterface $form): array {
+                /** @var string[] $groups */
                 $groups = ['Default'];
-                $data   = $form->getData();
-                if ($data !== null && $data->isStationEnabled()) { // then we want station fields to be required
+                /** @var DpdFranceTransportSettings|null $data */
+                $data = $form->getData();
+                if ($data !== null && $data->isStationEnabled()) {
                     $groups[] = 'STATION_ENABLED_VALIDATION_GROUP_REQUIRED';
                 }
 
