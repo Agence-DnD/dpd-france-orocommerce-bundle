@@ -39,7 +39,7 @@ In the admin section, go to `System > Shipping rules > Create shipping rule`.
 
 Select the proper currency / website combination for your store, set a base price for the services and an eventual extra fee per service in additional options section.
 
-Set the following expression in your shopping rule if you want to use the `maxQtyForDpdFr` product attribute to enforce limitations at product level:
+In order to use the quantity limitation at product level, you can set the following rule expression:
 ```
 lineItems.all(
     (lineItem.product.maxQtyForDpdFr < 0)
@@ -47,6 +47,14 @@ lineItems.all(
     (lineItem.product.maxQtyForDpdFr > lineItem.quantity)
 )
 ```
+
+* A product with the attribute `DPD France Max qty` set to "-1" have no specific limitation.
+* A product with the attribute `DPD France Max qty` set to "0" is not shippable with DPD France.
+
+There are 3 levels of limitation for product quantities:
+* 1- DPD France `Max Quantity` Integration global setting
+* 2- Method specific limitation in db table `dnd_dpd_fr_shipping_service`
+* 3- Product specific limitation with the attribute `DPD France Max qty`
 
 #### Enable the checkout workflow "With DPD France"
 
