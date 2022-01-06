@@ -37,7 +37,8 @@ dnd_dpd_france_shipping:
             label: DPD France
     pudo:
         address.label: Addresse
-        name.label: Point Relais
+        name.label: Nom du point DPD Relay
+        point_id.label: ID du point DPD Relay
     transport:
         classic_method_name:
             label: Label service DPD Classic
@@ -59,7 +60,7 @@ dnd_dpd_france_shipping:
         order_statuses_sent_to_station:
             label: Statuts de commande transmis à Station
         max_qty:
-            label: Quantité maximale
+            label: Nombre de colis maximum par commande
             tooltip: Peut être surchargé en spécifiant une valeur pour chaque service dans la table dnd_dpd_fr_shipping_service
         contract_number:
             label: Numéro de contrat

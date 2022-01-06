@@ -104,7 +104,9 @@ class ShippableWithDpdFrance
 
         /** @var ShippingLineItemInterface[] $packages */
         try {
-            $packages = $this->packageFactory->create($shippingContext->getLineItems(), $shippingService);
+            $packages = $this->packageFactory->create(
+                $shippingContext->getLineItems(), $shippingService, $context->getWebsite()->getId()
+            );
         } catch (PackageException $e) {
             $this->logger->info(
                 sprintf(

@@ -10,6 +10,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
+use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
 
 /**
  * Class PackageFactory
@@ -44,20 +45,32 @@ class PackageFactory
      *
      * @param ShippingLineItemCollectionInterface $lineItemCollection
      * @param ShippingService                     $shippingService
+     * @param int                                 $websiteId
      *
      * @return DpdShippingPackageOptionsInterface[]
      * @throws PackageException
      */
     public function create(
         ShippingLineItemCollectionInterface $lineItemCollection,
-        ShippingService $shippingService
+        ShippingService $shippingService,
+        int $websiteId
     ): array {
-        $this->packagesBuilder->init($shippingService);
+        $this->packagesBuilder->init($shippingService, $websiteId);
         /** @var ShippingLineItemInterface $item */
         foreach ($lineItemCollection as $item) {
             $this->packagesBuilder->addLineItem($item);
         }
 
-        return $this->packagesBuilder->getPackages();
+        /** @var ShippingPackageOptionsInterface[] $packages */
+        $packages = $this->packagesBuilder->getPackages();
+        if (empty($packages)) {
+            throw new PackageException(
+                sprintf(
+                    'Could not build a set of packages matching %s requirements for this checkout.',
+                    $shippingService->getLabel()
+                )
+            );
+        }
+        return $packages;
     }
 }

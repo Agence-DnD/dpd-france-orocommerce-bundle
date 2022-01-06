@@ -11,6 +11,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptions;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\SettingsProvider;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Provider\WebsiteCurrencyProvider;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
@@ -43,12 +44,6 @@ class ShippingPackagesBuilder
      */
     public const WEIGHT_UNIT = 'kg';
     /**
-     * DPD France currency used for limitations
-     *
-     * @var string CURRENCY
-     */
-    public const CURRENCY = 'EUR';
-    /**
      * Description $measureUnitConversion field
      *
      * @var MeasureUnitConversion $measureUnitConversion
@@ -75,11 +70,23 @@ class ShippingPackagesBuilder
      */
     private array $packages = [];
     /**
+     * @var string|null $currencyCode
+     */
+    private ?string $currencyCode = null;
+    /**
+     * @var int|null $websiteId
+     */
+    private ?int $websiteId = null;
+    /**
      * Description $shippingService field
      *
      * @var ShippingService $shippingService
      */
     private ShippingService $shippingService;
+    /**
+     * @var WebsiteCurrencyProvider $websiteCurrencyProvider
+     */
+    private WebsiteCurrencyProvider $websiteCurrencyProvider;
 
     /**
      * ShippingPackagesBuilder constructor
@@ -87,26 +94,32 @@ class ShippingPackagesBuilder
      * @param DpdShippingPackageOptionsFactoryInterface $packageOptionsFactory
      * @param MeasureUnitConversion                     $measureUnitConversion
      * @param SettingsProvider                          $settingsProvider
+     * @param WebsiteCurrencyProvider                   $websiteCurrencyProvider
      */
     public function __construct(
         DpdShippingPackageOptionsFactoryInterface $packageOptionsFactory,
         MeasureUnitConversion $measureUnitConversion,
-        SettingsProvider $settingsProvider
+        SettingsProvider $settingsProvider,
+        WebsiteCurrencyProvider $websiteCurrencyProvider
     ) {
-        $this->packageOptionsFactory = $packageOptionsFactory;
-        $this->measureUnitConversion = $measureUnitConversion;
-        $this->settingsProvider      = $settingsProvider;
+        $this->packageOptionsFactory   = $packageOptionsFactory;
+        $this->measureUnitConversion   = $measureUnitConversion;
+        $this->settingsProvider        = $settingsProvider;
+        $this->websiteCurrencyProvider = $websiteCurrencyProvider;
     }
 
     /**
      * Init the builder for each shipping service
      *
      * @param ShippingService $shippingService
+     * @param int             $websiteId
      *
      * @return void
      */
-    public function init(ShippingService $shippingService): void
+    public function init(ShippingService $shippingService, int $websiteId): void
     {
+        $this->websiteId       = $websiteId;
+        $this->currencyCode    = $this->websiteCurrencyProvider->getWebsiteDefaultCurrency($websiteId);
         $this->resetCurrentPackage();
         $this->packages        = [];
         $this->shippingService = $shippingService;
@@ -127,6 +140,12 @@ class ShippingPackagesBuilder
         }
         if (!$lineItem->getDimensions()) {
             $this->badItemException($lineItem, 'Unknown size.');
+        }
+        if ($lineItem->getPrice()->getCurrency() !== $this->currencyCode) {
+            $this->badItemException(
+                $lineItem,
+                sprintf('Lineitem price not defined in website\'s default currency: %s.', $this->currencyCode)
+            );
         }
         /** @var Weight $weight */
         $weight = $this->measureUnitConversion->convert($lineItem->getWeight(), self::WEIGHT_UNIT);
@@ -151,9 +170,10 @@ class ShippingPackagesBuilder
                 if (!$this->packCurrentPackage()) {
                     throw new PackageException(
                         sprintf(
-                            'Too many packages, need more than %d packages while %d are allowed. Advise splitting order.',
+                            'Too many packages, need more than %d packages while %d are allowed for %s. Advise splitting order.',
                             count($this->packages) + 1,
-                            $this->getParcelMaxAmount()
+                            $this->getParcelMaxAmount(),
+                            $this->shippingService->getLabel()
                         )
                     );
                 }
@@ -194,9 +214,10 @@ class ShippingPackagesBuilder
     {
         throw new PackageException(
             sprintf(
-                'The item %s (%s) cannot be shipped with DPD FR. %s',
+                'The item %s (%s) cannot be shipped with %s. %s',
                 $lineItem->getProduct()->getName(),
                 $lineItem->getProduct()->getSku(),
+                $this->shippingService->getLabel(),
                 $message
             )
         );
@@ -212,11 +233,12 @@ class ShippingPackagesBuilder
     private function itemCanFit(DpdShippingPackageOptionsInterface $itemOptions): bool
     {
         return (
-            $itemOptions->getLength() < $this->shippingService->getParcelMaxLength()    &&
-            $itemOptions->getWidth()  < $this->shippingService->getParcelMaxLength()    &&
-            $itemOptions->getWeight() < $this->shippingService->getParcelMaxWeight()    &&
-            $itemOptions->getGirth()  < $this->shippingService->getParcelMaxPerimeter() &&
-            $itemOptions->getPrice()->getValue() < $this->shippingService->getParcelMaxValue()
+            $itemOptions->getLength() <= $this->shippingService->getParcelMaxLength()    &&
+            $itemOptions->getWidth()  <= $this->shippingService->getParcelMaxLength()    &&
+            $itemOptions->getHeight() <= $this->shippingService->getParcelMaxLength()    &&
+            $itemOptions->getWeight() <= $this->shippingService->getParcelMaxWeight()    &&
+            $itemOptions->getGirth()  <= $this->shippingService->getParcelMaxPerimeter() &&
+            $itemOptions->getPrice()->getValue() <= $this->shippingService->getParcelMaxValue()
         );
     }
 
@@ -261,7 +283,7 @@ class ShippingPackagesBuilder
         $this->currentPackage = $this->createPackageOptions(
             0,
             Dimensions::create(0, 0, 0),
-            Price::create(0, self::CURRENCY)
+            Price::create(0, $this->currencyCode)
         );
     }
 
@@ -341,11 +363,19 @@ class ShippingPackagesBuilder
      * Gets the different packages needed to ship all them lineItems
      *
      * @return ShippingPackageOptionsInterface[]
+     * @throws PackageException
      */
     public function getPackages(): array
     {
         if ($this->currentPackage->getWeight() > 0 && !$this->packCurrentPackage()) {
-            return [];
+            throw new PackageException(
+                sprintf(
+                    'Too many packages, need more than %d packages while %d are allowed for %s. Advise splitting order.',
+                    count($this->packages) + 1,
+                    $this->getParcelMaxAmount(),
+                    $this->shippingService->getLabel()
+                )
+            );
         }
 
         return $this->packages;
