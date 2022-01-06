@@ -44,23 +44,40 @@ In order to use the quantity limitation at product level, you can set the follow
 lineItems.all(
     (lineItem.product.maxQtyForDpdFr < 0)
     or
-    (lineItem.product.maxQtyForDpdFr > lineItem.quantity)
+    (lineItem.product.maxQtyForDpdFr >= lineItem.quantity)
 )
 ```
 
-* A product with the attribute `DPD France Max qty` set to "-1" have no specific limitation.
+* A product with the attribute `DPD France Max qty` set to "-1" has no specific quantity limitation.
 * A product with the attribute `DPD France Max qty` set to "0" is not shippable with DPD France.
 
 There are 3 levels of limitation for product quantities:
-* 1- DPD France `Max Quantity` Integration global setting
-* 2- Method specific limitation in db table `dnd_dpd_fr_shipping_service`
+* 1- DPD France `Maximum package number per order` Integration global setting
+* 2- Method specific limitation in db table `dnd_dpd_fr_shipping_service`: parcel_max_amount
 * 3- Product specific limitation with the attribute `DPD France Max qty`
+
+Other limitations can be set using [Expression Language for Shipping and Payment Rules](https://doc.oroinc.com/user/back-office/system/shipping-rules/expression-lang/#payment-shipping-expression-lang)
+, you can for example add the following to your rule expression to limit the shipping method to a specific customer group:
+
+```
+and customer.group.id = 4
+```
 
 #### Enable the checkout workflow "With DPD France"
 
 The two native checkout workflows have been cloned into their "*...with DPD France*" declinations.
 
 Enable the one corresponding to the workflow desired.
+
+
+#### Customize shipping methods limitations
+
+DPD FR Standard limitations are stored in db table `dnd_dpd_fr_shipping_service` and can be tweaked in the case of contractual arrangements with DPD France. 
+
+* Weight limitation is expressed in kilograms (kg)
+* Dimensions limitations are expressed in meters (m)
+* Value limitation is expressed in your website's default currency
+
 
 ### Flush the cache
 

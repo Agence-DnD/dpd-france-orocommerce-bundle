@@ -85,6 +85,7 @@ services:
             - '@dnd_dpd_france_shipping.factory.dpd_shipping_package_options'
             - '@oro_shipping.provider.measure_units.conversion'
             - '@dnd_dpd_france_shipping.provider.settings'
+            - '@oro_pricing.provider.website_currency_provider'
 
     dnd_dpd_france_shipping.factory.package:
         class: Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory
