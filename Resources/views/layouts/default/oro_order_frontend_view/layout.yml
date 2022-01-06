@@ -22,16 +22,16 @@ layout:
                     text: '=data["dnd_dpd_france_shipping_order_details"].getPudoName(data["order"].getDpdFrRelayId())'
                     additional_block_prefixes: [ 'order_body_column_element' ]
 
-        #- '@add':
-        #        id: order_dpd_france_pudo_id
-        #        blockType: text
-        #        parentId: order_body_column_left
-        #        siblingId: order_shipping_address
-        #        options:
-        #            visible: '=data["order"].getDpdFrRelayId()!=null'
-        #            label: 'dnd_dpd_france_shipping.pudo.point_id.label'
-        #            text: '=data["order"].getDpdFrRelayId()'
-        #            additional_block_prefixes: [ 'order_body_column_element' ]
+        - '@add':
+                id: order_dpd_france_pudo_id
+                blockType: text
+                parentId: order_body_column_left
+                siblingId: order_shipping_address
+                options:
+                    visible: '=data["order"].getDpdFrRelayId()!=null'
+                    label: 'dnd_dpd_france_shipping.pudo.point_id.label'
+                    text: '=data["order"].getDpdFrRelayId()'
+                    additional_block_prefixes: [ 'order_body_column_element' ]
 
         - '@add':
                 id: order_dpd_france_pudo_address
