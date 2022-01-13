@@ -337,7 +337,8 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
             }
             $this->packages = $this->packagesFactory->create(
                 $convertedLineItems,
-                $shippingService
+                $shippingService,
+                $order->getWebsite()->getId()
             );
         }
 

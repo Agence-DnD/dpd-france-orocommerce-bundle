@@ -118,7 +118,7 @@ class StationExportProvider
      */
     public function isStationExportEnabled(): bool
     {
-        return $this->settingsProvider->getSettings()->get('dpd_fr_station_enabled');
+        return $this->settingsProvider->getSettings()->get('dpd_fr_station_enabled') ?? false;
     }
 
     /**

@@ -237,7 +237,8 @@ HELP
             }
             $this->packages = $this->packagesFactory->create(
                 $convertedLineItems,
-                $shippingService
+                $shippingService,
+                $order->getWebsite()->getId()
             );
         }
 
