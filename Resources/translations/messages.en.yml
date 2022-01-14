@@ -1,7 +1,9 @@
 oro:
     order:
         dpd_fr_relay_id:
-            label: DPD FR Relay ID
+            label: DPD Relay point ID
+        dpd_fr_relay_name:
+            label: DPD Relay point Name
         delivery_phone:
             label: DPD Predict Phone Number
         synchronized_dpd:

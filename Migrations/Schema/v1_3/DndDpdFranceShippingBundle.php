@@ -77,6 +77,19 @@ class DndDpdFranceShippingBundle implements Migration
                 'merge'       => ['display' => true],
             ],
         ]);
+        $table->addColumn('dpd_fr_relay_name', Types::STRING, [
+            'notnull'     => false,
+            'oro_options' => [
+                'extend' => [
+                    'is_extend'     => true,
+                    'owner'         => ExtendScope::OWNER_CUSTOM,
+                    'is_serialized' => false,
+                ],
+                'form'        => ['is_enabled' => false],
+                'datagrid'    => ['is_visible' => DatagridScope::IS_VISIBLE_TRUE],
+                'merge'       => ['display' => true],
+            ],
+        ]);
         $table->addColumn('synchronized_dpd', Types::DATETIME_MUTABLE, [
             'notnull'     => false,
             'oro_options' => [
@@ -85,7 +98,7 @@ class DndDpdFranceShippingBundle implements Migration
                     'owner'         => ExtendScope::OWNER_CUSTOM,
                     'is_serialized' => false,
                 ],
-                'form'        => ['is_enabled' => true],
+                'form'        => ['is_enabled' => false],
                 'datagrid'    => ['is_visible' => DatagridScope::IS_VISIBLE_TRUE],
                 'merge'       => ['display' => true],
             ],

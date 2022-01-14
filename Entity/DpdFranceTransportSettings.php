@@ -82,7 +82,7 @@ class DpdFranceTransportSettings extends Transport
      *
      * @var string DEFAULT_CLASSIC_METHOD_DESC
      */
-    public const DEFAULT_CLASSIC_METHOD_DESC = 'Description de la méthode DPD Classic';
+    public const DEFAULT_CLASSIC_METHOD_DESC = 'Livraison à domicile DPD';
     /**
      * The default name for DPD Predict method
      *
@@ -94,7 +94,7 @@ class DpdFranceTransportSettings extends Transport
      *
      * @var string DEFAULT_PREDICT_METHOD_DESC
      */
-    public const DEFAULT_PREDICT_METHOD_DESC = 'Description de la méthode DPD Predict';
+    public const DEFAULT_PREDICT_METHOD_DESC = 'Livraison à domicile Predict sur rendez-vous';
     /**
      * The default name for DPD Pickup method
      *
@@ -106,7 +106,7 @@ class DpdFranceTransportSettings extends Transport
      *
      * @var string DEFAULT_PICKUP_METHOD_DESC
      */
-    public const DEFAULT_PICKUP_METHOD_DESC = 'Description de la méthode DPD Relais';
+    public const DEFAULT_PICKUP_METHOD_DESC = 'Livraison en relais Pickup proche de chez vous';
     /**
      * The settings for the DPD France transport
      *

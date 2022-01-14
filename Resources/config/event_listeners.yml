@@ -13,3 +13,12 @@ services:
             - '@dnd_dpd_france_shipping.provider.station_export'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: postUpdate }
+
+    dnd_dpd_france_shipping.event_listener.order_pudo_listener:
+        public: true
+        class: Dnd\Bundle\DpdFranceShippingBundle\EventListener\OrderPudoListener
+        arguments:
+            - '@Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider'
+        tags:
+            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, event: prePersist }
