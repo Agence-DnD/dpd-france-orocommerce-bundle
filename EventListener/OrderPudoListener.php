@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\EventListener;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
+use Oro\Component\Action\Event\ExtendableActionEvent;
 
 /**
  * Class OrderPudoListener
@@ -56,18 +59,33 @@ class OrderPudoListener
     }
 
     /**
-     * Description preUpdate function
+     * Description onCreateOrder function
      *
-     * @param LifecycleEventArgs $event
+     * @param ExtendableActionEvent $event
+     *
+     * @return void
+     * @throws WorkflowException
      */
-    public function prePersist(LifecycleEventArgs $event): void
+    public function onCreateOrder(ExtendableActionEvent $event)
     {
-        /** @var mixed|Order $entity */
-        $entity = $event->getObject();
-        if (!($entity instanceof Order)) {
+        if (!$this->isCorrectOrderContext($event->getContext())) {
             return;
         }
-        $this->updateDpdFields($entity);
+        $this->updateDpdFields($event->getContext()->getData()->get('order'));
+    }
+
+    /**
+     * Description isCorrectOrderContext function
+     *
+     * @param $context
+     *
+     * @return bool
+     * @throws WorkflowException
+     */
+    protected function isCorrectOrderContext($context): bool
+    {
+        return ($context instanceof WorkflowItem && $context->getData() instanceof WorkflowData && $context->getData()
+                ->has('order') && $context->getData()->get('order') instanceof Order);
     }
 
     /**

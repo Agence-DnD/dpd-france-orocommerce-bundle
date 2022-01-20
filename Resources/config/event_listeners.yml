@@ -21,4 +21,4 @@ services:
             - '@Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider'
         tags:
             - { name: doctrine.event_listener, event: preUpdate }
-            - { name: doctrine.event_listener, event: prePersist }
+            - { name: kernel.event_listener, event: extendable_action.finish_checkout, method: onCreateOrder, priority: 10 }
