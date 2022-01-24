@@ -57,10 +57,11 @@ There are 3 levels of limitation for product quantities:
 * 3- Product specific limitation with the attribute `DPD France Max qty`
 
 Other limitations can be set using [Expression Language for Shipping and Payment Rules](https://doc.oroinc.com/user/back-office/system/shipping-rules/expression-lang/#payment-shipping-expression-lang)
-, you can for example add the following to your rule expression to limit the shipping method to a specific customer group:
+, you can for example add the following expression on top of your rule expression to limit the shipping method to a specific customer group:
 
 ```
-and customer.group.id = 4
+customer.group.id = 4 and 
+lineItems.all(...)
 ```
 
 #### Enable the checkout workflow "With DPD France"
