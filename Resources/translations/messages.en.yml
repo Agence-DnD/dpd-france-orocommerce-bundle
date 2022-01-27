@@ -49,11 +49,11 @@ dnd_dpd_france_shipping:
         pickup_method_name:
             label: DPD Relay service label
         classic_method_description:
-            label: DPD home delivery
+            label: DPD Classic service description
         predict_method_description:
-            label: Home delivery Predict with appointment
+            label: DPD Predict service description
         pickup_method_description:
-            label: Near home delivery in pickup points
+            label: DPD Relay service description
         agency_code:
             label: Agency code
         google_maps_api_key:
