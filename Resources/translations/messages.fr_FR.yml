@@ -46,14 +46,14 @@ dnd_dpd_france_shipping:
             label: Label service DPD Classic
         predict_method_name:
             label: Label service DPD Predict
-        relay_method_name:
+        pickup_method_name:
             label: Label service DPD Relay
         classic_method_description:
-            label: Livraison à domicile DPD
+            label: Description service DPD Classic
         predict_method_description:
-            label: Livraison à domicile Predict sur rendez-vous
-        relay_method_description:
-            label: Livraison en relais Pickup proche de chez vous
+            label: Description service DPD Predict
+        pickup_method_description:
+            label: Description service DPD Relais
         agency_code:
             label: Code d'agence
         google_maps_api_key:
