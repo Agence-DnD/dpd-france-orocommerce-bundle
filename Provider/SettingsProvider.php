@@ -9,7 +9,6 @@ use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceTransport;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
 use Oro\Bundle\IntegrationBundle\Provider\ConnectorContextMediator;
-use Psr\Log\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -66,14 +65,18 @@ class SettingsProvider
      * Description getSettings function
      *
      * @return ParameterBag
-     * @throws InvalidArgumentException
      */
     public function getSettings(): ParameterBag
     {
+        /** @var Channel|null $channel */
+        $channel = $this->getDpdFranceChannel();
         if (null === $this->settings) {
-            /** @var DpdFranceTransport $transport */
-            $transport      = $this->contextMediator->getInitializedTransport($this->getDpdFranceChannel(), true);
-            $this->settings = $transport->getSettings();
+            $this->settings = new ParameterBag();
+            if ($channel !== null) {
+                /** @var DpdFranceTransport $transport */
+                $transport      = $this->contextMediator->getInitializedTransport($channel, true);
+                $this->settings = $transport->getSettings();
+            }
         }
 
         return $this->settings;
@@ -82,21 +85,12 @@ class SettingsProvider
     /**
      * Description getDpdFranceChannel function
      *
-     * @return Channel
-     * @throws InvalidArgumentException
+     * @return Channel|null
      */
-    private function getDpdFranceChannel(): Channel
+    private function getDpdFranceChannel(): ?Channel
     {
         if (null === $this->channel) {
             $this->channel = $this->channelRepository->findOneBy(['type' => DpdFranceChannel::TYPE]);
-            if (null === $this->channel) {
-                throw new InvalidArgumentException(
-                    sprintf(
-                        'Please create integration of type %s, while using DPD France module.',
-                        DpdFranceChannel::TYPE
-                    )
-                );
-            }
         }
 
         return $this->channel;
