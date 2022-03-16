@@ -70,7 +70,7 @@ class StationExportProvider
     }
 
     /**
-     * Enqueues an order for DPD FR station export if elligible
+     * Enqueues an order for DPD FR station export if eligible
      *
      * @param Order     $order
      * @param bool|null $forced
@@ -112,7 +112,7 @@ class StationExportProvider
     }
 
     /**
-     * Description isStationExportEnabled function
+     * Returns whether the admin enabled the station export or not in the integration settings
      *
      * @return bool
      */

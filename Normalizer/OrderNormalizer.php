@@ -295,7 +295,7 @@ class OrderNormalizer implements NormalizerInterface
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
-                self::STATUS_MANDATORY,
+                self::STATUS_OPTIONAL,
                 374,
                 20,
                 "Téléphone",
