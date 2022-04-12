@@ -17,13 +17,7 @@ const ShippingMethodsView = BaseView.extend({
 
         formSelector: 'form[name="oro_workflow_transition"]',
 
-        filledInputs: {
-            zipCode: '#dpd_fr_shipping_address_zipcode',
-            addressCity: '#dpd_fr_shipping_address_city',
-            addressStreet: '#dpd_fr_shipping_address_street',
-            addressPhone: '#dpd_fr_shipping_address_phone',
-            googleMapsApi: '#dpd_fr_google_maps_api_key'
-        },
+        shippingAddress: "#dpd_fr_shipping_address",
 
         hiddenInputs: {
             deliveryPhone: '[name*="delivery_phone"]',
@@ -96,14 +90,14 @@ const ShippingMethodsView = BaseView.extend({
     _methodDetails: function() {
         this.subview('checkoutShippingMethodPickup', new DndDpdMethodPickup({
             el: this.$el.find(`[data-method-detail="${this.options.pickupId}"]`),
-            filledInputs: this.options.filledInputs,
+            shippingAddress: this.options.shippingAddress,
             hiddenInputs: this.options.hiddenInputs,
             formSelector: this.options.formSelector
         }));
 
         this.subview('checkoutShippingMethodPredict', new DndDpdMethodPredict({
             el: this.$el.find(`[data-method-detail="${this.options.predictId}"]`),
-            filledInputs: this.options.filledInputs,
+            shippingAddress: this.options.shippingAddress,
             hiddenInputs: this.options.hiddenInputs,
             formSelector: this.options.formSelector
         }));

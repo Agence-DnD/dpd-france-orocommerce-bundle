@@ -46,7 +46,7 @@ const DndDpdMethodPredict = BaseView.extend({
      */
     render: function() {
         const savedPhone = this.$hiddenDeliveryPhone.val();
-        const phone = savedPhone ? savedPhone : $(this.options.filledInputs.addressPhone).val();
+        const phone = savedPhone ? savedPhone : $(this.options.shippingAddress).data('phone');
 
         const $el = $(this.template({
             phone: phone

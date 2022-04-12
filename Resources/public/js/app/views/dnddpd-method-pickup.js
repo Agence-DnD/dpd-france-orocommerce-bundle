@@ -215,10 +215,10 @@ const DndDpdMethodPickup = BaseView.extend({
      * @private
      */
     _initForm: function() {
-        const address = $(this.options.filledInputs.addressStreet).val(),
-            zipCode = $(this.options.filledInputs.zipCode).val(),
-            city = $(this.options.filledInputs.addressCity).val(),
-            googleApi = $(this.options.filledInputs.googleMapsApi).val();
+        const address = $(this.options.shippingAddress).data('street'),
+            zipCode = $(this.options.shippingAddress).data('postal-code'),
+            city = $(this.options.shippingAddress).data('city'),
+            googleApi = $(this.options.shippingAddress).data('google-api');
 
         address && $(this.options.form.addressSelector).val(address);
         zipCode && $(this.options.form.zipCodeSelector).val(zipCode);
