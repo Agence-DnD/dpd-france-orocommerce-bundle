@@ -1,16 +1,17 @@
 layout:
     imports:
-        -   id: dpd_fr_items
+        -   
+            id: dpd_fr_items
             namespace: checkout
-            root: checkout_form
+            root: shipping_methods_wrapper
     actions:
         - '@setBlockTheme':
-              themes: 'DndDpdFranceShippingBundle:layouts:default/oro_checkout_frontend_checkout/layout.html.twig'
+            themes: 'DndDpdFranceShippingBundle:layouts:default/oro_checkout_frontend_checkout/layout.html.twig'
         - '@setOption':
-              id: shipping_methods
-              optionName: attr.class
-              optionValue: 'grid__column grid__column--offset-y grid__column--12 grid__column--gutter-l-none grid__column--gutter-r-none'
+            id: shipping_methods
+            optionName: attr.class
+            optionValue: 'grid__column grid__column--offset-y grid__column--12 grid__column--gutter-l-none grid__column--gutter-r-none'
         - '@move':
-                id: dpd_fr_items
-                parentId: checkout_form
-                siblingId: checkout_form_fields
+            id: dpd_fr_items
+            parentId: shipping_methods_wrapper
+            siblingId: shipping_methods_hidden

@@ -1,0 +1,14 @@
+layout:
+    imports:
+        - 
+            id: dpd_fr_items
+            namespace: checkout
+            root: checkout_form
+
+    actions:
+        - '@move':
+            id: dpd_fr_items
+            parentId: checkout_form
+            siblingId: checkout_form_fields
+    
+    conditions: 'context["workflowStepName"]=="enter_shipping_method"'
