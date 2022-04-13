@@ -45,14 +45,15 @@ const DndDpdMethodPredict = BaseView.extend({
      * Render method details
      */
     render: function() {
-        const savedPhone = this.$hiddenDeliveryPhone.val();
-        const phone = savedPhone ? savedPhone : $(this.options.shippingAddress).data('phone');
+        const savedPhone = this.$hiddenDeliveryPhone.val(),
+            phone = savedPhone != 0 ? savedPhone : $(this.options.shippingAddress).data('phone');
 
         const $el = $(this.template({
             phone: phone
         }));
 
         this.$el.html($el);
+        this._setDeliveryPhone(phone);
     },
 
     /**
@@ -105,6 +106,7 @@ const DndDpdMethodPredict = BaseView.extend({
      */
     _setDeliveryPhone: function(number) {
         this.$hiddenDeliveryPhone.val(number);
+        this.$hiddenDeliveryPhone.trigger('change');
     }
 });
 

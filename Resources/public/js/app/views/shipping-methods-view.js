@@ -103,6 +103,25 @@ const ShippingMethodsView = BaseView.extend({
         }));
     },
 
+    _updateHiddenFields: function (method) {
+        const hiddenInputs = this.options.hiddenInputs,
+            $deliveryPhone = $(hiddenInputs.deliveryPhone),
+            $relayId = $(hiddenInputs.relayId),
+            selectedMethod = method || this.options.selectedMethod;
+
+        (selectedMethod === this.options.pickupId) &&
+            $deliveryPhone.val(0) &&
+            $relayId.val();
+
+        (selectedMethod === this.options.predictId) &&
+            $relayId.val(0) &&
+            $deliveryPhone.val();
+
+        ((selectedMethod !== this.options.predictId) && (selectedMethod !== this.options.pickupId)) &&
+            $relayId.val(0) &&
+            $deliveryPhone.val(0);
+    },
+
     /**
      * add Class to selected method
      *
@@ -116,6 +135,8 @@ const ShippingMethodsView = BaseView.extend({
         .addClass('active')
         .siblings()
         .removeClass('active');
+
+        this._updateHiddenFields($(e.target).data('shipping-type'));
 
         this.subview('checkoutShippingMethodPredict').validateForm();
         this.subview('checkoutShippingMethodPickup').validateForm();
