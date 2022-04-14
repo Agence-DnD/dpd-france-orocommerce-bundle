@@ -241,7 +241,6 @@ const DndDpdMethodPickup = BaseView.extend({
         });
     },
 
-
     /**
      * Get pickups from API
      *

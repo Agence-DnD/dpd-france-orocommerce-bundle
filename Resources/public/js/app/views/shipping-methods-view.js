@@ -103,6 +103,11 @@ const ShippingMethodsView = BaseView.extend({
         }));
     },
 
+    /**
+     * Update hidden fields (pickup and phone)
+     * 
+     * @param {String} method
+     */
     _updateHiddenFields: function (method) {
         const hiddenInputs = this.options.hiddenInputs,
             $deliveryPhone = $(hiddenInputs.deliveryPhone),
