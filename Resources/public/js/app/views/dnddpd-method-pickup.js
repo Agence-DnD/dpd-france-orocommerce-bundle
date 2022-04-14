@@ -419,6 +419,14 @@ const DndDpdMethodPickup = BaseView.extend({
     },
 
     /**
+     * Set selected method if exist
+     */
+    setSelectedMethod: function() {
+        const selectedPickup = this.$pickupList.find('[name="pickup"]:checked').parents('[data-pickup-id]').data('pickup-id');
+        selectedPickup && this._setPickupId(selectedPickup);
+    },
+
+    /**
      * Convert distance to km
      *
      * @param distance

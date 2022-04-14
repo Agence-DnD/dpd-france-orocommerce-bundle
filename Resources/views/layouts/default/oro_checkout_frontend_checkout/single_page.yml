@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@setOption':
-            id: shipping_methods_wrapper
+            id: checkout_content
             optionName: attr.class
             optionValue: 'minimal-view'
 

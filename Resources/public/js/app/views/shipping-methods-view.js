@@ -111,11 +111,13 @@ const ShippingMethodsView = BaseView.extend({
 
         (selectedMethod === this.options.pickupId) &&
             $deliveryPhone.val(0) &&
-            $relayId.val();
+            $relayId.val('') &&
+            this.subview('checkoutShippingMethodPickup').setSelectedMethod();
 
         (selectedMethod === this.options.predictId) &&
             $relayId.val(0) &&
-            $deliveryPhone.val();
+            $deliveryPhone.val('') &&
+            this.subview('checkoutShippingMethodPredict').triggerField();
 
         ((selectedMethod !== this.options.predictId) && (selectedMethod !== this.options.pickupId)) &&
             $relayId.val(0) &&
