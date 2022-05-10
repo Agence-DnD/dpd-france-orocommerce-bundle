@@ -215,10 +215,10 @@ const DndDpdMethodPickup = BaseView.extend({
      * @private
      */
     _initForm: function() {
-        const address = $(this.options.filledInputs.addressStreet).val(),
-            zipCode = $(this.options.filledInputs.zipCode).val(),
-            city = $(this.options.filledInputs.addressCity).val(),
-            googleApi = $(this.options.filledInputs.googleMapsApi).val();
+        const address = $(this.options.shippingAddress).data('street'),
+            zipCode = $(this.options.shippingAddress).data('postal-code'),
+            city = $(this.options.shippingAddress).data('city'),
+            googleApi = $(this.options.shippingAddress).data('google-api');
 
         address && $(this.options.form.addressSelector).val(address);
         zipCode && $(this.options.form.zipCodeSelector).val(zipCode);
@@ -240,7 +240,6 @@ const DndDpdMethodPickup = BaseView.extend({
             city: $(this.options.form.citySelector).val()
         });
     },
-
 
     /**
      * Get pickups from API
@@ -416,6 +415,14 @@ const DndDpdMethodPickup = BaseView.extend({
     validateForm: function() {
         const submitBtn = this.$checkoutForm.find('[type="submit"]');
         submitBtn.prop("disabled", !this.$checkoutForm.valid());
+    },
+
+    /**
+     * Set selected method if exist
+     */
+    setSelectedMethod: function() {
+        const selectedPickup = this.$pickupList.find('[name="pickup"]:checked').parents('[data-pickup-id]').data('pickup-id');
+        selectedPickup && this._setPickupId(selectedPickup);
     },
 
     /**
