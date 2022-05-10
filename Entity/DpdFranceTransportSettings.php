@@ -283,7 +283,7 @@ class DpdFranceTransportSettings extends Transport
     }
 
     /**
-     * Description getSettingsBag function
+     * Returns all the DPD FR integration settings in a ParameterBag
      *
      * @return ParameterBag
      */
@@ -293,6 +293,7 @@ class DpdFranceTransportSettings extends Transport
             $this->settings = new ParameterBag([
                 //STATION SETTINGS
                 'dpd_fr_order_statuses_sent_to_station' => $this->getOrderStatusesSentToStation(),
+                'dpd_fr_station_enabled'                => $this->isStationEnabled(),
                 'dpd_fr_station_ftp_port'               => $this->getStationFtpPort(),
                 'dpd_fr_station_ftp_host'               => $this->getStationFtpHost(),
                 'dpd_fr_station_ftp_user'               => $this->getStationFtpUser(),
