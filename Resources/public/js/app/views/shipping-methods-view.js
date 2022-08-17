@@ -92,14 +92,16 @@ const ShippingMethodsView = BaseView.extend({
             el: this.$el.find(`[data-method-detail="${this.options.pickupId}"]`),
             shippingAddress: this.options.shippingAddress,
             hiddenInputs: this.options.hiddenInputs,
-            formSelector: this.options.formSelector
+            formSelector: this.options.formSelector,
+            pickupId: this.options.pickupId
         }));
 
         this.subview('checkoutShippingMethodPredict', new DndDpdMethodPredict({
             el: this.$el.find(`[data-method-detail="${this.options.predictId}"]`),
             shippingAddress: this.options.shippingAddress,
             hiddenInputs: this.options.hiddenInputs,
-            formSelector: this.options.formSelector
+            formSelector: this.options.formSelector,
+            predictId: this.options.predictId
         }));
     },
 

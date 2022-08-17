@@ -53,7 +53,10 @@ const DndDpdMethodPredict = BaseView.extend({
         }));
 
         this.$el.html($el);
-        this._setDeliveryPhone(phone);
+
+        (this.isCurrentMethod()) ?
+            this._setDeliveryPhone(phone) :
+            this._setDeliveryPhone(0);
     },
 
     /**
@@ -87,6 +90,10 @@ const DndDpdMethodPredict = BaseView.extend({
             this._setDeliveryPhone('');
         }
 
+        if (!this.isCurrentMethod()) {
+            this._setDeliveryPhone(0);
+        }
+
         this.validateForm();
     },
 
@@ -104,10 +111,17 @@ const DndDpdMethodPredict = BaseView.extend({
      * @param number
      * @private
      */
-    _setDeliveryPhone: function(number) {
+    _setDeliveryPhone: function (number) {
         this.$hiddenDeliveryPhone.val(number);
         this.$hiddenDeliveryPhone.trigger('change');
-    }
+    },
+
+    /**
+     * Current method 
+     */
+    isCurrentMethod: function () {
+        return $('[name="shippingMethodType"]:checked')[0].getAttribute('data-shipping-type') === this.options.predictId;
+    },
 });
 
 export default DndDpdMethodPredict;
