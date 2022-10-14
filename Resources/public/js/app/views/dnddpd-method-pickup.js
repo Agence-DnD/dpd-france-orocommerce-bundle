@@ -313,6 +313,11 @@ const DndDpdMethodPickup = BaseView.extend({
             this._setPickupId('');
         }
 
+        // set pickup to 0 if other method is selected
+        if (!this.isCurrentMethod()) {
+            this._setPickupId(0);
+        }
+
         const $pickupList = $(pickupList({
             pickups: this.results,
             formatDistance: this._formatDistance,
@@ -423,6 +428,13 @@ const DndDpdMethodPickup = BaseView.extend({
     setSelectedMethod: function() {
         const selectedPickup = this.$pickupList.find('[name="pickup"]:checked').parents('[data-pickup-id]').data('pickup-id');
         selectedPickup && this._setPickupId(selectedPickup);
+    },
+
+    /**
+     * Current method 
+     */
+    isCurrentMethod: function () {
+        return $('[name="shippingMethodType"]:checked')[0].getAttribute('data-shipping-type') === this.options.pickupId;
     },
 
     /**
