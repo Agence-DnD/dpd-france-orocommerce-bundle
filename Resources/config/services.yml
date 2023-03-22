@@ -1,5 +1,5 @@
 parameters:
-    dnd_dpd_france_shipping.admin_view.method_template: 'DndDpdFranceShippingBundle::method/dpdFranceShippingMethodWithOptions.html.twig'
+    dnd_dpd_france_shipping.admin_view.method_template: '@@DndDpdFranceShipping/method/dpdFranceShippingMethodWithOptions.html.twig'
 services:
     dnd_dpd_france_shipping.identifier_generator.method:
         parent: oro_integration.generator.prefixed_identifier_generator
