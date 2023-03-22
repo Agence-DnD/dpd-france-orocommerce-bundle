@@ -43,9 +43,9 @@ php bin/console oro:translation:load
 
 ### Requirements:
 
-| OroCommerce |  PHP  |
-|:------------|:-----:|
-| > 5.0       | > 8.1 |
+| OroCommerce |   PHP   |
+|:------------|:-------:|
+| \>= 5.0     | \>= 8.1 |
 
 ### About us:
 
