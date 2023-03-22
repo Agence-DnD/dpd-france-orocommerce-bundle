@@ -38,7 +38,7 @@ bin/console assets:install
 Load the modified workflows and reload the translations:
 ```bash
 bin/console oro:workflow:definitions:load
-php bin/console oro:translation:load
+bin/console oro:translation:load
 ```
 
 ### Requirements:
