@@ -87,6 +87,10 @@
                 color: $dnddpd-method-pickup-error-color;
             }
         }
+
+        ul {
+            list-style: none;
+        }
     }
 
     &__item {
