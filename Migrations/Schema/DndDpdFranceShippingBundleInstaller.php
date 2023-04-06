@@ -15,12 +15,9 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
- * Class DndDpdFranceShippingBundleInstaller
- *
- * @package   Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class DndDpdFranceShippingBundleInstaller implements Installation
@@ -36,7 +33,6 @@ class DndDpdFranceShippingBundleInstaller implements Installation
     /**
      * {@inheritdoc}
      *
-     * @return void
      * @throws SchemaException
      */
     public function up(Schema $schema, QueryBag $queries): void

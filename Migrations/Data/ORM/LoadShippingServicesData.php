@@ -10,12 +10,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Class LoadShippingServicesData
- *
- * @package   Oro\Bundle\DPDBundle\Migrations\Data\ORM
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class LoadShippingServicesData extends AbstractShippingServiceFixture implements ContainerAwareInterface
@@ -29,22 +26,15 @@ class LoadShippingServicesData extends AbstractShippingServiceFixture implements
 
     /**
      * {@inheritdoc}
-     *
-     * @param ContainerInterface|null $container
-     *
-     * @return void
      */
-    public function setContainer(ContainerInterface $container = null): void
+    public function setContainer(
+        ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
 
     /**
      * {@inheritdoc}
-     *
-     * @param ObjectManager $manager
-     *
-     * @return void
      */
     public function load(ObjectManager $manager): void
     {
@@ -52,11 +42,6 @@ class LoadShippingServicesData extends AbstractShippingServiceFixture implements
         $manager->flush();
     }
 
-    /**
-     * Description getShippingServicesData function
-     *
-     * @return mixed[]
-     */
     protected function getShippingServicesData(): array
     {
         return Yaml::parse(file_get_contents(__DIR__ . '/data/dpd_services.yml'));
