@@ -207,7 +207,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         if (empty($body['orderId'])) {
             $this->logger->error(
                 sprintf(
-                    'Incomplete message, the body must contain an orderId. Topic: %s - Body: %s',
+                    '[Station export]: Incomplete message, the body must contain an orderId. Topic: %s - Body: %s',
                     $body['orderId'],
                     $topic
                 )
@@ -220,11 +220,19 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
         if ($order === null) {
             $this->logger->error(
-                sprintf('Async processor could not fetch order with id %d for topic %s', $body['orderId'], $topic)
+                sprintf('[Station export] Async processor could not fetch order with id %d for topic %s', $body['orderId'], $topic)
             );
 
             return self::REJECT;
         }
+        if ($topic === Topics::SHIPMENT_EXPORT_TO_DPD_STATION && $order->getSynchronizedDpd() !== null) {
+            $this->logger->warning(
+                sprintf('[Station export] Skipping already exported order with id %d.', $body['orderId'])
+            );
+
+            return self::REJECT;
+        }
+
 
         return $this->processAsync($order, $topic);
     }

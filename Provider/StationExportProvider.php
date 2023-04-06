@@ -148,7 +148,7 @@ class StationExportProvider
                 $this->settingsProvider->getSettings()->get('dpd_fr_order_statuses_sent_to_station')
             );
 
-            return (false !== $exportableStatuses && in_array($internalStatusName, $exportableStatuses, true));
+            return (false !== $exportableStatuses && in_array($internalStatusName, $exportableStatuses));
         }
 
         return false;

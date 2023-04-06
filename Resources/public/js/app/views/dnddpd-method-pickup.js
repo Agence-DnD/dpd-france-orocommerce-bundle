@@ -2,9 +2,12 @@ import BaseView from 'oroui/js/app/views/base/view';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import tools from 'oroui/js/tools';
-import pickupList from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-list.html';
-import pickupDetails from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-details.html';
-import pickupModal from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-modal-content.html';
+import pickupList
+    from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-list.html';
+import pickupDetails
+    from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-details.html';
+import pickupModal
+    from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-modal-content.html';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
 import Modal from 'oroui/js/modal';
 import $ from 'jquery';
@@ -313,9 +316,9 @@ const DndDpdMethodPickup = BaseView.extend({
             this._setPickupId('');
         }
 
-        // set pickup to 0 if other method is selected
+        // set pickup to -1 if other method is selected
         if (!this.isCurrentMethod()) {
-            this._setPickupId(0);
+            this._setPickupId(-1);
         }
 
         const $pickupList = $(pickupList({
