@@ -8,37 +8,20 @@ use Dnd\Bundle\DpdFranceShippingBundle\Provider\SettingsProvider;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Class IntegrationSettingsProvider
- *
- * @package   Dnd\Bundle\DpdFranceShippingBundle\Layout\Dataprovider
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class IntegrationSettingsProvider
 {
-    /**
-     * Description $settingsProvider field
-     *
-     * @var SettingsProvider $settingsProvider
-     */
-    protected SettingsProvider $settingsProvider;
-
-    /**
-     * IntegrationSettingsProvider constructor
-     *
-     * @param SettingsProvider $settingsProvider
-     */
-    public function __construct(SettingsProvider $settingsProvider)
-    {
-        $this->settingsProvider = $settingsProvider;
+    public function __construct(
+        private readonly SettingsProvider $settingsProvider
+    ) {
     }
 
     /**
      * Returns the DPD FR integration settings
-     *
-     * @return ParameterBag
      */
     public function getSettings(): ParameterBag
     {
@@ -47,8 +30,6 @@ class IntegrationSettingsProvider
 
     /**
      * Returns google maps api key
-     *
-     * @return mixed
      */
     public function getMapsApiKey(): string
     {

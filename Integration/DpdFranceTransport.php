@@ -10,27 +10,14 @@ use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Class DpdFranceTransport
- *
- * @package   Dnd\Bundle\DpdFranceShippingBundle\Integration
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class DpdFranceTransport implements DpdFranceTransportInterface
 {
-    /**
-     * Description $transportEntity field
-     *
-     * @var DpdFranceTransportSettings $transportEntity
-     */
     protected DpdFranceTransportSettings $transportEntity;
-    /**
-     * Description $settings field
-     *
-     * @var ParameterBag|null $settings
-     */
     protected ?ParameterBag $settings;
 
     /**
@@ -59,8 +46,6 @@ class DpdFranceTransport implements DpdFranceTransportInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return DpdFranceTransportSettings
      */
     public function getTransportEntity(): DpdFranceTransportSettings
     {
@@ -69,8 +54,6 @@ class DpdFranceTransport implements DpdFranceTransportInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return ParameterBag
      */
     public function getSettings(): ParameterBag
     {
@@ -78,15 +61,11 @@ class DpdFranceTransport implements DpdFranceTransportInterface
     }
 
     /**
-     * Description init function
-     *
-     * @param Transport $transportEntity
-     *
-     * @return void
+     * {@inheritDoc}
      */
     public function init(Transport $transportEntity): void
     {
         $this->transportEntity = $transportEntity;
-        $this->settings        = $this->transportEntity->getSettingsBag();
+        $this->settings = $this->transportEntity->getSettingsBag();
     }
 }
