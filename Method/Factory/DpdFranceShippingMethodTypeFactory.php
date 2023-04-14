@@ -24,8 +24,6 @@ class DpdFranceShippingMethodTypeFactory
         private readonly DpdFranceMethodTypeIdentifierGenerator $typeIdentifierGenerator,
         private readonly IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator
     ) {
-        $this->typeIdentifierGenerator = $typeIdentifierGenerator;
-        $this->methodIdentifierGenerator = $methodIdentifierGenerator;
     }
 
     public function create(Channel $channel, ShippingService $service): ShippingMethodTypeInterface

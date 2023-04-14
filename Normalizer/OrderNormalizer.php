@@ -702,7 +702,7 @@ class OrderNormalizer implements NormalizerInterface
         int $position,
         int $length,
         string $code,
-        $value = null
+        mixed $value = null
     ): array {
         if ($status === self::STATUS_MANDATORY && $value === null) {
             throw new NormalizerException(sprintf('missing value for mandatory attribute %s', $code));
@@ -721,12 +721,9 @@ class OrderNormalizer implements NormalizerInterface
 
     /**
      * Formats the different kind of data to DPD Station requirements
-     *
-     * @return string
      */
-    private function format($value, string $format, int $length): string
+    private function format(mixed $value, string $format, int $length): string
     {
-        $output = '';
         switch ($format) {
             case self::TYPE_NUMERIC:
                 $value = round((float)$value, 2);

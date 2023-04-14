@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Model;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ShippingBundle\Model\Dimensions;
 use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 
@@ -17,12 +18,11 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 class DpdShippingPackageOptions extends ShippingPackageOptions implements DpdShippingPackageOptionsInterface
 {
     public function __construct(
+        protected Dimensions $dimensions,
         protected Weight $weight,
         protected Price $price
     ) {
         parent::__construct($dimensions, $weight);
-
-        $this->price = $price;
     }
 
     public function getPrice(): Price

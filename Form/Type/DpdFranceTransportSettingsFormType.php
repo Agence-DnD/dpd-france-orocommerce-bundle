@@ -8,7 +8,6 @@ use Dnd\Bundle\DpdFranceShippingBundle\Entity\DpdFranceTransportSettings;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Form\DataTransformer\OrderStatusTransformer;
 use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceTransportInterface;
-use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumChoiceType;
 use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -39,11 +38,10 @@ class DpdFranceTransportSettingsFormType extends AbstractType
      */
     public const BLOCK_PREFIX = 'dnd_dpd_france_shipping_transport_settings_form_type';
 
-    protected $dataClass;
+    protected ?string $dataClass = null;
 
     public function __construct(
         private readonly DpdFranceTransportInterface $transport,
-        private readonly EntityManager $em,
         private readonly OrderStatusTransformer $orderStatusTransformer
     ) {
     }

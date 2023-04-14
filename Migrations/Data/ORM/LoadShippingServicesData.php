@@ -17,18 +17,12 @@ use Symfony\Component\Yaml\Yaml;
  */
 class LoadShippingServicesData extends AbstractShippingServiceFixture implements ContainerAwareInterface
 {
-    /**
-     * Description $container field
-     *
-     * @var ContainerInterface $container
-     */
     protected ContainerInterface $container;
 
     /**
      * {@inheritdoc}
      */
-    public function setContainer(
-        ContainerInterface $container = null): void
+    public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }

@@ -10,7 +10,6 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Transport\Exception\Exception;
 use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -22,7 +21,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class StationExportProvider
 {
     public function __construct(
-        private readonly LoggerInterface $logger,
         private readonly MessageProducerInterface $producer,
         private readonly SettingsProvider $settingsProvider,
         private readonly TranslatorInterface $translator
@@ -32,7 +30,7 @@ class StationExportProvider
     /**
      * Enqueues an order for DPD FR station export if eligible
      *
-     * @throws Exception
+     * @throws Exception|\JsonException
      */
     public function queueIfExportable(Order $order, ?bool $forced = false): array
     {
@@ -73,30 +71,30 @@ class StationExportProvider
         return $this->settingsProvider->getSettings()->get('dpd_fr_station_enabled') ?? false;
     }
 
+
     /**
      * Checks whether the order is a valid candidate for Station export or not
      */
     public function isOrderExportable(Order $order, bool $forced): bool
     {
-        if ($order->getSynchronizedDpd() === null && DpdFranceShippingMethodProvider::isDpdFrShippingMethod(
-                $order->getShippingMethod()
-            )
-        ) {
-            if ($forced) {
-                return true;
-            }
-            $internalStatusName = $order->getInternalStatus() ? strtolower(
-                $order->getInternalStatus()->getName()
-            ) : null;
-
-            $exportableStatuses = explode(
-                ',',
-                $this->settingsProvider->getSettings()->get('dpd_fr_order_statuses_sent_to_station')
-            );
-
-            return (false !== $exportableStatuses && in_array($internalStatusName, $exportableStatuses));
+        if (!DpdFranceShippingMethodProvider::isDpdFrShippingMethod($order->getShippingMethod())) {
+            return false;
         }
+        if ($forced) {
+            return true;
+        }
+        if ($order->getSynchronizedDpd() !== null) {
+            return false;
+        }
+        $internalStatusName = $order->getInternalStatus() ? strtolower(
+            $order->getInternalStatus()->getName()
+        ) : null;
 
-        return false;
+        $exportableStatuses = explode(
+            ',',
+            $this->settingsProvider->getSettings()->get('dpd_fr_order_statuses_sent_to_station')
+        );
+
+        return (in_array($internalStatusName, $exportableStatuses, true));
     }
 }

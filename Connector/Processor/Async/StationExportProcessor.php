@@ -343,11 +343,6 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         $this->getManager()->flush();
     }
 
-    /**
-     * Description getTrackingLinks function
-     *
-     * @return string[]
-     */
     private function getTrackingLinks(Order $order, ParameterBag $settings): array
     {
         /** @var string[] $trackingLinks */
