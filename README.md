@@ -12,9 +12,7 @@ See the full documentaton [here](doc/documentation.md).
 
 ### Installation:
 
-First, you need to follow our OroCommerce module install guide: [Install Guide](https://agencednd.atlassian.net/wiki/spaces/MI/pages/2145681458/Installation+des+modules+Marketplace+interne+OroCommerce)
-
-After that, you can require the module with composer:
+Require the module with composer:
 ```bash
 composer require agencednd/dpd-france-orocommerce-bundle
 ```
