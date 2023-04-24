@@ -38,14 +38,14 @@ bin/console assets:install
 Load the modified workflows and reload the translations:
 ```bash
 bin/console oro:workflow:definitions:load
-php bin/console oro:translation:load
+bin/console oro:translation:load
 ```
 
 ### Requirements:
 
-| OroCommerce           | PHP                               |
-| :---------------------| :--------------------------------:|
-|                       | \>= 7.1.3, >= 7.2, >= 7.3, >= 7.4 |
+| OroCommerce |   PHP   |
+|:------------|:-------:|
+| \>= 5.0     | \>= 8.1 |
 
 ### About us:
 

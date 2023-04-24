@@ -1,2 +1,2 @@
 bundles:
-    - DndDpdFranceShippingBundle:Form:fields.html.twig
+    - '@DndDpdFranceShipping/Form/fields.html.twig'

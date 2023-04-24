@@ -12,69 +12,30 @@ use Oro\Bundle\IntegrationBundle\Provider\ConnectorContextMediator;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * Class SettingsProvider
- *
- * @package   SettingsProvider
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class SettingsProvider
 {
-    /**
-     * Description $channel field
-     *
-     * @var Channel|null $channel
-     */
     private ?Channel $channel = null;
-    /**
-     * Description $settings field
-     *
-     * @var ParameterBag|null $settings
-     */
     protected ?ParameterBag $settings = null;
-    /**
-     * Description $channelRepository field
-     *
-     * @var ChannelRepository $channelRepository
-     */
-    private ChannelRepository $channelRepository;
-    /**
-     * Description $contextMediator field
-     *
-     * @var ConnectorContextMediator $contextMediator
-     */
-    private ConnectorContextMediator $contextMediator;
 
-    /**
-     * SettingsProvider constructor
-     *
-     * @param ChannelRepository        $channelRepository
-     * @param ConnectorContextMediator $contextMediator
-     */
     public function __construct(
-        ChannelRepository $channelRepository,
-        ConnectorContextMediator $contextMediator
+        private readonly ChannelRepository $channelRepository,
+        private readonly ConnectorContextMediator $contextMediator
     ) {
-        $this->channelRepository = $channelRepository;
-        $this->contextMediator   = $contextMediator;
     }
 
-    /**
-     * Description getSettings function
-     *
-     * @return ParameterBag
-     */
     public function getSettings(): ParameterBag
     {
-        /** @var Channel|null $channel */
         $channel = $this->getDpdFranceChannel();
         if (null === $this->settings) {
             $this->settings = new ParameterBag();
             if ($channel !== null) {
                 /** @var DpdFranceTransport $transport */
-                $transport      = $this->contextMediator->getInitializedTransport($channel, true);
+                $transport = $this->contextMediator->getInitializedTransport($channel, true);
                 $this->settings = $transport->getSettings();
             }
         }
@@ -82,11 +43,6 @@ class SettingsProvider
         return $this->settings;
     }
 
-    /**
-     * Description getDpdFranceChannel function
-     *
-     * @return Channel|null
-     */
     private function getDpdFranceChannel(): ?Channel
     {
         if (null === $this->channel) {

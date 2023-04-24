@@ -10,80 +10,33 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Transport\Exception\Exception;
 use Oro\Component\MessageQueue\Util\JSON;
-use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Class StationExportProvider
- *
- * @package   Dnd\Bundle\DpdFranceShippingBundle\Provider
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class StationExportProvider
 {
-    /**
-     * Description $logger field
-     *
-     * @var LoggerInterface $logger
-     */
-    protected LoggerInterface $logger;
-    /**
-     * Description $producer field
-     *
-     * @var MessageProducerInterface $producer
-     */
-    protected MessageProducerInterface $producer;
-    /**
-     * Description $settingsProvider field
-     *
-     * @var SettingsProvider $settingsProvider
-     */
-    protected SettingsProvider $settingsProvider;
-    /**
-     * Description $translator field
-     *
-     * @var TranslatorInterface $translator
-     */
-    protected TranslatorInterface $translator;
-
-    /**
-     * OrderListener constructor
-     *
-     * @param LoggerInterface          $logger
-     * @param MessageProducerInterface $producer
-     * @param SettingsProvider         $settingsProvider
-     * @param TranslatorInterface      $translator
-     */
     public function __construct(
-        LoggerInterface $logger,
-        MessageProducerInterface $producer,
-        SettingsProvider $settingsProvider,
-        TranslatorInterface $translator
+        private readonly MessageProducerInterface $producer,
+        private readonly SettingsProvider $settingsProvider,
+        private readonly TranslatorInterface $translator
     ) {
-        $this->logger           = $logger;
-        $this->producer         = $producer;
-        $this->settingsProvider = $settingsProvider;
-        $this->translator       = $translator;
     }
 
     /**
      * Enqueues an order for DPD FR station export if eligible
      *
-     * @param Order     $order
-     * @param bool|null $forced
-     *
-     * @return mixed[]
-     * @throws Exception
+     * @throws Exception|\JsonException
      */
     public function queueIfExportable(Order $order, ?bool $forced = false): array
     {
-        /** @var mixed[] $result */
         $result = [
             'successful' => false,
-            'error'      => [],
+            'error' => [],
         ];
         try {
             if (!$this->isOrderExportable($order, $forced)) {
@@ -100,7 +53,6 @@ class StationExportProvider
 
             return $result;
         }
-        /** @var string $topic */
         $topic = Topics::SHIPMENT_EXPORT_TO_DPD_STATION;
         if ($forced) {
             $topic = Topics::SHIPMENT_EXPORT_TO_DPD_STATION_FORCED;
@@ -113,44 +65,36 @@ class StationExportProvider
 
     /**
      * Returns whether the admin enabled the station export or not in the integration settings
-     *
-     * @return bool
      */
     public function isStationExportEnabled(): bool
     {
         return $this->settingsProvider->getSettings()->get('dpd_fr_station_enabled') ?? false;
     }
 
+
     /**
      * Checks whether the order is a valid candidate for Station export or not
-     *
-     * @param Order $order
-     * @param bool  $forced
-     *
-     * @return bool
      */
     public function isOrderExportable(Order $order, bool $forced): bool
     {
-        if ($order->getSynchronizedDpd() === null && DpdFranceShippingMethodProvider::isDpdFrShippingMethod(
-                $order->getShippingMethod()
-            )) {
-            if ($forced) {
-                return true;
-            }
-            /** @var string|null $internalStatusName */
-            $internalStatusName = $order->getInternalStatus() ? strtolower(
-                $order->getInternalStatus()->getName()
-            ) : null;
-
-            /** @var false|string[] $exportableStatuses */
-            $exportableStatuses = explode(
-                ',',
-                $this->settingsProvider->getSettings()->get('dpd_fr_order_statuses_sent_to_station')
-            );
-
-            return (false !== $exportableStatuses && in_array($internalStatusName, $exportableStatuses, true));
+        if (!DpdFranceShippingMethodProvider::isDpdFrShippingMethod($order->getShippingMethod())) {
+            return false;
         }
+        if ($forced) {
+            return true;
+        }
+        if ($order->getSynchronizedDpd() !== null) {
+            return false;
+        }
+        $internalStatusName = $order->getInternalStatus() ? strtolower(
+            $order->getInternalStatus()->getName()
+        ) : null;
 
-        return false;
+        $exportableStatuses = explode(
+            ',',
+            $this->settingsProvider->getSettings()->get('dpd_fr_order_statuses_sent_to_station')
+        );
+
+        return (in_array($internalStatusName, $exportableStatuses, true));
     }
 }

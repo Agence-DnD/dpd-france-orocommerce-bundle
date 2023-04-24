@@ -8,120 +8,68 @@ use Dnd\Bundle\DpdFranceShippingBundle\Exception\NormalizerException;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
- * Class OrderNormalizer
- *
- * @package   Dnd\Commerce\Bundle\OrderBundle\Normalizer
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class OrderNormalizer implements NormalizerInterface
 {
     /**
      * Required value
-     *
-     * @var string STATUS_MANDATORY
      */
     public const STATUS_MANDATORY = 'O';
     /**
      * Optional value
-     *
-     * @var string STATUS_OPTIONAL
      */
     public const STATUS_OPTIONAL = 'F';
     /**
      * Always empty
-     *
-     * @var string STATUS_EMPTY
      */
     public const STATUS_EMPTY = 'V';
     /**
      * Columns containing alphanumeric values
-     *
-     * @var string TYPE_ALPHANUMERIC
      */
     public const TYPE_ALPHANUMERIC = 'AN';
     /**
      * Columns containing numeric values
-     *
-     * @var string TYPE_NUMERIC
      */
     public const TYPE_NUMERIC = 'N';
     /**
      * Columns filled with air
-     *
-     * @var string TYPE_FILLER
      */
     public const TYPE_FILLER = 'F';
     /**
      * Grouping type
-     *
-     * @var int CONSOLIDATION_TYPE_DECLARATIVE
      */
     public const CONSOLIDATION_TYPE_DECLARATIVE = 38;
     /**
      * Grouping type
-     *
-     * @var int CONSOLIDATION_TYPE_DELIVERY_GROUPING
      */
     public const CONSOLIDATION_TYPE_DELIVERY_GROUPING = 1;
-    /**
-     * Description $shippingOriginProvider field
-     *
-     * @var ShippingOriginProvider $shippingOriginProvider
-     */
-    protected ShippingOriginProvider $shippingOriginProvider;
-    /**
-     * Description $shippingLineItemConverter field
-     *
-     * @var OrderShippingLineItemConverterInterface $shippingLineItemConverter
-     */
+
     protected OrderShippingLineItemConverterInterface $shippingLineItemConverter;
-    /**
-     * Description $fillerCount field
-     *
-     * @var int $fillerCount
-     */
     private int $fillerCount = 0;
-    /**
-     * Description $packageCount field
-     *
-     * @var int $packageCount
-     */
     private int $packageCount = 0;
 
-    /**
-     * OrderNormalizer constructor
-     *
-     * @param ShippingOriginProvider                  $shippingOriginProvider
-     */
     public function __construct(
-        ShippingOriginProvider $shippingOriginProvider
+        private readonly ShippingOriginProvider $shippingOriginProvider
     ) {
-        $this->shippingOriginProvider    = $shippingOriginProvider;
     }
 
     /**
      * Ensures that vital elements are set in the context
      *
-     * @param array $context
-     *
-     * @return void
      * @throws NormalizerException
      */
     private function checkContext(array $context): void
     {
-        /** @var string[] $mandatoryKeys */
         $mandatoryKeys = ['shipping_service', 'settings', 'packages'];
-        /** @var string $mandatoryKey */
         foreach ($mandatoryKeys as $mandatoryKey) {
             if (!isset($context[$mandatoryKey])) {
                 throw new NormalizerException(sprintf('Could not fetch %s from context.', $mandatoryKey));
@@ -132,21 +80,14 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * {@inheritDoc}
      *
-     * @param Order   $order
-     * @param string  $format
-     * @param mixed[] $context
-     *
-     * @return mixed[]
      * @throws NormalizerException
      */
     public function normalize($order, $format = null, array $context = []): array
     {
-        /** @var mixed[] $data */
         $data = [];
         $this->checkContext($context);
 
         $this->packageCount = count($context['packages']);
-        /** @var DpdShippingPackageOptionsInterface $package */
         foreach ($context['packages'] as $package) {
             $data[] = $this->getGeneralFields($order, $package);
             $data[] = $this->getRecipientFields($order);
@@ -155,17 +96,13 @@ class OrderNormalizer implements NormalizerInterface
             $data[] = $this->getReturnFields();
             $data[] = $this->getLineEnd();
         }
+
         return array_merge([], ...$data);
     }
 
     /**
      * Builds an array of general elements
      *
-     * @param Order                              $order
-     * @param DpdShippingPackageOptionsInterface $package
-     * @param ParameterBag                       $settings
-     *
-     * @return array
      * @throws NormalizerException
      */
     private function getGeneralFields(
@@ -197,14 +134,10 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * Builds an array of recipient address related elements
      *
-     * @param Order $order
-     *
-     * @return array
      * @throws NormalizerException
      */
     private function getRecipientFields(Order $order): array
     {
-        /** @var OrderAddress $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
         if (null === $shippingAddress) {
             throw new NormalizerException('The order has no shipping address');
@@ -308,17 +241,11 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * Builds an array of recipient address related elements
      *
-     * @param Order $order
-     *
-     * @return array
      * @throws NormalizerException
      */
     private function getSenderFields(Order $order): array
     {
-        /** @var ShippingOrigin $shippingOrigin */
         $shippingOrigin = $this->shippingOriginProvider->getSystemShippingOrigin();
-
-        /** @var string[] $multiLineCustomerNotes */
         $multiLineCustomerNotes = explode("\n", wordwrap($order->getCustomerNotes() ?? '', 35));
 
         return [
@@ -423,11 +350,6 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * Builds an array of elements related with the shipment
      *
-     * @param Order                              $order
-     * @param DpdShippingPackageOptionsInterface $package
-     * @param ParameterBag                       $settings
-     *
-     * @return array
      * @throws NormalizerException
      */
     private function getShipmentFields(
@@ -435,7 +357,6 @@ class OrderNormalizer implements NormalizerInterface
         DpdShippingPackageOptionsInterface $package,
         ParameterBag $settings
     ): array {
-        /** @var OrderAddress $shippingAddress */
         $shippingAddress = $order->getShippingAddress();
 
         if (null === $shippingAddress) {
@@ -610,7 +531,6 @@ class OrderNormalizer implements NormalizerInterface
      * Builds an array of elements related with the return procedure
      * Return policy not implemented yet, returns only empty values
      *
-     * @return array
      * @throws NormalizerException
      */
     private function getReturnFields(): array
@@ -737,7 +657,6 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * Returns a line closing element
      *
-     * @return mixed[][]
      * @throws NormalizerException
      */
     private function getLineEnd(): array
@@ -757,10 +676,6 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * Returns a filler with a given position and length
      *
-     * @param int $position
-     * @param int $length
-     *
-     * @return mixed[]
      * @throws NormalizerException
      */
     private function makeFiller(int $position, int $length): array
@@ -779,14 +694,6 @@ class OrderNormalizer implements NormalizerInterface
     /**
      * Builds a formatted element ready to be assembled into the export string
      *
-     * @param string $format
-     * @param string $status
-     * @param int    $position
-     * @param int    $length
-     * @param string $code
-     * @param mixed  $value
-     *
-     * @return mixed[]
      * @throws NormalizerException
      */
     private function getElement(
@@ -795,41 +702,31 @@ class OrderNormalizer implements NormalizerInterface
         int $position,
         int $length,
         string $code,
-        $value = null
+        mixed $value = null
     ): array {
         if ($status === self::STATUS_MANDATORY && $value === null) {
             throw new NormalizerException(sprintf('missing value for mandatory attribute %s', $code));
         }
-        /** @var mixed[] $element */
         $element = [];
         if ($status === self::STATUS_EMPTY || ($status === self::STATUS_OPTIONAL && $value === '')) {
             $format = self::TYPE_FILLER;
         }
-        $element['code']     = $code;
+        $element['code'] = $code;
         $element['position'] = $position;
-        $element['length']   = $length;
-        $element['value']    = $this->format($value, $format, $length);
+        $element['length'] = $length;
+        $element['value'] = $this->format($value, $format, $length);
 
         return $element;
     }
 
     /**
      * Formats the different kind of data to DPD Station requirements
-     *
-     * @param mixed  $value
-     * @param string $format
-     * @param int    $length
-     *
-     * @return string
      */
-    private function format($value, string $format, int $length): string
+    private function format(mixed $value, string $format, int $length): string
     {
-        /** @var string $output */
-        $output = '';
         switch ($format) {
             case self::TYPE_NUMERIC:
-                /** @var float $value */
-                $value  = round((float)$value, 2);
+                $value = round((float)$value, 2);
                 $output = str_pad((string)$value, $length, '0', STR_PAD_LEFT);
                 break;
             case self::TYPE_FILLER:

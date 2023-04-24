@@ -7,45 +7,24 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\EventListener;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Action\Event\ExtendableActionEvent;
 
 /**
- * Class OrderPudoListener
+ * Sets DPD relay related data into the order
  *
- * @package   Dnd\Commerce\Bundle\OrderBundle\EventListener\Flux
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class OrderPudoListener
 {
-    /**
-     * Description $pudoProvider field
-     *
-     * @var PudoProvider $pudoProvider
-     */
-    protected PudoProvider $pudoProvider;
-
-    /**
-     * OrderPudoListener constructor
-     *
-     * @param PudoProvider $pudoProvider
-     */
     public function __construct(
-        PudoProvider $pudoProvider
+        private readonly PudoProvider $pudoProvider
     ) {
-        $this->pudoProvider = $pudoProvider;
     }
 
-    /**
-     * Description preUpdate function
-     *
-     * @param PreUpdateEventArgs $event
-     */
     public function preUpdate(PreUpdateEventArgs $event): void
     {
         /** @var mixed|Order $entity */
@@ -59,45 +38,29 @@ class OrderPudoListener
     }
 
     /**
-     * Description onCreateOrder function
-     *
-     * @param ExtendableActionEvent $event
-     *
-     * @return void
      * @throws WorkflowException
      */
-    public function onCreateOrder(ExtendableActionEvent $event)
+    public function onCreateOrder(ExtendableActionEvent $event): void
     {
         if (!$this->isCorrectOrderContext($event->getContext())) {
             return;
         }
-        $this->updateDpdFields($event->getContext()->getData()->get('order'));
+        $this->updateDpdFields($event->getContext()?->getData()?->get('order'));
     }
 
     /**
-     * Description isCorrectOrderContext function
-     *
-     * @param $context
-     *
-     * @return bool
      * @throws WorkflowException
      */
     protected function isCorrectOrderContext($context): bool
     {
-        return ($context instanceof WorkflowItem && $context->getData() instanceof WorkflowData && $context->getData()
-                ->has('order') && $context->getData()->get('order') instanceof Order);
+        return $context?->getData()?->get('order') instanceof Order;
     }
 
-    /**
-     * Description updateDpdFields function
-     *
-     * @param Order $order
-     *
-     * @return void
-     */
-    private function updateDpdFields(Order $order)
+    private function updateDpdFields(Order $order): void
     {
-        /** @var string $pudoName */
+        if ($order->getDpdFrRelayId() === -1) {
+            $order->setDpdFrRelayId(null);
+        }
         $pudoName = '';
         if ($order->getDpdFrRelayId() !== null) {
             try {
@@ -107,6 +70,9 @@ class OrderPudoListener
             } catch (\Throwable $e) {
                 $pudoName = '';
             }
+        }
+        if ($order->getDeliveryPhone() === '0') {
+            $order->setDeliveryPhone(null);
         }
         $order->setDpdFrRelayName($pudoName);
     }

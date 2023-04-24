@@ -21,7 +21,6 @@ use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Component\MessageQueue\Client\Config;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -32,153 +31,59 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFileSystem;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
- * Class StationExportProcessor
- *
- * @package   Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class StationExportProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
     /**
      * The local FS folder for the files
-     *
-     * @var string LOCAL_FOLDER
      */
     public const LOCAL_FOLDER = 'data/dpd-france/export/';
     /**
      * The distant folder for the files
-     *
-     * @var string TARGET_FOLDER
      */
     public const TARGET_FOLDER = '/export/';
     /**
      * The local FS sub folder for the files successfully exported to station
-     *
-     * @var string SUCCESS_FOLDER
      */
     public const SUCCESS_FOLDER = 'success/';
     /**
      * The local FS sub folder for the files that were NOT exported to station
-     *
-     * @var string FAIL_FOLDER
      */
     public const FAIL_FOLDER = 'error/';
     /**
      * The prefix for the station filenames
-     *
-     * @var string FILE_PREFIX
      */
     public const FILE_PREFIX = 'oro';
     /**
      * The extension for the station filenames
-     *
-     * @var string FILE_EXTENSION
      */
     public const FILE_EXTENSION = 'txt';
-    /**
-     * Description $doctrineHelper field
-     *
-     * @var DoctrineHelper $doctrineHelper
-     */
-    protected DoctrineHelper $doctrineHelper;
-    /**
-     * The normalizer for the exported entity
-     *
-     * @var NormalizerInterface $normalizer
-     */
-    protected NormalizerInterface $normalizer;
-    /**
-     * Description $logger field
-     *
-     * @var LoggerInterface $logger
-     */
-    protected LoggerInterface $logger;
-    /**
-     * Description $filesystem field
-     *
-     * @var Filesystem $filesystem
-     */
+
     protected Filesystem $filesystem;
-    /**
-     * Description $settingsProvider field
-     *
-     * @var SettingsProvider $settingsProvider
-     */
-    protected SettingsProvider $settingsProvider;
-    /**
-     * Description $shippingServiceProvider field
-     *
-     * @var ShippingServiceProvider $shippingServiceProvider
-     */
-    protected ShippingServiceProvider $shippingServiceProvider;
-    /**
-     * Description $settings field
-     *
-     * @var ParameterBag|null $settings
-     */
     protected ?ParameterBag $settings = null;
+
     /**
-     * Description $crypter field
-     *
-     * @var SymmetricCrypterInterface $crypter
-     */
-    protected SymmetricCrypterInterface $crypter;
-    /**
-     * Description $shippingLineItemConverter field
-     *
-     * @var OrderShippingLineItemConverterInterface $shippingLineItemConverter
-     */
-    protected OrderShippingLineItemConverterInterface $shippingLineItemConverter;
-    /**
-     * Description $packagesFactory field
-     *
-     * @var PackageFactory $packagesFactory
-     */
-    protected PackageFactory $packagesFactory;
-    /**
-     * Description $packages field
-     *
      * @var DpdShippingPackageOptionsInterface[]|null $packages
      */
     private ?array $packages = null;
 
-    /**
-     * AbstractExportProcessor constructor
-     *
-     * @param DoctrineHelper                          $doctrineHelper
-     * @param OrderNormalizer                         $normalizer
-     * @param SettingsProvider                        $settingsProvider
-     * @param LoggerInterface                         $logger
-     * @param ShippingServiceProvider                 $shippingServiceProvider
-     * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
-     * @param PackageFactory                          $packagesFactory
-     * @param SymmetricCrypterInterface               $crypter
-     */
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        OrderNormalizer $normalizer,
-        SettingsProvider $settingsProvider,
-        LoggerInterface $logger,
-        ShippingServiceProvider $shippingServiceProvider,
-        OrderShippingLineItemConverterInterface $shippingLineItemConverter,
-        PackageFactory $packagesFactory,
-        SymmetricCrypterInterface $crypter
+        private readonly DoctrineHelper $doctrineHelper,
+        private readonly OrderNormalizer $normalizer,
+        private readonly SettingsProvider $settingsProvider,
+        private readonly LoggerInterface $logger,
+        private readonly ShippingServiceProvider $shippingServiceProvider,
+        private readonly OrderShippingLineItemConverterInterface $shippingLineItemConverter,
+        private readonly PackageFactory $packagesFactory,
+        private readonly SymmetricCrypterInterface $crypter
     ) {
-        $this->doctrineHelper            = $doctrineHelper;
-        $this->normalizer                = $normalizer;
-        $this->logger                    = $logger;
-        $this->filesystem                = new SymfonyFileSystem();
-        $this->settingsProvider          = $settingsProvider;
-        $this->shippingServiceProvider   = $shippingServiceProvider;
-        $this->crypter                   = $crypter;
-        $this->shippingLineItemConverter = $shippingLineItemConverter;
-        $this->packagesFactory           = $packagesFactory;
+        $this->filesystem = new SymfonyFileSystem();
     }
 
     /**
@@ -199,15 +104,13 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
      */
     public function process(MessageInterface $message, SessionInterface $session): string
     {
-        /** @var string $topic */
         $topic = $message->getProperty(Config::PARAMETER_TOPIC_NAME);
 
-        /** @var array|null $body */
         $body = JSON::decode($message->getBody());
         if (empty($body['orderId'])) {
             $this->logger->error(
                 sprintf(
-                    'Incomplete message, the body must contain an orderId. Topic: %s - Body: %s',
+                    '[Station export]: Incomplete message, the body must contain an orderId. Topic: %s - Body: %s',
                     $body['orderId'],
                     $topic
                 )
@@ -215,35 +118,34 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
             return self::REJECT;
         }
-        /** @var Order $order */
         $order = $this->getManager()->find(Order::class, $body['orderId']);
-
         if ($order === null) {
             $this->logger->error(
-                sprintf('Async processor could not fetch order with id %d for topic %s', $body['orderId'], $topic)
+                sprintf('[Station export] Async processor could not fetch order with id %d for topic %s', $body['orderId'], $topic)
             );
 
             return self::REJECT;
         }
+        if ($topic === Topics::SHIPMENT_EXPORT_TO_DPD_STATION && $order->getSynchronizedDpd() !== null) {
+            $this->logger->warning(
+                sprintf('[Station export] Skipping already exported order with id %d.', $body['orderId'])
+            );
+
+            return self::REJECT;
+        }
+
 
         return $this->processAsync($order, $topic);
     }
 
     /**
      * Creates a local station file for the order and copies it to station FTP
-     *
-     * @param Order  $order the exported entity
-     * @param string $topic the async message topic
-     *
-     * @return string
      */
     public function processAsync(Order $order, string $topic): string
     {
         try {
-            /** @var string $fileName */
             $fileName = $this->generateFileName($order->getId(), $topic);
 
-            /** @var ShippingService $shippingService */
             $shippingService = $this->shippingServiceProvider->getServiceForMethodTypeIdentifier(
                 $order->getShippingMethodType()
             );
@@ -254,14 +156,13 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
                 $this->filesystem->mkdir(self::LOCAL_FOLDER . self::FAIL_FOLDER);
             }
             $this->filesystem->touch(self::LOCAL_FOLDER . $fileName);
-
             $this->filesystem->dumpFile(
                 self::LOCAL_FOLDER . $fileName,
                 $this->assembleNormalizedData(
                     $this->normalizer->normalize($order, 'dpd_fr_station', [
                         'shipping_service' => $shippingService,
-                        'settings'         => $this->getSettings(),
-                        'packages'         => $this->getPackages($order, $shippingService),
+                        'settings' => $this->getSettings(),
+                        'packages' => $this->getPackages($order, $shippingService),
                     ])
                 )
             );
@@ -282,7 +183,6 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
             $this->onSuccess($order, $this->getSettings());
         } catch (\Throwable $e) {
-            /** @var string $errorMsg */
             $errorMsg = 'DPD France export processor failed to export shipment to station';
             $this->logError($errorMsg, $order, $topic, $e);
             $this->onFail($fileName);
@@ -295,21 +195,13 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
     /**
      * Returns the FTP url for the target file
-     *
-     * @param string $targetPath
-     *
-     * @return string
      */
     private function getStationFtpUrl(string $targetPath): string
     {
         $this->settings = $this->getSettings();
-        /** @var string|null $host */
         $host = $this->settings->get('dpd_fr_station_ftp_host');
-        /** @var int|null $port */
         $port = $this->settings->getInt('dpd_fr_station_ftp_port');
-        /** @var string|null $username */
         $username = $this->settings->get('dpd_fr_station_ftp_user');
-        /** @var string|null $password */
         $password = $this->crypter->decryptData($this->settings->get('dpd_fr_station_ftp_password'));
         if (!isset($host, $port, $username, $password)) {
             throw new \InvalidArgumentException('At least one parameter is missing for FTP connection.');
@@ -321,16 +213,12 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     /**
      * Gets the different packages needed to ship the order
      *
-     * @param Order           $order
-     * @param ShippingService $shippingService
-     *
      * @return DpdShippingPackageOptionsInterface[]|null
      * @throws PackageException
      */
     private function getPackages(Order $order, ShippingService $shippingService): ?array
     {
         if ($this->packages === null) {
-            /** @var ShippingLineItemCollectionInterface|null $convertedLineItems */
             $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($order->getLineItems());
             if ($convertedLineItems === null) {
                 throw new InvalidArgumentException('The order does not contain any line item.');
@@ -348,19 +236,13 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     /**
      * Assembles the string ready to be dumped into the file
      *
-     * @param mixed[] $data
-     *
-     * @return string
      * @throws ExportException
      */
     private function assembleNormalizedData(array $data): string
     {
-        /** @var string $mightyString */
         $mightyString = $this->getFileHeader();
-        /** @var string $lineString */
         $lineString = '';
 
-        /** @var mixed[] $datum */
         foreach ($data as $datum) {
             if (strlen($lineString) + 1 !== $datum['position']) {
                 throw new ExportException(
@@ -375,7 +257,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
             $lineString .= $datum['value'];
             if ($datum['position'] === 2247) {
                 $mightyString .= $lineString;
-                $lineString   = '';
+                $lineString = '';
             }
         }
 
@@ -384,8 +266,6 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
     /**
      * Prepares the first line of the file
-     *
-     * @return void
      */
     private function getFileHeader(): string
     {
@@ -394,18 +274,11 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
     /**
      * Generates the filename for the export
-     *
-     * @param int    $orderId
-     * @param string $topic
-     *
-     * @return string
      */
     private function generateFileName(int $orderId, string $topic): string
     {
-        /** @var \DateTime $now */
         $now = new \DateTime();
 
-        /** @var string $forced */
         $forced = $topic === Topics::SHIPMENT_EXPORT_TO_DPD_STATION_FORCED ? '_forced' : '';
 
         return sprintf(
@@ -420,17 +293,9 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
     /**
      * Prepares an error message with some details about the context and logs it
-     *
-     * @param string          $errorMsg Some information about the exception
-     * @param Order           $order the order being exported
-     * @param string          $topic the topic of the async message
-     * @param \Throwable|null $e
-     *
-     * @return void
      */
     private function logError(string $errorMsg, Order $order, string $topic, ?\Throwable $e = null): void
     {
-        /** @var string $entityInfoMsg */
         $entityInfoMsg = sprintf(
             ' while exporting order with id %d for topic %s. ',
             $order->getId(),
@@ -444,10 +309,6 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
     /**
      * Does some cleanup and logging whenever the process fails
-     *
-     * @param string|null $fileName
-     *
-     * @return void
      */
     public function onFail(?string $fileName): void
     {
@@ -467,19 +328,12 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
     /**
      * Flag the exported order as having its shipment successfully been synchronized with DPD Station
-     *
-     * @param Order        $order the order being exported
-     * @param ParameterBag $settings
-     *
-     * @return void
      */
     public function onSuccess(Order $order, ParameterBag $settings): void
     {
         $order->setSynchronizedDpd(new \DateTime());
 
-        /** @var string $trackingLink */
         foreach ($this->getTrackingLinks($order, $settings) as $trackingLink) {
-            /** @var OrderShippingTracking $shippingTracking */
             $shippingTracking = new OrderShippingTracking();
             $shippingTracking->setMethod($order->getShippingMethod());
             $shippingTracking->setNumber($trackingLink);
@@ -489,20 +343,11 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         $this->getManager()->flush();
     }
 
-    /**
-     * Description getTrackingLinks function
-     *
-     * @param Order        $order
-     * @param ParameterBag $settings
-     *
-     * @return string[]
-     */
     private function getTrackingLinks(Order $order, ParameterBag $settings): array
     {
         /** @var string[] $trackingLinks */
         $trackingLinks = [];
-        /** @var int $pkgAmount */
-        $pkgAmount     = count($this->packages);
+        $pkgAmount = count($this->packages);
         for ($i = 0; $i < $pkgAmount; $i++) {
             //'%s://www.dpd.fr/tracer_%s_%d%d';
             $trackingLinks[] = sprintf(
@@ -519,8 +364,6 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
     /**
      * Gets the entity manager of the exported entity
-     *
-     * @return EntityManagerInterface
      */
     public function getManager(): EntityManagerInterface
     {
@@ -529,8 +372,6 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
     /**
      * Returns the settings from DPD France Integration
-     *
-     * @return ParameterBag
      */
     private function getSettings(): ParameterBag
     {

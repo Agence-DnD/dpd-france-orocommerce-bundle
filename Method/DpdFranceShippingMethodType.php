@@ -12,74 +12,32 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 /**
- * Class DpdFranceShippingMethodType
- *
- * @package   Dnd\Bundle\DpdFranceShippingBundle\Method\Type
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class DpdFranceShippingMethodType implements ShippingMethodTypeInterface
 {
     /**
-     * Description PRICE_OPTION constant
-     *
-     * @var string PRICE_OPTION
+     * Price option index
      */
     public const PRICE_OPTION = 'price';
-    /**
-     * Description $settings field
-     *
-     * @var DpdFranceTransportSettings $settings
-     */
-    protected DpdFranceTransportSettings $settings;
-    /**
-     * Description $shippingService field
-     *
-     * @var ShippingService $shippingService
-     */
-    protected ShippingService $shippingService;
-    /**
-     * Description $methodId field
-     *
-     * @var string $methodId
-     */
+
     protected string $methodId;
-    /**
-     * Description $identifier field
-     *
-     * @var string $identifier
-     */
     private string $identifier;
-    /**
-     * Description $label field
-     *
-     * @var string $label
-     */
     private string $label;
 
-    /**
-     * DpdFranceShippingMethodType constructor
-     *
-     * @param string                     $identifier
-     * @param string                     $label
-     * @param string                     $methodId
-     * @param DpdFranceTransportSettings $settings
-     * @param ShippingService            $shippingService
-     */
     public function __construct(
         string $identifier,
         string $label,
         string $methodId,
-        DpdFranceTransportSettings $settings,
-        ShippingService $shippingService
+        private readonly DpdFranceTransportSettings $settings,
+        private readonly ShippingService $shippingService
     ) {
-        $this->identifier      = $identifier;
-        $this->label           = $label;
-        $this->methodId        = $methodId;
-        $this->settings        = $settings;
-        $this->shippingService = $shippingService;
+        $this->identifier = $identifier;
+        $this->label = $label;
+        $this->methodId = $methodId;
     }
 
     /**
@@ -90,19 +48,11 @@ class DpdFranceShippingMethodType implements ShippingMethodTypeInterface
         return $this->identifier;
     }
 
-    /**
-     * Description isGrouped function
-     *
-     * @return bool
-     */
     public function isGrouped(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getLabel(): string
     {
         return $this->label;
@@ -133,19 +83,12 @@ class DpdFranceShippingMethodType implements ShippingMethodTypeInterface
             return null;
         }
 
-        /** @var float $methodSurcharge */
         $methodSurcharge = $this->getSurchargeFromOptions($methodOptions);
-        /** @var float $typeSurcharge */
         $typeSurcharge = $this->getSurchargeFromOptions($typeOptions);
 
         return Price::create($methodSurcharge + $typeSurcharge, $context->getCurrency());
     }
 
-    /**
-     * @param array $option
-     *
-     * @return float
-     */
     private function getSurchargeFromOptions(array $option): float
     {
         return (float)($option[DpdFranceShippingMethod::OPTION_SURCHARGE] ?? 0);

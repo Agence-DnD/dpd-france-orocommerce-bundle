@@ -38,7 +38,7 @@ dnd_dpd_france_shipping:
         transport:
             label: DPD France
     pudo:
-        address.label: Address
+        address.label: DPD Relay Point Address
         name.label: DPD Relay Point Name
         point_id.label: DPD Relay Point ID
     transport:

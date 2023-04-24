@@ -1,5 +1,5 @@
 parameters:
-    dnd_dpd_france_shipping.admin_view.method_template: 'DndDpdFranceShippingBundle::method/dpdFranceShippingMethodWithOptions.html.twig'
+    dnd_dpd_france_shipping.admin_view.method_template: '@@DndDpdFranceShipping/method/dpdFranceShippingMethodWithOptions.html.twig'
 services:
     dnd_dpd_france_shipping.identifier_generator.method:
         parent: oro_integration.generator.prefixed_identifier_generator
@@ -47,7 +47,6 @@ services:
         public: true
         autowire: true
         arguments:
-            - '@monolog.logger.dnd_dpd_france_shipping'
             - '@oro_message_queue.client.message_producer'
             - '@dnd_dpd_france_shipping.provider.settings'
             - '@translator'
@@ -73,7 +72,6 @@ services:
     dnd_dpd_france_shipping.condition.shippable:
         class: Dnd\Bundle\DpdFranceShippingBundle\Condition\ShippableWithDpdFrance
         arguments:
-            - '@oro_entity.doctrine_helper'
             - '@oro_checkout.provider.shipping_context'
             - '@dnd_dpd_france_shipping.factory.package'
             - '@monolog.logger.dnd_dpd_france_shipping'
@@ -123,9 +121,7 @@ services:
         tags:
             - { name: layout.data_provider, alias: dnd_dpd_france_shipping_integration_settings }
 
-    dnd_dpd_france_shipping.layout.data_provider.order_details:
-        class: Dnd\Bundle\DpdFranceShippingBundle\Layout\DataProvider\OrderDetailsProvider
-        arguments:
-            - '@Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider'
+    Dnd\Bundle\DpdFranceShippingBundle\Layout\DataProvider\OrderDetailsProvider:
+        autowire: true
         tags:
             - { name: layout.data_provider, alias: dnd_dpd_france_shipping_order_details }

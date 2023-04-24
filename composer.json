@@ -4,9 +4,10 @@
   "description": "Agence Dn'D - DPD France Shipping Bundle",
   "keywords": ["DPD", "Oro", "commerce", "shipping", "France", "DPD France", "OroCommerce", "integration"],
   "require": {
-    "oro/platform": "4.2.*",
-    "oro/platform-serialised-fields": "4.2.*",
-    "oro/commerce": "4.2.*"
+    "oro/platform": "5.0.*",
+    "oro/platform-serialised-fields": "5.0.*",
+    "oro/commerce": "5.0.*",
+    "ext-simplexml": "*"
   },
   "version": "0.2.2",
   "license": "OSL-3.0",

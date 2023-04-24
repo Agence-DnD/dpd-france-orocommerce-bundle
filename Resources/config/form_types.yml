@@ -11,7 +11,6 @@ services:
         autowire: true
         arguments:
             $transport: '@dnd_dpd_france_shipping.integration.transport.type'
-            $em: '@doctrine.orm.entity_manager'
             $orderStatusTransformer: '@dnd_dpd_france_shipping.form.data_transformer.order_status_transformer'
         tags:
             - { name: form.type, alias: dnd_dpd_france_shipping_transport_settings_type }
