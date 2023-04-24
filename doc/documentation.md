@@ -2,7 +2,7 @@
 
 ### Documentation:
 
-After installing `DPD France Shipping Bundle`, please follow the following steps.
+After installing `DPD France Shipping Bundle`, please follow these steps:
 
 #### Create the DPD France Shipping Integration
 
@@ -12,7 +12,7 @@ Select the `DPD France` integration type and fill in the requested configuration
 
 ![DPD Integration Creation](images/dpd-integration-creation.png)
 
-#### Configure DPD France Shipping Integration
+#### Configure the DPD France Shipping Integration
 
 The configuration fields available in the Integration are: 
 * Type
@@ -39,13 +39,13 @@ The configuration fields available in the Integration are:
 ![DPD Integration Configuration 1](images/dpd-integration-configuration-1.png)
 ![DPD Integration Configuration 2](images/dpd-integration-configuration-2.png)
 
-#### Create shipping rules
+#### Create the shipping rules associated to DPD Shipping method
 
 In the admin section, go to `System > Shipping rules > Create shipping rule`.
 
-Select the proper currency / website combination for your store, set a base price for the services and an eventual extra fee per service in additional options section.
+Select the proper currency / website combination for your store, set a base price for the services and an eventual extra fee per service in the additional options section.
 
-In order to use the quantity limitation at product level, you can set the following rule expression:
+In order to use the quantity limitation for DPD shipping at product level, you have to set the following rule expression:
 ```
 lineItems.all(
     (lineItem.product.maxQtyForDpdFr < 0)
@@ -54,16 +54,16 @@ lineItems.all(
 )
 ```
 
-* A product with the attribute `DPD France Max qty` set to "-1" has no specific quantity limitation.
-* A product with the attribute `DPD France Max qty` set to "0" is not shippable with DPD France.
+* A product with the attribute `DPD France Max qty` set to "-1" has no specific quantity limitation
+* A product with the attribute `DPD France Max qty` set to "0" is not shippable with DPD France
 
-There are 3 levels of limitation for product quantities:
-* 1- DPD France `Maximum package number per order` Integration global setting
-* 2- Method specific limitation in db table `dnd_dpd_fr_shipping_service`: parcel_max_amount
-* 3- Product specific limitation with the attribute `DPD France Max qty`
+There are 3 levels of limitation regarding product quantities:
+* 1- The DPD France `Maximum package number per order` Integration global setting
+* 2- The DPD shipping method specific limitation inside the database table `dnd_dpd_fr_shipping_service`: `parcel_max_amount`
+* 3- The Product specific limitation with the attribute `DPD France Max qty` as described above
 
-Other limitations can be set using [Expression Language for Shipping and Payment Rules](https://doc.oroinc.com/user/back-office/system/shipping-rules/expression-lang/#payment-shipping-expression-lang)
-, you can for example add the following expression on top of your rule expression to limit the shipping method to a specific customer group:
+Other limitations can be set using [Expression Language for Shipping and Payment Rules](https://doc.oroinc.com/user/back-office/system/shipping-rules/expression-lang/#payment-shipping-expression-lang).
+For example, you can add the following expression on top of your expression rules to limit the DPD shipping method to a specific customer group:
 
 ```
 customer.group.id = 4 and 
@@ -72,21 +72,20 @@ lineItems.all(...)
 
 ![DPD Shipping Rule](images/dpd-shipping-rule.png)
 
-#### Enable the checkout workflow "With DPD France"
+#### Enable the specific checkout workflow "With DPD France"
 
-The two native checkout workflows have been cloned into their "*...with DPD France*" declinations.
+The two native checkout workflows have been cloned into their corresponding "*...with DPD France*" workflows.
 
-Enable the one corresponding to the workflow desired.
+Enable the one corresponding to the workflow desired:
 
 ![DPD Workflow](images/dpd-workflow.png)
 
-#### Customize shipping methods limitations
+#### Customize DPD shipping methods limitations
 
-DPD FR Standard limitations are stored in db table `dnd_dpd_fr_shipping_service` and can be tweaked in the case of contractual arrangements with DPD France. 
-
+DPD shipping standard limitations are stored inside the database table `dnd_dpd_fr_shipping_service` and can be adjusted in the case of specific contractual agreements with DPD France:
 * Weight limitation is expressed in kilograms (kg)
 * Dimensions limitations are expressed in meters (m)
-* Value limitation is expressed in your website's default currency
+* Value limitation is expressed in your website default currency
 
 ### Flush the cache
 
