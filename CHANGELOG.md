@@ -1,3 +1,4 @@
 # Changelog
 
-## Version 100.0.0 - 2021-XX-XX
+## Version 100.0.0 - 2023-05-XX
+- Add initial version

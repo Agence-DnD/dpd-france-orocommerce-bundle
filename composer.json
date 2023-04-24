@@ -1,27 +1,36 @@
 {
-  "name": "agencednd/dpd-france-orocommerce-bundle",
-  "type": "symfony-bundle",
-  "description": "Agence Dn'D - DPD France Shipping Bundle",
-  "keywords": ["DPD", "Oro", "commerce", "shipping", "France", "DPD France", "OroCommerce", "integration"],
-  "require": {
-    "oro/platform": "5.0.*",
-    "oro/platform-serialised-fields": "5.0.*",
-    "oro/commerce": "5.0.*",
-    "ext-simplexml": "*"
-  },
-  "version": "0.2.2",
-  "license": "OSL-3.0",
-  "authors": [
-    {
-      "name": "Agence Dn'D",
-      "email": "contact@dnd.fr",
-      "role": "Developer",
-      "homepage": "https://www.dnd.fr/"
+    "name": "agencednd/dpd-france-orocommerce-bundle",
+    "type": "symfony-bundle",
+    "description": "Agence Dn'D - DPD France Shipping Bundle",
+    "keywords": [
+        "DPD",
+        "Oro",
+        "Commerce",
+        "Shipping",
+        "France",
+        "DPD France",
+        "OroCommerce",
+        "Integration"
+    ],
+    "require": {
+        "oro/platform": "5.0.*",
+        "oro/platform-serialised-fields": "5.0.*",
+        "oro/commerce": "5.0.*",
+        "ext-simplexml": "*"
+    },
+    "version": "0.2.2",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Agence Dn'D",
+            "email": "contact@dnd.fr",
+            "role": "Developer",
+            "homepage": "https://www.dnd.fr/"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Dnd\\Bundle\\DpdFranceShippingBundle\\": ""
+        }
     }
-  ],
-  "autoload": {
-    "psr-4": {
-      "Dnd\\Bundle\\DpdFranceShippingBundle\\": ""
-    }
-  }
 }

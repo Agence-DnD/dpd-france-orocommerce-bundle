@@ -10,8 +10,11 @@ In the admin section, go to `System > Integrations > Manage integrations > Creat
 
 Select the `DPD France` integration type and fill in the requested configurations.
 
+![DPD Integration Creation](images/dpd-integration-creation.png)
+
 #### Configure DPD France Shipping Integration
 
+The configuration fields available in the Integration are: 
 * Type
 * Name
 * Agency code
@@ -32,6 +35,9 @@ Select the `DPD France` integration type and fill in the requested configuration
 * Station FTP Port
 * Order statuses sent to station
 * Default owner
+
+![DPD Integration Configuration 1](images/dpd-integration-configuration-1.png)
+![DPD Integration Configuration 2](images/dpd-integration-configuration-2.png)
 
 #### Create shipping rules
 
@@ -64,12 +70,15 @@ customer.group.id = 4 and
 lineItems.all(...)
 ```
 
+![DPD Shipping Rule](images/dpd-shipping-rule.png)
+
 #### Enable the checkout workflow "With DPD France"
 
 The two native checkout workflows have been cloned into their "*...with DPD France*" declinations.
 
 Enable the one corresponding to the workflow desired.
 
+![DPD Workflow](images/dpd-workflow.png)
 
 #### Customize shipping methods limitations
 
@@ -78,7 +87,6 @@ DPD FR Standard limitations are stored in db table `dnd_dpd_fr_shipping_service`
 * Weight limitation is expressed in kilograms (kg)
 * Dimensions limitations are expressed in meters (m)
 * Value limitation is expressed in your website's default currency
-
 
 ### Flush the cache
 
