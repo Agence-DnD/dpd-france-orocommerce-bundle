@@ -6,7 +6,8 @@
   "require": {
     "oro/platform": "5.0.*",
     "oro/platform-serialised-fields": "5.0.*",
-    "oro/commerce": "5.0.*"
+    "oro/commerce": "5.0.*",
+    "ext-simplexml": "*"
   },
   "version": "0.2.2",
   "license": "OSL-3.0",

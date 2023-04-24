@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Integration;
 
-use Oro\Bundle\IntegrationBundle\Provider\{
-    ChannelInterface,
-    IconAwareIntegrationInterface};
+use Oro\Bundle\IntegrationBundle\Provider\{ChannelInterface, IconAwareIntegrationInterface};
 
 /**
  * @author    Agence Dn'D <contact@dnd.fr>

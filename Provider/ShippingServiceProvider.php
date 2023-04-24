@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Provider;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 /**

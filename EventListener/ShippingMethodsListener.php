@@ -10,7 +10,6 @@ use Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShippingBundle\Event\ApplicableMethodsEvent;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 
 /**
  * @author    Agence Dn'D <contact@dnd.fr>

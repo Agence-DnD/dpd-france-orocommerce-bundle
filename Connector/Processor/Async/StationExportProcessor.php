@@ -21,7 +21,6 @@ use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
-use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Component\MessageQueue\Client\Config;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -32,7 +31,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFileSystem;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * @author    Agence Dn'D <contact@dnd.fr>
@@ -112,7 +110,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         if (empty($body['orderId'])) {
             $this->logger->error(
                 sprintf(
-                    'Incomplete message, the body must contain an orderId. Topic: %s - Body: %s',
+                    '[Station export]: Incomplete message, the body must contain an orderId. Topic: %s - Body: %s',
                     $body['orderId'],
                     $topic
                 )
@@ -123,11 +121,19 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         $order = $this->getManager()->find(Order::class, $body['orderId']);
         if ($order === null) {
             $this->logger->error(
-                sprintf('Async processor could not fetch order with id %d for topic %s', $body['orderId'], $topic)
+                sprintf('[Station export] Async processor could not fetch order with id %d for topic %s', $body['orderId'], $topic)
             );
 
             return self::REJECT;
         }
+        if ($topic === Topics::SHIPMENT_EXPORT_TO_DPD_STATION && $order->getSynchronizedDpd() !== null) {
+            $this->logger->warning(
+                sprintf('[Station export] Skipping already exported order with id %d.', $body['orderId'])
+            );
+
+            return self::REJECT;
+        }
+
 
         return $this->processAsync($order, $topic);
     }
@@ -337,11 +343,6 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         $this->getManager()->flush();
     }
 
-    /**
-     * Description getTrackingLinks function
-     *
-     * @return string[]
-     */
     private function getTrackingLinks(Order $order, ParameterBag $settings): array
     {
         /** @var string[] $trackingLinks */

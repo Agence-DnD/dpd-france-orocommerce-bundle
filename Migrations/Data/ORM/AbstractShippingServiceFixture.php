@@ -7,7 +7,6 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Data\ORM;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
 
 /**
  * @author    Agence Dn'D <contact@dnd.fr>

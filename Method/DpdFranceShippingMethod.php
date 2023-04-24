@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Method;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\DpdFranceTransportSettings;
-use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Form\Type\DpdFranceShippingMethodOptionsType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;

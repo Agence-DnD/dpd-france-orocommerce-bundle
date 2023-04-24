@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 
 /**
  * @author    Agence Dn'D <contact@dnd.fr>

@@ -3,9 +3,10 @@ import _ from 'underscore';
 import $ from 'jquery';
 import NumberFormatter from 'orolocale/js/formatter/number';
 import mediator from 'oroui/js/mediator';
-import DndDpdMethodPickup from 'dnddpdfranceshipping/js/app/views/dnddpd-method-pickup';
-import DndDpdMethodPredict from 'dnddpdfranceshipping/js/app/views/dnddpd-method-predict';
-import validate from 'jquery.validate';
+import DndDpdMethodPickup
+    from 'dnddpdfranceshipping/js/app/views/dnddpd-method-pickup';
+import DndDpdMethodPredict
+    from 'dnddpdfranceshipping/js/app/views/dnddpd-method-predict';
 
 const ShippingMethodsView = BaseView.extend({
     autoRender: true,
@@ -122,12 +123,12 @@ const ShippingMethodsView = BaseView.extend({
             this.subview('checkoutShippingMethodPickup').setSelectedMethod();
 
         (selectedMethod === this.options.predictId) &&
-            $relayId.val(0) &&
+            $relayId.val(-1) &&
             $deliveryPhone.val('') &&
             this.subview('checkoutShippingMethodPredict').triggerField();
 
         ((selectedMethod !== this.options.predictId) && (selectedMethod !== this.options.pickupId)) &&
-            $relayId.val(0) &&
+            $relayId.val(-1) &&
             $deliveryPhone.val(0);
     },
 

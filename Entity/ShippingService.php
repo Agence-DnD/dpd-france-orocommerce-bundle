@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\Repository\ShippingServiceRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @author    Agence Dn'D <contact@dnd.fr>

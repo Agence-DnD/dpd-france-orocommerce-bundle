@@ -6,7 +6,6 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Migrations\Schema\v1_3;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
-use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Types;
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;

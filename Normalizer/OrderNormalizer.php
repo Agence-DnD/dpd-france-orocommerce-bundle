@@ -8,8 +8,6 @@ use Dnd\Bundle\DpdFranceShippingBundle\Exception\NormalizerException;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\ShippingBundle\Model\ShippingOrigin;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -704,7 +702,7 @@ class OrderNormalizer implements NormalizerInterface
         int $position,
         int $length,
         string $code,
-        $value = null
+        mixed $value = null
     ): array {
         if ($status === self::STATUS_MANDATORY && $value === null) {
             throw new NormalizerException(sprintf('missing value for mandatory attribute %s', $code));
@@ -723,12 +721,9 @@ class OrderNormalizer implements NormalizerInterface
 
     /**
      * Formats the different kind of data to DPD Station requirements
-     *
-     * @return string
      */
-    private function format($value, string $format, int $length): string
+    private function format(mixed $value, string $format, int $length): string
     {
-        $output = '';
         switch ($format) {
             case self::TYPE_NUMERIC:
                 $value = round((float)$value, 2);

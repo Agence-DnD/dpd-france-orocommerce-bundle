@@ -6,7 +6,6 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\EventListener;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\StationExportProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Component\MessageQueue\Transport\Exception\Exception;
 
 /**
  * @author    Agence Dn'D <contact@dnd.fr>

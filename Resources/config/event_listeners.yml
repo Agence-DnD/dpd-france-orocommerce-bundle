@@ -17,6 +17,9 @@ services:
     Dnd\Bundle\DpdFranceShippingBundle\EventListener\OrderPudoListener:
         public: true
         autowire: true
+        arguments:
+            - '@Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider'
+            - '@monolog.logger.dnd_dpd_france_shipping'
         tags:
-            - { name: doctrine.event_listener, event: preUpdate }
+            - { name: doctrine.event_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: preUpdate }
             - { name: kernel.event_listener, event: extendable_action.finish_checkout, method: onCreateOrder, priority: 10 }

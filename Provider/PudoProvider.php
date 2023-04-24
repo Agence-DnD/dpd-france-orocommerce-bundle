@@ -123,6 +123,7 @@ class PudoProvider
     /**
      * Handles WS Response, parses it in case of success, throws an error in case of failure
      *
+     * @return array|bool|\SimpleXMLElement
      * @throws PudoException
      * @throws TransportExceptionInterface
      * @throws \JsonException
@@ -130,7 +131,7 @@ class PudoProvider
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      */
-    private function handleResponse(ResponseInterface $response, bool $parseXML = true)
+    private function handleResponse(ResponseInterface $response, bool $parseXML = true): array|bool|\SimpleXMLElement
     {
         if (Response::HTTP_OK !== $response->getStatusCode()) {
             throw new PudoException(

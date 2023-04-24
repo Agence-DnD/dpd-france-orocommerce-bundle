@@ -9,8 +9,6 @@ use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
 
 /**
  * @author    Agence Dn'D <contact@dnd.fr>

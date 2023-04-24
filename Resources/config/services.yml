@@ -47,7 +47,6 @@ services:
         public: true
         autowire: true
         arguments:
-            - '@monolog.logger.dnd_dpd_france_shipping'
             - '@oro_message_queue.client.message_producer'
             - '@dnd_dpd_france_shipping.provider.settings'
             - '@translator'
@@ -73,7 +72,6 @@ services:
     dnd_dpd_france_shipping.condition.shippable:
         class: Dnd\Bundle\DpdFranceShippingBundle\Condition\ShippableWithDpdFrance
         arguments:
-            - '@oro_entity.doctrine_helper'
             - '@oro_checkout.provider.shipping_context'
             - '@dnd_dpd_france_shipping.factory.package'
             - '@monolog.logger.dnd_dpd_france_shipping'

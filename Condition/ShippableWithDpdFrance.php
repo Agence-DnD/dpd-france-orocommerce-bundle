@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Condition;
 
-use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutShippingContextProvider;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Psr\Log\LoggerInterface;
@@ -24,12 +22,10 @@ use Psr\Log\LoggerInterface;
 class ShippableWithDpdFrance
 {
     public function __construct(
-        private readonly DoctrineHelper $doctrineHelper,
         private readonly CheckoutShippingContextProvider $checkoutShippingContextProvider,
         private readonly PackageFactory $packageFactory,
         private readonly LoggerInterface $logger,
         private readonly ShippingServiceProvider $shippingServiceProvider
-
     ) {
     }
 
@@ -43,7 +39,7 @@ class ShippableWithDpdFrance
         );
         $shippingContext = $this->checkoutShippingContextProvider->getContext($context);
 
-        if ($shippingContext === null) {
+        if ($shippingContext === null || $shippingService === null) {
             return false;
         }
 
@@ -52,7 +48,7 @@ class ShippableWithDpdFrance
             $packages = $this->packageFactory->create(
                 $shippingContext->getLineItems(),
                 $shippingService,
-                $context->getWebsite()->getId()
+                $context->getWebsite()?->getId()
             );
         } catch (PackageException $e) {
             $this->logger->info(

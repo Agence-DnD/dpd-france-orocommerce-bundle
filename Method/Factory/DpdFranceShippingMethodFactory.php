@@ -28,9 +28,6 @@ class DpdFranceShippingMethodFactory implements IntegrationShippingMethodFactory
         private readonly IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator,
         private readonly DpdFranceShippingMethodTypeFactory $methodTypeFactory
     ) {
-        $this->methodIdentifierGenerator = $methodIdentifierGenerator;
-        $this->integrationIconProvider = $integrationIconProvider;
-        $this->methodTypeFactory = $methodTypeFactory;
     }
 
     public function create(Channel $channel): ShippingMethodInterface

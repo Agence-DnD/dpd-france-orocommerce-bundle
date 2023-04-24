@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -114,7 +113,7 @@ class DpdFranceTransportSettings extends Transport
     #[ORM\JoinTable(name: "dnd_dpd_fr_transport_ship_service")]
     #[ORM\JoinColumn(name: "transport_id", referencedColumnName: "id", onDelete: "CASCADE")]
     #[ORM\InverseJoinColumn(name: "ship_service_code", referencedColumnName: "code", unique: true, onDelete: "CASCADE")]
-    protected $shippingServices;
+    protected ?Collection $shippingServices = null;
     #[ORM\Column(name: "dpd_fr_google_maps_api_key", type: "string", length: 255)]
     protected ?string $googleMapsApiKey = null;
 
@@ -366,16 +365,14 @@ class DpdFranceTransportSettings extends Transport
         return $descriptions[$identifier] ?? null;
     }
 
-    /**
-     * @return ShippingService[]
-     */
-    public function getShippingServices(): Collection
+    public function getShippingServices(): ?Collection
     {
         return $this->shippingServices;
     }
 
-    public function getShippingService($code): ?ShippingService
+    public function getShippingService(string $code): ?ShippingService
     {
+        /** @var ShippingService $service */
         foreach ($this->shippingServices as $service) {
             if ($service->getCode() === $code) {
                 return $service;
@@ -422,5 +419,4 @@ class DpdFranceTransportSettings extends Transport
     {
         $this->stationEnabled = $stationEnabled;
     }
-
 }

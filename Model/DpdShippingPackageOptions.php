@@ -18,12 +18,11 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 class DpdShippingPackageOptions extends ShippingPackageOptions implements DpdShippingPackageOptionsInterface
 {
     public function __construct(
+        protected Dimensions $dimensions,
         protected Weight $weight,
         protected Price $price
     ) {
         parent::__construct($dimensions, $weight);
-
-        $this->price = $price;
     }
 
     public function getPrice(): Price
