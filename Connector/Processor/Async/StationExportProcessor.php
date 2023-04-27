@@ -9,7 +9,6 @@ use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\ExportException;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PackageException;
 use Dnd\Bundle\DpdFranceShippingBundle\Factory\PackageFactory;
-use Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethod;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Dnd\Bundle\DpdFranceShippingBundle\Normalizer\OrderNormalizer;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\SettingsProvider;
@@ -17,10 +16,10 @@ use Dnd\Bundle\DpdFranceShippingBundle\Provider\ShippingServiceProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use http\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\MessageQueue\Client\Config;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -81,7 +80,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         private readonly ShippingServiceProvider $shippingServiceProvider,
         private readonly OrderShippingLineItemConverterInterface $shippingLineItemConverter,
         private readonly PackageFactory $packagesFactory,
-        private readonly SymmetricCrypterInterface $crypter
+        private readonly LocaleSettings $localeSettings
     ) {
         $this->filesystem = new SymfonyFileSystem();
     }
@@ -226,7 +225,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
             $this->packages = $this->packagesFactory->create(
                 $convertedLineItems,
                 $shippingService,
-                $order->getWebsite()->getId()
+                $order->getWebsite()?->getId()
             );
         }
 
@@ -284,8 +283,8 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         return sprintf(
             '%s_%s_%s%s.%s',
             self::FILE_PREFIX,
-            $now->format('Ymd_His'),
-            (string)$orderId,
+            $now->setTimezone(new \DateTimeZone($this->localeSettings->getTimeZone()))->format('Y-m-d_H-i-s'),
+            (string) $orderId,
             $forced,
             self::FILE_EXTENSION
         );
@@ -333,33 +332,33 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     {
         $order->setSynchronizedDpd(new \DateTime());
 
-        foreach ($this->getTrackingLinks($order, $settings) as $trackingLink) {
+        foreach ($this->getTrackingNumbers($order, $settings) as $trackingNumber) {
             $shippingTracking = new OrderShippingTracking();
             $shippingTracking->setMethod($order->getShippingMethod());
-            $shippingTracking->setNumber($trackingLink);
+            $shippingTracking->setNumber($trackingNumber);
             $order->addShippingTracking($shippingTracking);
         }
         $this->getManager()->persist($order);
         $this->getManager()->flush();
     }
 
-    private function getTrackingLinks(Order $order, ParameterBag $settings): array
+    private function getTrackingNumbers(Order $order, ParameterBag $settings): array
     {
-        /** @var string[] $trackingLinks */
-        $trackingLinks = [];
+        /** @var string[] $trackingNumbers */
+        $trackingNumbers = [];
         $pkgAmount = count($this->packages);
         for ($i = 0; $i < $pkgAmount; $i++) {
-            //'%s://www.dpd.fr/tracer_%s_%d%d';
-            $trackingLinks[] = sprintf(
-                DpdFranceShippingMethod::TRACKING_URL_PATTERN,
-                'https',
-                $order->getId() . '-' . $i > 0 ? $i : '',
-                (int)$settings->get('dpd_fr_agency_code'),
-                (int)$settings->get('dpd_fr_contract_number')
+            $trackingNumbers[] = implode(
+                '_',
+                [
+                    $pkgAmount > 1 ? implode('-', [$order->getIdentifier(), $i]) : $order->getIdentifier(),
+                    (int) $settings->get('dpd_fr_agency_code'),
+                    (int) $settings->get('dpd_fr_contract_number')
+                ]
             );
         }
 
-        return $trackingLinks;
+        return $trackingNumbers;
     }
 
     /**

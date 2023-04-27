@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Layout\DataProvider;
 
+use Dnd\Bundle\DpdFranceShippingBundle\Entity\DpdFranceTransportSettings;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\PudoException;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use SimpleXMLElement;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
@@ -22,6 +24,26 @@ class OrderDetailsProvider
     public function __construct(
         private readonly PudoProvider $pudoProvider
     ) {
+    }
+
+    public function isPickupDetailsVisible(?Order $order): ?bool
+    {
+        if ($order->getShippingMethodType() !== DpdFranceTransportSettings::IDENTIFIER_PICKUP) {
+            return false;
+        }
+        $pudoID = $order->getDpdFrRelayId();
+
+        return ($pudoID !== null && $pudoID !== '' && $pudoID !== '-1');
+    }
+
+    public function isPredictDetailsVisible(?Order $order): ?bool
+    {
+        return $order?->getShippingMethodType() === DpdFranceTransportSettings::IDENTIFIER_PREDICT;
+    }
+
+    public function getPredictPhone(?Order $order): ?string
+    {
+        return !empty($order?->getDeliveryPhone()) ? $order?->getDeliveryPhone() : 'N/A';
     }
 
     public function getPudoDetails(string $pudoID): ?SimpleXMLElement

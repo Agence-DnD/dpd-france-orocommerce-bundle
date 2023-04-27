@@ -7,6 +7,7 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\EventListener;
 use Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Oro\Component\Action\Event\ExtendableActionEvent;
 
@@ -51,7 +52,7 @@ class OrderPudoListener
     /**
      * @throws WorkflowException
      */
-    protected function isCorrectOrderContext($context): bool
+    protected function isCorrectOrderContext(WorkflowItem $context): bool
     {
         return $context?->getData()?->get('order') instanceof Order;
     }

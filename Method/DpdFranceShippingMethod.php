@@ -133,7 +133,11 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
     }
 
     /**
-     * {@inheritDoc}
+     * Forms the tracking link from the tracking number and the configured tracking URL pattern
+     *
+     * @param string $number the tracking number declared by station export
+     *
+     * @return string|null
      */
     public function getTrackingLink($number): ?string
     {
