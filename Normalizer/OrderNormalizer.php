@@ -254,7 +254,7 @@ class OrderNormalizer implements NormalizerInterface
                 419,
                 35,
                 'Nom expéditeur',
-                $order->getOrganization()?->getName(),
+                '',
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -541,7 +541,7 @@ class OrderNormalizer implements NormalizerInterface
                 1835,
                 1,
                 'Retour',
-                null
+                ''
             ),
             $this->makeFiller(1836, 15),
             $this->getElement(
