@@ -449,7 +449,7 @@ class OrderNormalizer implements NormalizerInterface
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
-                $order->getShippingMethodType() !== 'predict' ? self::STATUS_OPTIONAL : self::STATUS_MANDATORY,
+                $order->getShippingMethodType() !== 'dpd_fr_predict' ? self::STATUS_OPTIONAL : self::STATUS_MANDATORY,
                 1312,
                 35,
                 'GSM destinataire',
@@ -484,11 +484,11 @@ class OrderNormalizer implements NormalizerInterface
             $this->makeFiller(1568, 1),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
-                $order->getShippingMethodType() !== 'predict' ? self::STATUS_OPTIONAL : self::STATUS_MANDATORY,
+                $order->getShippingMethodType() !== 'dpd_fr_predict' ? self::STATUS_OPTIONAL : self::STATUS_MANDATORY,
                 1569,
                 1,
                 'Predict',
-                $order->getShippingMethodType() === 'predict' ? '+' : ''
+                $order->getShippingMethodType() === 'dpd_fr_predict' ? '+' : ''
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
