@@ -48,10 +48,6 @@ class OrderNormalizer implements NormalizerInterface
      * Grouping type
      */
     public const CONSOLIDATION_TYPE_DECLARATIVE = 38;
-    /**
-     * Grouping type
-     */
-    public const CONSOLIDATION_TYPE_DELIVERY_GROUPING = 1;
 
     protected OrderShippingLineItemConverterInterface $shippingLineItemConverter;
     private int $fillerCount = 0;
@@ -88,8 +84,10 @@ class OrderNormalizer implements NormalizerInterface
         $this->checkContext($context);
 
         $this->packageCount = count($context['packages']);
+        $i = 0;
         foreach ($context['packages'] as $package) {
-            $data[] = $this->getGeneralFields($order, $package);
+            $i++;
+            $data[] = $this->getGeneralFields($order, $package, $i);
             $data[] = $this->getRecipientFields($order);
             $data[] = $this->getSenderFields($order);
             $data[] = $this->getShipmentFields($order, $package, $context['settings']);
@@ -105,9 +103,10 @@ class OrderNormalizer implements NormalizerInterface
      *
      * @throws NormalizerException
      */
-    private function getGeneralFields(
+    protected function getGeneralFields(
         Order $order,
-        DpdShippingPackageOptionsInterface $package
+        DpdShippingPackageOptionsInterface $package,
+        int $i
     ): array {
         return [
             $this->getElement(
@@ -116,7 +115,7 @@ class OrderNormalizer implements NormalizerInterface
                 1,
                 35,
                 'Référence client N°1',
-                'BL' . $order->getId()
+                $this->packageCount > 1 ? implode('-', [$order->getIdentifier(), $i]) : $order->getIdentifier()
             ),
             $this->makeFiller(36, 2),
             $this->getElement(
@@ -136,7 +135,7 @@ class OrderNormalizer implements NormalizerInterface
      *
      * @throws NormalizerException
      */
-    private function getRecipientFields(Order $order): array
+    protected function getRecipientFields(Order $order): array
     {
         $shippingAddress = $order->getShippingAddress();
         if (null === $shippingAddress) {
@@ -232,7 +231,7 @@ class OrderNormalizer implements NormalizerInterface
                 374,
                 20,
                 "Téléphone",
-                $order->getDeliveryPhone()
+                $order->getDeliveryPhone() ?? $shippingAddress->getPhone()
             ),
             $this->makeFiller(394, 25),
         ];
@@ -243,7 +242,7 @@ class OrderNormalizer implements NormalizerInterface
      *
      * @throws NormalizerException
      */
-    private function getSenderFields(Order $order): array
+    protected function getSenderFields(Order $order): array
     {
         $shippingOrigin = $this->shippingOriginProvider->getSystemShippingOrigin();
         $multiLineCustomerNotes = explode("\n", wordwrap($order->getCustomerNotes() ?? '', 35));
@@ -255,7 +254,7 @@ class OrderNormalizer implements NormalizerInterface
                 419,
                 35,
                 'Nom expéditeur',
-                $shippingOrigin->getLastName(),
+                $order->getOrganization()?->getName(),
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -309,7 +308,7 @@ class OrderNormalizer implements NormalizerInterface
                 732,
                 20,
                 "Téléphone",
-                '' //@TODO set phone in integration settings & fetch it here
+                ''
             ),
             $this->makeFiller(752, 10),
             $this->getElement(
@@ -352,7 +351,7 @@ class OrderNormalizer implements NormalizerInterface
      *
      * @throws NormalizerException
      */
-    private function getShipmentFields(
+    protected function getShipmentFields(
         Order $order,
         DpdShippingPackageOptionsInterface $package,
         ParameterBag $settings
@@ -421,7 +420,7 @@ class OrderNormalizer implements NormalizerInterface
                 1072,
                 35,
                 'Numéro de consolidation',
-                $this->packageCount > 1 ? 'BL' . $order->getId() : ''
+                $this->packageCount > 1 ? $order->getIdentifier() : ''
             ),
             $this->makeFiller(1107, 10),
             $this->getElement(
@@ -463,7 +462,7 @@ class OrderNormalizer implements NormalizerInterface
                 1443,
                 8,
                 'Identifiant du point relais',
-                $order->getDpdFrRelayId()
+                $order->getDpdFrRelayId() !== '-1' ? $order->getDpdFrRelayId() : ''
             ),
             $this->makeFiller(1451, 113),
             $this->getElement(
@@ -489,7 +488,7 @@ class OrderNormalizer implements NormalizerInterface
                 1569,
                 1,
                 'Predict',
-                $order->getShippingMethodType() === 'predict' ? '+' : '0' // so much for a numeric value
+                $order->getShippingMethodType() === 'predict' ? '+' : ''
             ),
             $this->getElement(
                 self::TYPE_ALPHANUMERIC,
@@ -533,7 +532,7 @@ class OrderNormalizer implements NormalizerInterface
      *
      * @throws NormalizerException
      */
-    private function getReturnFields(): array
+    protected function getReturnFields(): array
     {
         return [
             $this->getElement(
@@ -542,7 +541,7 @@ class OrderNormalizer implements NormalizerInterface
                 1835,
                 1,
                 'Retour',
-                0
+                null
             ),
             $this->makeFiller(1836, 15),
             $this->getElement(
@@ -666,7 +665,7 @@ class OrderNormalizer implements NormalizerInterface
                 self::TYPE_ALPHANUMERIC,
                 self::STATUS_MANDATORY,
                 2247,
-                2,
+                1,
                 "Fin d'enregistrement",
                 PHP_EOL
             ),
