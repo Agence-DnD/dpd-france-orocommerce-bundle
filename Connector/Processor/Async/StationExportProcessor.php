@@ -20,6 +20,7 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\MessageQueue\Client\Config;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -80,6 +81,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         private readonly ShippingServiceProvider $shippingServiceProvider,
         private readonly OrderShippingLineItemConverterInterface $shippingLineItemConverter,
         private readonly PackageFactory $packagesFactory,
+        private readonly SymmetricCrypterInterface $crypter,
         private readonly LocaleSettings $localeSettings
     ) {
         $this->filesystem = new SymfonyFileSystem();
