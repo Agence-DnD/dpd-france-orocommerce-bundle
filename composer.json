@@ -13,6 +13,7 @@
         "Integration"
     ],
     "require": {
+        "php": "~8.2.0",
         "oro/platform": "5.1.*",
         "oro/platform-serialised-fields": "5.1.*",
         "oro/commerce": "5.1.*",
