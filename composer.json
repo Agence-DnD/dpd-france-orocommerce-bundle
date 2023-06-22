@@ -13,12 +13,12 @@
         "Integration"
     ],
     "require": {
-        "oro/platform": "5.0.*",
-        "oro/platform-serialised-fields": "5.0.*",
-        "oro/commerce": "5.0.*",
+        "oro/platform": "5.1.*",
+        "oro/platform-serialised-fields": "5.1.*",
+        "oro/commerce": "5.1.*",
         "ext-simplexml": "*"
     },
-    "version": "1.0.0",
+    "version": "1.1.0",
     "license": "OSL-3.0",
     "authors": [
         {
