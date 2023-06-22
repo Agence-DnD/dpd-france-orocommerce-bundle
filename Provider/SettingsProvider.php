@@ -6,8 +6,9 @@ namespace Dnd\Bundle\DpdFranceShippingBundle\Provider;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel;
 use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceTransport;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\IntegrationBundle\Entity\Channel as Integration;
 use Oro\Bundle\IntegrationBundle\Provider\ConnectorContextMediator;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -23,7 +24,7 @@ class SettingsProvider
     protected ?ParameterBag $settings = null;
 
     public function __construct(
-        private readonly ChannelRepository $channelRepository,
+        private readonly EntityManagerInterface $entityManager,
         private readonly ConnectorContextMediator $contextMediator
     ) {
     }
@@ -46,7 +47,7 @@ class SettingsProvider
     private function getDpdFranceChannel(): ?Channel
     {
         if (null === $this->channel) {
-            $this->channel = $this->channelRepository->findOneBy(['type' => DpdFranceChannel::TYPE]);
+            $this->channel = $this->entityManager->getRepository(Integration::class)->findOneBy(['type' => DpdFranceChannel::TYPE]);
         }
 
         return $this->channel;

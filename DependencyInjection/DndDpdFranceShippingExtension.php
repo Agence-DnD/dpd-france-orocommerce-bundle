@@ -40,6 +40,7 @@ class DndDpdFranceShippingExtension extends Extension implements PrependExtensio
         $loader->load('event_listeners.yml');
         $loader->load('form_types.yml');
         $loader->load('integration.yml');
+        $loader->load('mq_topics.yml');
         $loader->load('services.yml');
     }
 
