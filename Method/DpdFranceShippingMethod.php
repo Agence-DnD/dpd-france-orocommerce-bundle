@@ -121,11 +121,12 @@ class DpdFranceShippingMethod implements ShippingMethodInterface, ShippingMethod
     public function getType($identifier): ?ShippingMethodTypeInterface
     {
         $methodTypes = $this->getTypes();
-        if ($methodTypes !== null) {
-            foreach ($methodTypes as $methodType) {
-                if ($methodType->getIdentifier() === (string)$identifier) {
-                    return $methodType;
-                }
+        if (empty($methodTypes)) {
+            return null;
+        }
+        foreach ($methodTypes as $methodType) {
+            if ($methodType->getIdentifier() === (string)$identifier) {
+                return $methodType;
             }
         }
 

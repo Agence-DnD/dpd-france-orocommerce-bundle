@@ -106,8 +106,7 @@ services:
                 - "@oro_security.encoder.default"
                 - '@oro_locale.settings'
             tags:
-                - { name: 'oro_message_queue.client.message_processor', topicName: !php/const Dnd\Bundle\DpdFranceShippingBundle\Async\Topics::SHIPMENT_EXPORT_TO_DPD_STATION }
-                - { name: 'oro_message_queue.client.message_processor', topicName: !php/const Dnd\Bundle\DpdFranceShippingBundle\Async\Topics::SHIPMENT_EXPORT_TO_DPD_STATION_FORCED }
+                - { name: 'oro_message_queue.client.message_processor' }
 
     dnd_dpd_france_shipping.factory.dpd_shipping_package_options:
         class: Dnd\Bundle\DpdFranceShippingBundle\Factory\DpdShippingPackageOptionsFactory

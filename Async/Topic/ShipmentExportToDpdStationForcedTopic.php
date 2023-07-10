@@ -6,7 +6,6 @@ declare(strict_types=1);
 namespace Dnd\Bundle\DpdFranceShippingBundle\Async\Topic;
 
 
-use Dnd\Bundle\DpdFranceShippingBundle\Async\Topics;
 use Oro\Component\MessageQueue\Topic\AbstractTopic;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,7 +19,7 @@ class ShipmentExportToDpdStationForcedTopic extends AbstractTopic
 {
     public static function getName(): string
     {
-        return Topics::SHIPMENT_EXPORT_TO_DPD_STATION_FORCED;
+        return 'dnd_dpd_france_shipping.flow.station_export_forced';
     }
 
     public static function getDescription(): string
@@ -30,6 +29,9 @@ class ShipmentExportToDpdStationForcedTopic extends AbstractTopic
 
     public function configureMessageBody(OptionsResolver $resolver): void
     {
-        $resolver->setRequired(['orderId']);
+        $resolver
+            ->setDefined(['orderId'])
+            ->setRequired(['orderId'])
+        ;
     }
 }
