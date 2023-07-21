@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace Dnd\Bundle\DpdFranceShippingBundle\Async\Topic;
-
 
 use Oro\Component\MessageQueue\Topic\AbstractTopic;
 use Symfony\Component\OptionsResolver\OptionsResolver;
