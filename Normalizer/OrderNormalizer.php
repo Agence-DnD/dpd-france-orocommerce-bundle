@@ -8,7 +8,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Exception\NormalizerException;
 use Dnd\Bundle\DpdFranceShippingBundle\Model\DpdShippingPackageOptionsInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
+use Oro\Bundle\ShippingBundle\Provider\SystemShippingOriginProvider;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -54,7 +54,7 @@ class OrderNormalizer implements NormalizerInterface
     private int $packageCount = 0;
 
     public function __construct(
-        private readonly ShippingOriginProvider $shippingOriginProvider
+        private readonly SystemShippingOriginProvider $shippingOriginProvider
     ) {
     }
 

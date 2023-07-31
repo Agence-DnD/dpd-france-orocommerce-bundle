@@ -28,7 +28,6 @@ services:
         class: Dnd\Bundle\DpdFranceShippingBundle\Provider\SettingsProvider
         autowire: true
         arguments:
-            $channelRepository: '@oro_integration.repository.channel'
             $contextMediator : '@oro_integration.provider.connector_context_mediator'
 
     Dnd\Bundle\DpdFranceShippingBundle\Provider\PudoProvider:
@@ -55,11 +54,10 @@ services:
         class: 'Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider'
         arguments:
             - !php/const Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel::TYPE
-            - '@oro_entity.doctrine_helper'
             - '@dnd_dpd_france_shipping.factory.method'
+            - '@oro_shipping.method.loader'
         tags:
             - { name: oro_shipping_method_provider }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: postLoad }
 
     dnd_dpd_france_shipping.event_listener.shipping_method_config_data:
         parent: oro_shipping.admin_view.method_template.listener
@@ -93,7 +91,7 @@ services:
     dnd_dpd_france_shipping.normalizer.order:
         class: Dnd\Bundle\DpdFranceShippingBundle\Normalizer\OrderNormalizer
         arguments:
-            - '@oro_shipping.shipping_origin.provider'
+            - '@oro_shipping.system_shipping_origin_provider'
 
     dnd_dpd_france_shipping.processor.async.station_export:
             class: Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async\StationExportProcessor
@@ -108,8 +106,7 @@ services:
                 - "@oro_security.encoder.default"
                 - '@oro_locale.settings'
             tags:
-                - { name: 'oro_message_queue.client.message_processor', topicName: !php/const Dnd\Bundle\DpdFranceShippingBundle\Async\Topics::SHIPMENT_EXPORT_TO_DPD_STATION }
-                - { name: 'oro_message_queue.client.message_processor', topicName: !php/const Dnd\Bundle\DpdFranceShippingBundle\Async\Topics::SHIPMENT_EXPORT_TO_DPD_STATION_FORCED }
+                - { name: 'oro_message_queue.client.message_processor' }
 
     dnd_dpd_france_shipping.factory.dpd_shipping_package_options:
         class: Dnd\Bundle\DpdFranceShippingBundle\Factory\DpdShippingPackageOptionsFactory

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Connector\Processor\Async;
 
+use Dnd\Bundle\DpdFranceShippingBundle\Async\Topic\ShipmentExportToDpdStationForcedTopic;
+use Dnd\Bundle\DpdFranceShippingBundle\Async\Topic\ShipmentExportToDpdStationTopic;
 use Dnd\Bundle\DpdFranceShippingBundle\Async\Topics;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
 use Dnd\Bundle\DpdFranceShippingBundle\Exception\ExportException;
@@ -93,8 +95,8 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     public static function getSubscribedTopics(): array
     {
         return [
-            Topics::SHIPMENT_EXPORT_TO_DPD_STATION,
-            Topics::SHIPMENT_EXPORT_TO_DPD_STATION_FORCED,
+            ShipmentExportToDpdStationTopic::getName(),
+            ShipmentExportToDpdStationForcedTopic::getName(),
         ];
     }
 
@@ -107,7 +109,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     {
         $topic = $message->getProperty(Config::PARAMETER_TOPIC_NAME);
 
-        $body = JSON::decode($message->getBody());
+        $body = $message->getBody();
         if (empty($body['orderId'])) {
             $this->logger->error(
                 sprintf(
@@ -127,7 +129,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
 
             return self::REJECT;
         }
-        if ($topic === Topics::SHIPMENT_EXPORT_TO_DPD_STATION && $order->getSynchronizedDpd() !== null) {
+        if ($topic === ShipmentExportToDpdStationTopic::getName() && $order->getSynchronizedDpd() !== null) {
             $this->logger->warning(
                 sprintf('[Station export] Skipping already exported order with id %d.', $body['orderId'])
             );
@@ -280,7 +282,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
     {
         $now = new \DateTime();
 
-        $forced = $topic === Topics::SHIPMENT_EXPORT_TO_DPD_STATION_FORCED ? '_forced' : '';
+        $forced = $topic === ShipmentExportToDpdStationForcedTopic::getName() ? '_forced' : '';
 
         return sprintf(
             '%s_%s_%s%s.%s',

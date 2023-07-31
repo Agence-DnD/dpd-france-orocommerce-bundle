@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Dnd\Bundle\DpdFranceShippingBundle\Provider;
 
+use Dnd\Bundle\DpdFranceShippingBundle\Async\Topic\ShipmentExportToDpdStationForcedTopic;
+use Dnd\Bundle\DpdFranceShippingBundle\Async\Topic\ShipmentExportToDpdStationTopic;
 use Dnd\Bundle\DpdFranceShippingBundle\Async\Topics;
 use Dnd\Bundle\DpdFranceShippingBundle\Method\DpdFranceShippingMethodProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -53,11 +55,11 @@ class StationExportProvider
 
             return $result;
         }
-        $topic = Topics::SHIPMENT_EXPORT_TO_DPD_STATION;
+        $topic = ShipmentExportToDpdStationTopic::getName();
         if ($forced) {
-            $topic = Topics::SHIPMENT_EXPORT_TO_DPD_STATION_FORCED;
+            $topic = ShipmentExportToDpdStationForcedTopic::getName();
         }
-        $this->producer->send($topic, JSON::encode(['orderId' => $order->getId()]));
+        $this->producer->send($topic, ['orderId' => $order->getId()]);
         $result['successful'] = true;
 
         return $result;

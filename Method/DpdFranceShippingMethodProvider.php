@@ -8,6 +8,7 @@ use Dnd\Bundle\DpdFranceShippingBundle\Integration\DpdFranceChannel;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider;
+use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodLoader;
 
 /**
  * @author    Agence Dn'D <contact@dnd.fr>
@@ -22,10 +23,10 @@ class DpdFranceShippingMethodProvider extends ChannelShippingMethodProvider
      */
     public function __construct(
         $channelType,
-        protected readonly DoctrineHelper $doctrineHelper,
-        protected readonly IntegrationShippingMethodFactoryInterface $methodFactory
+        protected readonly IntegrationShippingMethodFactoryInterface $methodFactory,
+        protected readonly ShippingMethodLoader $shippingMethodLoader
     ) {
-        parent::__construct($channelType, $doctrineHelper, $methodFactory);
+        parent::__construct($channelType, $methodFactory, $shippingMethodLoader);
     }
 
     public static function isDpdFrShippingMethod(?string $shippingMethodIdentifier): bool
