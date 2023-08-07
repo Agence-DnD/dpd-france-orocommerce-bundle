@@ -80,6 +80,20 @@ Enable the one corresponding to the workflow desired:
 
 ![DPD Workflow](images/dpd-workflow.png)
 
+#### Product weight
+
+As the product weight and size are used in package calculation, products must have their "Shipping options" configured properly in order to allow DPD shipping method usage.
+
+Please make sure to use kilogram (kg) and centimeter (cm) units to ensure the correct calculation.
+
+![Product weight and size](images/dpd-product-weight.png)
+
+#### Export to DPD Station
+
+If you choose to, you can automatically export your order shipments to DPD Station using the DPD Station configurations from the integration.
+
+Exported files will be sent to DPD Station through the FTP accesses configured in the DPD integration and the files will also be stored locally under the `data/dpd-france/export` directory.
+
 #### Customize DPD shipping methods limitations
 
 DPD shipping standard limitations are stored inside the database table `dnd_dpd_fr_shipping_service` and can be adjusted in the case of specific contractual agreements with DPD France:
