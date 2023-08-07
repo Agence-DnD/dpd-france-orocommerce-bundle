@@ -80,7 +80,7 @@ Enable the one corresponding to the workflow desired:
 
 ![DPD Workflow](images/dpd-workflow.png)
 
-#### Product weight
+#### Product weight and size
 
 As the product weight and size are used in package calculation, products must have their "Shipping options" configured properly in order to allow DPD shipping method usage.
 
