@@ -93,3 +93,11 @@
         }
     }
 }
+
+@include breakpoint('desktop') {
+    .dnddpd-method {
+        &-radio {
+            align-items: center;
+        }
+    }
+}
