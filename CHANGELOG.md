@@ -1,7 +1,6 @@
 # Changelog
 
-## [1.0.0] - 2023-05-XX
+## [1.0.0] - 2023-09-13
 
 ### Added
-- Add initial version
-- 
+- Add initial version of DPD Bundle

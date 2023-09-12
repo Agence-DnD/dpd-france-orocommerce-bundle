@@ -86,7 +86,7 @@ class StationExportProcessor implements MessageProcessorInterface, TopicSubscrib
         private readonly SymmetricCrypterInterface $crypter,
         private readonly LocaleSettings $localeSettings
     ) {
-        $this->filesystem = new SymfonyFileSystem();
+        $this->filesystem = new Filesystem();
     }
 
     /**
