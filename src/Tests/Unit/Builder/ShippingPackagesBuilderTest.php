@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\Builder;
+namespace Dnd\Bundle\DpdFranceShippingBundle\Tests\Unit\Builder;
 
 use Dnd\Bundle\DpdFranceShippingBundle\Builder\ShippingPackagesBuilder;
 use Dnd\Bundle\DpdFranceShippingBundle\Entity\ShippingService;
