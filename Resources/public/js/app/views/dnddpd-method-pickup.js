@@ -2,9 +2,12 @@ import BaseView from 'oroui/js/app/views/base/view';
 import _ from 'underscore';
 import __ from 'orotranslation/js/translator';
 import tools from 'oroui/js/tools';
-import pickupList from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-list.html';
-import pickupDetails from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-details.html';
-import pickupModal from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-modal-content.html';
+import pickupList
+    from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-list.html';
+import pickupDetails
+    from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-details.html';
+import pickupModal
+    from 'tpl-loader!dnddpdfranceshipping/templates/view/method-pickup-modal-content.html';
 import LoadingMaskView from 'oroui/js/app/views/loading-mask-view';
 import Modal from 'oroui/js/modal';
 import $ from 'jquery';
@@ -215,10 +218,10 @@ const DndDpdMethodPickup = BaseView.extend({
      * @private
      */
     _initForm: function() {
-        const address = $(this.options.filledInputs.addressStreet).val(),
-            zipCode = $(this.options.filledInputs.zipCode).val(),
-            city = $(this.options.filledInputs.addressCity).val(),
-            googleApi = $(this.options.filledInputs.googleMapsApi).val();
+        const address = $(this.options.shippingAddress).data('street'),
+            zipCode = $(this.options.shippingAddress).data('postal-code'),
+            city = $(this.options.shippingAddress).data('city'),
+            googleApi = $(this.options.shippingAddress).data('google-api');
 
         address && $(this.options.form.addressSelector).val(address);
         zipCode && $(this.options.form.zipCodeSelector).val(zipCode);
@@ -240,7 +243,6 @@ const DndDpdMethodPickup = BaseView.extend({
             city: $(this.options.form.citySelector).val()
         });
     },
-
 
     /**
      * Get pickups from API
@@ -312,6 +314,11 @@ const DndDpdMethodPickup = BaseView.extend({
         // remove saved pickup if it no longer exists in the new search
         if (currentPickupId && isExist.length === 0) {
             this._setPickupId('');
+        }
+
+        // set pickup to -1 if other method is selected
+        if (!this.isCurrentMethod()) {
+            this._setPickupId(-1);
         }
 
         const $pickupList = $(pickupList({
@@ -416,6 +423,21 @@ const DndDpdMethodPickup = BaseView.extend({
     validateForm: function() {
         const submitBtn = this.$checkoutForm.find('[type="submit"]');
         submitBtn.prop("disabled", !this.$checkoutForm.valid());
+    },
+
+    /**
+     * Set selected method if exist
+     */
+    setSelectedMethod: function() {
+        const selectedPickup = this.$pickupList.find('[name="pickup"]:checked').parents('[data-pickup-id]').data('pickup-id');
+        selectedPickup && this._setPickupId(selectedPickup);
+    },
+
+    /**
+     * Current method 
+     */
+    isCurrentMethod: function () {
+        return $('[name="shippingMethodType"]:checked')[0].getAttribute('data-shipping-type') === this.options.pickupId;
     },
 
     /**

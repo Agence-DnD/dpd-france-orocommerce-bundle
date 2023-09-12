@@ -6,8 +6,8 @@ layout:
                 parentId: order_body_column_left
                 siblingId: order_shipping_address
                 options:
-                    visible: '=data["order"].getDeliveryPhone()!=null'
-                    text: '=data["order"].getDeliveryPhone()'
+                    visible: '=data["dnd_dpd_france_shipping_order_details"].isPredictDetailsVisible(data["order"])'
+                    text: '=data["dnd_dpd_france_shipping_order_details"].getPredictPhone(data["order"])'
                     label: 'oro.order.delivery_phone.label'
                     additional_block_prefixes: ['order_body_column_element']
 
@@ -17,9 +17,20 @@ layout:
                 parentId: order_body_column_left
                 siblingId: order_shipping_address
                 options:
-                    visible: '=data["order"].getDpdFrRelayId()!=null'
+                    visible: '=data["dnd_dpd_france_shipping_order_details"].isPickupDetailsVisible(data["order"])'
                     label: 'dnd_dpd_france_shipping.pudo.name.label'
                     text: '=data["dnd_dpd_france_shipping_order_details"].getPudoName(data["order"].getDpdFrRelayId())'
+                    additional_block_prefixes: [ 'order_body_column_element' ]
+
+        - '@add':
+                id: order_dpd_france_pudo_id
+                blockType: text
+                parentId: order_body_column_left
+                siblingId: order_shipping_address
+                options:
+                    visible: '=data["dnd_dpd_france_shipping_order_details"].isPickupDetailsVisible(data["order"])'
+                    label: 'dnd_dpd_france_shipping.pudo.point_id.label'
+                    text: '=data["order"].getDpdFrRelayId()'
                     additional_block_prefixes: [ 'order_body_column_element' ]
 
         - '@add':
@@ -28,7 +39,7 @@ layout:
                 parentId: order_body_column_left
                 siblingId: order_dpd_france_pudo_name
                 options:
-                    visible: '=data["order"].getDpdFrRelayId()!=null'
+                    visible: '=data["dnd_dpd_france_shipping_order_details"].isPickupDetailsVisible(data["order"])'
                     label: 'dnd_dpd_france_shipping.pudo.address.label'
                     text: '=data["dnd_dpd_france_shipping_order_details"].getPudoAddress(data["order"].getDpdFrRelayId())'
                     additional_block_prefixes: [ 'order_body_column_element' ]

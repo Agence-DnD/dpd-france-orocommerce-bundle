@@ -1,0 +1,16 @@
+/* @theme: admin.oro; */
+
+.shipping-method-config-grid {
+    &__body {
+        padding: 7px 0;
+
+        .control-group {
+            &-collection_entry {
+                max-width: none;
+                padding: 7px 20px;
+                align-items: center;
+                margin: 0 !important;
+            }
+        }
+    }
+}

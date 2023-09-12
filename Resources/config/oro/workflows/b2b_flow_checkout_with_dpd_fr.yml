@@ -17,114 +17,140 @@ workflows:
                 property_path: checkout.billingAddress
                 type: null
                 options: {  }
+                default: null
             shipping_address:
                 property_path: checkout.shippingAddress
                 type: null
                 options: {  }
+                default: null
             save_billing_address:
                 property_path: checkout.saveBillingAddress
                 type: null
                 options: {  }
+                default: null
             save_shipping_address:
                 property_path: checkout.saveShippingAddress
                 type: null
                 options: {  }
+                default: null
             ship_to_billing_address:
                 property_path: checkout.shipToBillingAddress
                 type: null
                 options: {  }
+                default: null
             po_number:
                 property_path: checkout.poNumber
                 type: null
                 options: {  }
+                default: null
             ship_until:
                 property_path: checkout.shipUntil
                 type: null
                 options: {  }
+                default: null
             customer_notes:
                 property_path: checkout.customerNotes
                 type: null
                 options: {  }
+                default: null
             payment_method:
                 property_path: checkout.paymentMethod
                 type: null
                 options: {  }
+                default: null
             shipping_method:
                 property_path: checkout.shippingMethod
                 type: null
                 options: {  }
+                default: null
             shipping_method_type:
                 property_path: checkout.shippingMethodType
                 type: null
                 options: {  }
+                default: null
             # @ADD DND START
             delivery_phone:
                 property_path: checkout.delivery_phone
                 type: null
-                options: {  }
+                options: { }
             dpd_fr_relay_id:
                 property_path: checkout.dpd_fr_relay_id
                 type: null
-                options: {  }
+                options: { }
             # @ADD DND END
             billing_address_has_shipping:
                 type: boolean
+                default: false
                 property_path: null
                 options: {  }
             allow_manual_source_remove:
                 type: boolean
+                default: false
                 property_path: null
                 options: {  }
             disallow_billing_address_edit:
                 type: boolean
+                default: false
                 property_path: null
                 options: {  }
             disallow_shipping_address_edit:
                 type: boolean
+                default: false
                 property_path: null
                 options: {  }
             disallow_shipping_method_edit:
                 type: boolean
+                default: false
                 property_path: null
                 options: {  }
             remove_source:
                 type: boolean
+                default: false
                 property_path: null
                 options: {  }
             clear_source:
                 type: boolean
+                default: false
                 property_path: null
                 options: {  }
             auto_remove_source:
                 type: boolean
+                default: false
                 property_path: null
                 options: {  }
             source_remove_label:
                 type: string
+                default: ''
                 property_path: null
                 options: {  }
             edit_order_link:
                 type: string
+                default: ''
                 property_path: null
                 options: {  }
             payment_in_progress:
                 type: bool
+                default: false
                 property_path: null
                 options: {  }
             payment_validate:
                 type: bool
+                default: false
                 property_path: null
                 options: {  }
             payment_save_for_later:
                 type: bool
+                default: false
                 property_path: null
                 options: {  }
             additional_data:
                 type: string
+                default: ''
                 property_path: null
                 options: {  }
             state_token:
                 type: string
+                default: ''
                 property_path: null
                 options: {  }
             order:
@@ -132,17 +158,21 @@ workflows:
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
                 property_path: null
+                default: null
             visitor:
                 type: entity
                 options:
                     class: Oro\Bundle\CustomerBundle\Entity\CustomerVisitor
                 property_path: null
+                default: null
             email:
                 type: string
+                default: ''
                 property_path: null
                 options: {  }
             late_registration:
                 type: array
+                default: {  }
                 property_path: null
                 options: {  }
             customerConsents:
@@ -150,8 +180,20 @@ workflows:
                 options:
                     class: Doctrine\Common\Collections\ArrayCollection
                 property_path: null
+                default: null
             consents_available:
                 type: boolean
+                default: false
+                property_path: null
+                options: {  }
+            line_items_shipping_methods:
+                type: array
+                default: {  }
+                property_path: null
+                options: {  }
+            grouped_line_items:
+                type: array
+                default: {  }
                 property_path: null
                 options: {  }
         steps:
@@ -235,6 +277,7 @@ workflows:
                     - verify_payment
                     - finish_checkout
                     - payment_error
+                    - paid_partially
                     - back_to_enter_credentials
                     - back_to_customer_consents
                     - back_to_billing_address
@@ -364,8 +407,6 @@ workflows:
                             shopping_list_limit: $.result.shoppingListLimit
                 init_routes:
                     - oro_product_frontend_quick_add
-                    - oro_product_frontend_quick_add_copy_paste
-                    - oro_product_frontend_quick_add_import
                 acl_resource:
                     - CREATE
                     - 'entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout'
@@ -407,6 +448,26 @@ workflows:
                 transition_definition: payment_error_definition
                 is_hidden: true
                 step_to: enter_payment
+                is_start: false
+                is_unavailable_hidden: false
+                acl_message: null
+                frontend_options: {  }
+                form_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType
+                display_type: dialog
+                destination_page: ''
+                form_options: {  }
+                page_template: null
+                dialog_template: null
+                init_entities: {  }
+                init_routes: {  }
+                init_datagrids: {  }
+                init_context_attribute: init_context
+                message_parameters: {  }
+                triggers: {  }
+            paid_partially:
+                step_to: enter_payment
+                transition_definition: paid_partially_definition
+                is_hidden: true
                 is_start: false
                 is_unavailable_hidden: false
                 acl_message: null
@@ -489,9 +550,11 @@ workflows:
                                         Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents: null
                                     -
                                         Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: null
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_billing_address.attribute.customer_consents.label
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_billing_address.attribute.state_token.label
                 is_start: false
                 is_hidden: false
                 is_unavailable_hidden: false
@@ -540,18 +603,23 @@ workflows:
                                     -
                                         Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: null
                                 disabled: $disallow_billing_address_edit
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_shipping_address.attribute.billing_address.label
                         save_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_shipping_address.attribute.save_billing_address.label
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_shipping_address.attribute.ship_to_billing_address.label
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_shipping_address.attribute.state_token.label
                         email:
                             form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_shipping_address.attribute.email.label
                 is_start: false
                 is_hidden: false
                 is_unavailable_hidden: false
@@ -600,15 +668,19 @@ workflows:
                                         NotBlank: null
                                     -
                                         Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: null
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_shipping_method.attribute.shipping_address.label
                         save_shipping_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_shipping_method.attribute.save_shipping_address.label
                         ship_to_billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_shipping_method.attribute.ship_to_billing_address.label
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_shipping_method.attribute.state_token.label
                 is_start: false
                 is_hidden: false
                 is_unavailable_hidden: false
@@ -633,6 +705,13 @@ workflows:
                 form_options:
                     form_init:
                         -
+                            '@call_service_method':
+                                service: oro_checkout.manager.multi_shipping.checkout_line_items_shipping
+                                method: getCheckoutLineItemsShippingData
+                                method_parameters:
+                                    - $checkout
+                                attribute: $line_items_shipping_methods
+                        -
                             '@run_action_group':
                                 action_group: update_checkout_state
                                 parameters_mapping:
@@ -647,11 +726,13 @@ workflows:
                                 constraints:
                                     -
                                         NotBlank: null
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_payment.attribute.shipping_method.label
                         shipping_method_type:
                             options:
                                 constraints:
                                     -
                                         NotBlank: null
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_payment.attribute.shipping_method_type.label
                         # @ADD DND START
                         delivery_phone:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
@@ -660,9 +741,15 @@ workflows:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
                             options: null
                         # @ADD DND END
+                        line_items_shipping_methods:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\LineItemShippingMethodsType
+                            options:
+                                checkout: $checkout
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_payment.attribute.line_items_shipping_methods.label
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_payment.attribute.state_token.label
                 is_start: false
                 is_hidden: false
                 is_unavailable_hidden: false
@@ -739,19 +826,24 @@ workflows:
                                     result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         payment_method:
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_order_review.attribute.payment_method.label
                         payment_validate:
                             form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_order_review.attribute.payment_validate.label
                         payment_save_for_later:
                             form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_order_review.attribute.payment_save_for_later.label
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_order_review.attribute.state_token.label
                         additional_data:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.continue_to_order_review.attribute.additional_data.label
                 is_start: false
                 is_hidden: false
                 is_unavailable_hidden: false
@@ -992,23 +1084,29 @@ workflows:
                                     result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         remove_source:
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.place_order.attribute.remove_source.label
                         po_number:
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.place_order.attribute.po_number.label
                         ship_until:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType
                             options:
                                 checkout: $checkout
+                                label: oro.workflow.b2b_flow_checkout.transition.place_order.attribute.ship_until.label
                         late_registration:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
                             options:
                                 required: true
+                                label: oro.workflow.b2b_flow_checkout.transition.place_order.attribute.late_registration.label
                         customer_notes:
                             form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.place_order.attribute.customer_notes.label
                         state_token:
                             form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
-                            options: null
+                            options:
+                                label: oro.workflow.b2b_flow_checkout.transition.place_order.attribute.state_token.label
                 is_start: false
                 is_hidden: false
                 is_unavailable_hidden: false
@@ -1319,6 +1417,21 @@ workflows:
                         '@save_accepted_consents':
                             acceptedConsents: $customerConsents
                     -
+                        '@tree':
+                            conditions:
+                                '@and':
+                                    -
+                                        '@not_empty': $checkout.customerUser
+                                    -
+                                        '@equal':
+                                            - $checkout.customerUser.isGuest
+                                            - false
+                            actions:
+                                -
+                                    '@assign_value':
+                                        - $customerConsents
+                                        - null
+                    -
                         '@generate_uuid': $state_token
                 preconditions: {  }
                 conditions: {  }
@@ -1341,7 +1454,8 @@ workflows:
                                         parameters:
                                             - $.result.isConsentsAccepted
                                             - true
-                    - '@flash_message':
+                    -
+                        '@flash_message':
                             conditions:
                                 '@and':
                                     -
@@ -1352,8 +1466,8 @@ workflows:
                                         '@equal':
                                             - $consents_available
                                             - true
-                            type: warning
                             message: oro.checkout.workflow.condition.required_consents_should_be_checked.message
+                            type: warning
                 preconditions:
                     '@equal':
                         - $.result.isConsentsAccepted
@@ -1388,6 +1502,24 @@ workflows:
                                         parameters:
                                             - $.result.extendableConditionCheckout
                                             - true
+                    -
+                        '@call_service_method':
+                            service: oro_checkout.provider.multi_shipping_config
+                            method: isLineItemsGroupingEnabled
+                            method_parameters: {  }
+                            attribute: $.result.isLineItemsGroupingEnabled
+                    -
+                        '@call_service_method':
+                            conditions:
+                                '@equal':
+                                    - $.result.isLineItemsGroupingEnabled
+                                    - true
+                            parameters:
+                                service: oro_checkout.provider.grouped_line_items
+                                method: getGroupedLineItemsIds
+                                method_parameters:
+                                    - $checkout
+                                attribute: $grouped_line_items
                 preconditions:
                     '@and':
                         -
@@ -1399,11 +1531,13 @@ workflows:
                                 parameters:
                                     - $.result.orderLineItemsNotEmptyForRfp
                                     - true
+                                message: oro.checkout.workflow.condition.order_line_items_not_empty.not_allow_rfp.message
                         -
                             '@equal':
                                 parameters:
                                     - $.result.orderLineItemsNotEmpty
                                     - true
+                                message: oro.checkout.workflow.condition.order_line_items_not_empty.allow_rfp.message
                         -
                             '@quote_acceptable':
                                 - $checkout.sourceEntity
@@ -1416,6 +1550,7 @@ workflows:
                     '@and':
                         -
                             '@is_checkout_state_valid':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
                                 parameters:
                                     entity: $checkout
                                     token: $state_token
@@ -1448,6 +1583,21 @@ workflows:
                     -
                         '@save_accepted_consents':
                             acceptedConsents: $customerConsents
+                    -
+                        '@tree':
+                            conditions:
+                                '@and':
+                                    -
+                                        '@not_empty': $checkout.customerUser
+                                    -
+                                        '@equal':
+                                            - $checkout.customerUser.isGuest
+                                            - false
+                            actions:
+                                -
+                                    '@assign_value':
+                                        - $customerConsents
+                                        - null
                     -
                         '@generate_uuid': $state_token
                     -
@@ -1483,11 +1633,13 @@ workflows:
                                 parameters:
                                     - $.result.orderLineItemsNotEmptyForRfp
                                     - true
+                                message: oro.checkout.workflow.condition.order_line_items_not_empty.not_allow_rfp.message
                         -
                             '@equal':
                                 parameters:
                                     - $.result.orderLineItemsNotEmpty
                                     - true
+                                message: oro.checkout.workflow.condition.order_line_items_not_empty.allow_rfp.message
                         -
                             '@quote_acceptable':
                                 - $checkout.sourceEntity
@@ -1496,6 +1648,7 @@ workflows:
                     '@and':
                         -
                             '@is_checkout_state_valid':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
                                 parameters:
                                     entity: $checkout
                                     token: $state_token
@@ -1527,6 +1680,17 @@ workflows:
                             method_parameters:
                                 - $checkout
                     -
+                        '@tree':
+                            conditions:
+                                '@is_multishipping_enabled': null
+                            actions:
+                                -
+                                    '@call_service_method':
+                                        service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                                        method: setDefaultShippingMethods
+                                        method_parameters:
+                                            - $checkout
+                    -
                         '@generate_uuid': $state_token
             continue_to_payment_definition:
                 preactions:
@@ -1544,6 +1708,19 @@ workflows:
                             method: setDefaultShippingMethod
                             method_parameters:
                                 - $checkout
+                    -
+                        '@tree':
+                            conditions:
+                                '@is_multishipping_enabled': null
+                            actions:
+                                -
+                                    '@call_service_method':
+                                        service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                                        method: setDefaultShippingMethods
+                                        method_parameters:
+                                            - $checkout
+                                            - $line_items_shipping_methods
+                                            - true
                     -
                         '@tree':
                             conditions:
@@ -1567,16 +1744,19 @@ workflows:
                                 parameters:
                                     - $.result.orderLineItemsNotEmptyForRfp
                                     - true
+                                message: oro.checkout.workflow.condition.order_line_items_not_empty.not_allow_rfp.message
                         -
                             '@equal':
                                 parameters:
                                     - $.result.orderLineItemsNotEmpty
                                     - true
+                                message: oro.checkout.workflow.condition.order_line_items_not_empty.allow_rfp.message
                         -
                             '@equal':
                                 parameters:
                                     - $.result.checkoutHasApplicableShippingMethods
                                     - true
+                                message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                         -
                             '@quote_acceptable':
                                 - $checkout.sourceEntity
@@ -1585,6 +1765,7 @@ workflows:
                     '@and':
                         -
                             '@is_checkout_state_valid':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
                                 parameters:
                                     entity: $checkout
                                     token: $state_token
@@ -1598,10 +1779,41 @@ workflows:
                                 -
                                     '@not_empty':
                                         parameters: $checkout.shippingMethod
+                                        message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                         -
-                            '@shipping_method_has_enabled_shipping_rules':
-                                method_identifier: $checkout.shippingMethod
+                            '@and':
+                                -
+                                    '@or':
+                                        -
+                                            '@and':
+                                                -
+                                                    '@not':
+                                                        -
+                                                            '@is_multishipping_enabled': null
+                                                -
+                                                    '@shipping_method_has_enabled_shipping_rules':
+                                                        message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
+                                                        method_identifier: $checkout.shippingMethod
+                                        -
+                                            '@and':
+                                                -
+                                                    '@is_multishipping_enabled': null
+                                                -
+                                                    '@line_items_shipping_methods_has_enabled_shipping_rules':
+                                                        message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
+                                                        entity: $checkout
                 actions:
+                    -
+                        '@tree':
+                            conditions:
+                                '@is_multishipping_enabled': null
+                            actions:
+                                -
+                                    '@call_service_method':
+                                        service: oro_checkout.manager.multi_shipping.checkout_line_items_shipping
+                                        method: updateLineItemsShippingPrices
+                                        method_parameters:
+                                            - $checkout
                     -
                         '@run_action_group':
                             action_group: b2b_flow_checkout_update_shipping_method
@@ -1611,6 +1823,12 @@ workflows:
                         '@assign_value':
                             - $.result.shippingPriceUpdated
                             - true
+                    -
+                        '@call_service_method':
+                            service: oro_checkout.action.default_payment_method_setter
+                            method: setDefaultPaymentMethod
+                            method_parameters:
+                                - $checkout
                     -
                         '@generate_uuid': $state_token
             continue_to_order_review_definition:
@@ -1624,6 +1842,22 @@ workflows:
                                 result.orderLineItemsNotEmpty: $.orderLineItemsNotEmpty
                                 result.orderLineItemsNotEmptyForRfp: $.orderLineItemsNotEmptyForRfp
                     -
+                        '@call_service_method':
+                            conditions:
+                                '@and':
+                                    -
+                                        '@is_multishipping_enabled': null
+                                    -
+                                        '@is_line_items_shipping_methods_update_required':
+                                            - $checkout.lineItems
+                                            - $line_items_shipping_methods
+                            parameters:
+                                service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                                method: setDefaultShippingMethods
+                                method_parameters:
+                                    - $checkout
+                                    - $line_items_shipping_methods
+                    -
                         '@tree':
                             conditions:
                                 '@blank': $.result.shippingMethodHasEnabledShippingRules
@@ -1632,13 +1866,34 @@ workflows:
                                     '@assign_value':
                                         - $.result.shippingMethodHasEnabledShippingRules
                                         - false
+                    -
+                        '@tree':
+                            conditions:
+                                '@and':
+                                    -
+                                        '@not':
+                                            -
+                                                '@is_multishipping_enabled': null
+                                    -
+                                        '@shipping_method_has_enabled_shipping_rules': $checkout.shippingMethod
+                            actions:
                                 -
                                     '@assign_value':
-                                        conditions:
-                                            '@shipping_method_has_enabled_shipping_rules': $checkout.shippingMethod
-                                        parameters:
-                                            - $.result.shippingMethodHasEnabledShippingRules
-                                            - true
+                                        - $.result.shippingMethodHasEnabledShippingRules
+                                        - true
+                    -
+                        '@tree':
+                            conditions:
+                                '@and':
+                                    -
+                                        '@is_multishipping_enabled': null
+                                    -
+                                        '@line_items_shipping_methods_has_enabled_shipping_rules': $checkout
+                            actions:
+                                -
+                                    '@assign_value':
+                                        - $.result.shippingMethodHasEnabledShippingRules
+                                        - true
                     -
                         '@call_service_method':
                             conditions:
@@ -1676,21 +1931,25 @@ workflows:
                                 parameters:
                                     - $.result.orderLineItemsNotEmptyForRfp
                                     - true
+                                message: oro.checkout.workflow.condition.order_line_items_not_empty.not_allow_rfp.message
                         -
                             '@equal':
                                 parameters:
                                     - $.result.orderLineItemsNotEmpty
                                     - true
+                                message: oro.checkout.workflow.condition.order_line_items_not_empty.allow_rfp.message
                         -
                             '@equal':
                                 parameters:
                                     - $.result.shippingMethodHasEnabledShippingRules
                                     - true
+                                message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                         -
                             '@equal':
                                 parameters:
                                     - $.result.hasApplicablePaymentMethods
                                     - true
+                                message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                         -
                             '@quote_acceptable':
                                 - $checkout.sourceEntity
@@ -1699,21 +1958,25 @@ workflows:
                     '@and':
                         -
                             '@check_request':
+                                message: oro.checkout.workflow.condition.invalid_request.message
                                 parameters:
                                     is_ajax: true
                                     expected_key: _wid
                                     expected_value: ajax_checkout
                         -
                             '@is_checkout_state_valid':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
                                 parameters:
                                     entity: $checkout
                                     token: $state_token
                                     current_state: $.result.currentCheckoutState
                         -
                             '@not_empty':
+                                message: oro.checkout.workflow.condition.payment_method_was_not_selected.message
                                 parameters: $checkout.paymentMethod
                         -
                             '@payment_method_applicable':
+                                message: oro.checkout.workflow.condition.payment_method_was_not_selected.message
                                 payment_method: $checkout.paymentMethod
                                 context: $.result.paymentContext
                 actions:
@@ -1820,18 +2083,21 @@ workflows:
                                 parameters:
                                     - $.result.orderLineItemsNotEmptyForRfp
                                     - true
+                                message: oro.checkout.workflow.condition.order_line_items_not_empty.not_allow_rfp.message
                         -
                             '@equal':
                                 parameters:
                                     - $.result.orderLineItemsNotEmpty
                                     - true
+                                message: oro.checkout.workflow.condition.order_line_items_not_empty.allow_rfp.message
                 actions:
                     -
                         '@generate_uuid': $state_token
                 conditions: {  }
             place_order_definition:
                 preactions:
-                    - '@flash_message':
+                    -
+                        '@flash_message':
                             conditions:
                                 '@and':
                                     -
@@ -1845,37 +2111,64 @@ workflows:
                             message: oro.checkout.workflow.condition.payment_has_not_been_processed.message
                             type: warning
                     -
-                        '@tree':
+                        '@call_service_method':
                             conditions:
-                                '@not_empty':
-                                    - $.id
-                            actions:
-                                -
-                                    '@call_service_method':
-                                        conditions:
-                                            '@empty': $.result.paymentContext
-                                        parameters:
-                                            service: oro_checkout.provider.payment_context
-                                            method: getContext
-                                            method_parameters:
-                                                - $checkout
-                                            attribute: $.result.paymentContext
+                                '@and':
+                                    -
+                                        '@not_empty':
+                                            - $.id
+                                    -
+                                        '@empty': $.result.paymentContext
+                            parameters:
+                                service: oro_checkout.provider.payment_context
+                                method: getContext
+                                method_parameters:
+                                    - $checkout
+                                attribute: $.result.paymentContext
                     -
-                        '@tree':
+                        '@call_service_method':
+                            conditions:
+                                '@and':
+                                    -
+                                        '@is_multishipping_enabled': null
+                                    -
+                                        '@is_line_items_shipping_methods_update_required':
+                                            - $checkout.lineItems
+                                            - $line_items_shipping_methods
+                            parameters:
+                                service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                                method: setDefaultShippingMethods
+                                method_parameters:
+                                    - $checkout
+                                    - $line_items_shipping_methods
+                    -
+                        '@assign_value':
                             conditions:
                                 '@blank': $.result.shippingMethodHasEnabledShippingRules
-                            actions:
-                                -
-                                    '@assign_value':
-                                        - $.result.shippingMethodHasEnabledShippingRules
-                                        - false
-                                -
-                                    '@assign_value':
-                                        conditions:
-                                            '@shipping_method_has_enabled_shipping_rules': $checkout.shippingMethod
-                                        parameters:
-                                            - $.result.shippingMethodHasEnabledShippingRules
-                                            - true
+                            parameters:
+                                attribute: $.result.shippingMethodHasEnabledShippingRules
+                                value: false
+                    -
+                        '@assign_value':
+                            conditions:
+                                '@or':
+                                    -
+                                        '@and':
+                                            -
+                                                '@not':
+                                                    -
+                                                        '@is_multishipping_enabled': null
+                                            -
+                                                '@shipping_method_has_enabled_shipping_rules': $checkout.shippingMethod
+                                    -
+                                        '@and':
+                                            -
+                                                '@is_multishipping_enabled': null
+                                            -
+                                                '@line_items_shipping_methods_has_enabled_shipping_rules': $checkout
+                            parameters:
+                                attribute: $.result.shippingMethodHasEnabledShippingRules
+                                value: true
                     -
                         '@tree':
                             conditions:
@@ -1939,11 +2232,13 @@ workflows:
                                 parameters:
                                     - $.result.shippingMethodHasEnabledShippingRules
                                     - true
+                                message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                         -
                             '@equal':
                                 parameters:
                                     - $.result.paymentMethodApplicable
                                     - true
+                                message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                         -
                             '@quote_acceptable':
                                 - $checkout.sourceEntity
@@ -1960,12 +2255,14 @@ workflows:
                     '@and':
                         -
                             '@is_checkout_state_valid':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
                                 parameters:
                                     entity: $checkout
                                     token: $state_token
                                     current_state: $.result.currentCheckoutState
                         -
                             '@extendable':
+                                message: oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message
                                 events:
                                     - extendable_condition.before_order_create
                 actions:
@@ -1988,6 +2285,30 @@ workflows:
                             results:
                                 data.order: $.order
                     -
+                        '@call_service_method':
+                            service: oro_checkout.provider.multi_shipping_config
+                            method: isCreateSubOrdersForEachGroupEnabled
+                            method_parameters: {  }
+                            attribute: $.result.createSubOrdersForLineItemsGroup
+                    -
+                        '@tree':
+                            conditions:
+                                '@and':
+                                    -
+                                        '@equal':
+                                            - $.result.createSubOrdersForLineItemsGroup
+                                            - true
+                                    -
+                                        '@not_empty': $grouped_line_items
+                            actions:
+                                -
+                                    '@run_action_group':
+                                        action_group: b2b_flow_checkout_create_child_orders
+                                        parameters_mapping:
+                                            checkout: $checkout
+                                            order: $order
+                                            groupedLineItemsIds: $grouped_line_items
+                    -
                         '@assign_value':
                             - $payment_in_progress
                             - true
@@ -2006,6 +2327,18 @@ workflows:
                         '@extendable':
                             events:
                                 - extendable_action.finish_checkout
+                    -
+                        '@assign_url':
+                            conditions:
+                                '@equal':
+                                    - '$.result.responseData[purchasePartial]'
+                                    - true
+                            parameters:
+                                attribute: $.result.responseData.partiallyPaidUrl
+                                route: oro_checkout_frontend_checkout
+                                route_parameters:
+                                    id: $checkout.id
+                                    transition: paid_partially
                     -
                         '@redirect':
                             conditions:
@@ -2090,6 +2423,17 @@ workflows:
                             method_parameters:
                                 - $checkout
                     -
+                        '@tree':
+                            conditions:
+                                '@is_multishipping_enabled': null
+                            actions:
+                                -
+                                    '@call_service_method':
+                                        service: oro_checkout.action.multi_shipping.default_shipping_method_setter
+                                        method: setDefaultShippingMethods
+                                        method_parameters:
+                                            - $checkout
+                    -
                         '@generate_uuid': $state_token
                 preactions: {  }
                 conditions: {  }
@@ -2150,8 +2494,78 @@ workflows:
                             entity: $checkout
                 preactions: {  }
                 preconditions: {  }
+            paid_partially_definition:
+                actions:
+                    -
+                        '@tree':
+                            conditions:
+                                '@not_empty': $order
+                            actions:
+                                -
+                                    '@assign_url':
+                                        attribute: $.result.orderViewPage
+                                        route: oro_order_frontend_view
+                                        route_parameters:
+                                            id: $order.id
+                                -
+                                    '@flash_message':
+                                        message: oro.checkout.workflow.condition.payment_has_not_fully_been_processed.message
+                                        message_parameters:
+                                            orderIdentifier: $order.identifier
+                                            orderViewLink: $.result.orderViewPage
+                                        type: warning
+                                -
+                                    '@actualize_line_items_by_unpaid_suborders':
+                                        order: $order
+                                        checkout: $checkout
+                                -
+                                    '@call_service_method':
+                                        service: oro_checkout.provider.grouped_line_items
+                                        method: getGroupedLineItemsIds
+                                        method_parameters:
+                                            - $checkout
+                                        attribute: $grouped_line_items
+                    -
+                        '@flash_message':
+                            conditions:
+                                '@empty': $order
+                            message: oro.checkout.workflow.condition.payment_has_not_fully_been_processed.message
+                            message_parameters:
+                                orderIdentifier: $order.identifier
+                                orderViewLink: $.result.orderViewPage
+                            type: warning
+                    -
+                        '@assign_value':
+                            -
+                                - $payment_method
+                                - null
+                            -
+                                - $payment_in_progress
+                                - false
+                    -
+                        '@unset_value':
+                            - $.data.order
+                    -
+                        '@generate_uuid': $state_token
+                    -
+                        '@delete_checkout_state':
+                            entity: $checkout
+                            token: $state_token
+                    -
+                        '@generate_checkout_state_snapshot':
+                            entity: $checkout
+                            attribute: $.result.currentCheckoutState
+                    -
+                        '@save_checkout_state':
+                            entity: $checkout
+                            state: $.result.currentCheckoutState
+                            token: $state_token
+                preactions: {  }
+                preconditions: {  }
+                conditions: {  }
         force_autostart: false
         scopes: {  }
         datagrids: {  }
         disable_operations: {  }
         entity_restrictions: {  }
+

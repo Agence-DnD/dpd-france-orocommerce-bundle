@@ -2,6 +2,8 @@ oro:
     order:
         dpd_fr_relay_id:
             label: ID de point relais DPD
+        dpd_fr_relay_name:
+            label: Nom de point relais DPD
         delivery_phone:
             label: Numéro de téléphone de livraison DPD Predict
         synchronized_dpd:
@@ -37,19 +39,20 @@ dnd_dpd_france_shipping:
             label: DPD France
     pudo:
         address.label: Addresse
-        name.label: Point Relais
+        name.label: Nom du point DPD Relay
+        point_id.label: ID du point DPD Relay
     transport:
         classic_method_name:
             label: Label service DPD Classic
         predict_method_name:
             label: Label service DPD Predict
-        relay_method_name:
+        pickup_method_name:
             label: Label service DPD Relay
         classic_method_description:
             label: Description service DPD Classic
         predict_method_description:
             label: Description service DPD Predict
-        relay_method_description:
+        pickup_method_description:
             label: Description service DPD Relais
         agency_code:
             label: Code d'agence
@@ -57,19 +60,19 @@ dnd_dpd_france_shipping:
             label: Clé d'API Google Maps
             tooltip: Utilisé pour afficher les points relais sur une carte
         order_statuses_sent_to_station:
-            label: Statuts de commande transmis à Station
+            label: Exporter commande vers DPD station lorsque son statut est
         max_qty:
-            label: Quantité maximale
+            label: Nombre de colis maximum par commande
             tooltip: Peut être surchargé en spécifiant une valeur pour chaque service dans la table dnd_dpd_fr_shipping_service
         contract_number:
             label: Numéro de contrat
         station_enabled:
-            label: Activer export station
+            label: Activer export DPD Station
         station_ftp_host:
-            label: Hôte FTP de Station
+            label: Hôte FTP de DPD Station
         station_ftp_password:
-            label: Mot de passe FTP de Station
+            label: Mot de passe FTP de DPD Station
         station_ftp_port:
-            label: Port FTP de Station
+            label: Port FTP de DPD Station
         station_ftp_user:
-            label: Utilisateur FTP de Station
+            label: Utilisateur FTP de DPD Station

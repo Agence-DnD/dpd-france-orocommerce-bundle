@@ -12,9 +12,7 @@ See the full documentaton [here](doc/documentation.md).
 
 ### Installation:
 
-First, you need to follow our OroCommerce module install guide: [Install Guide](https://agencednd.atlassian.net/wiki/spaces/MI/pages/2145681458/Installation+des+modules+Marketplace+interne+OroCommerce)
-
-After that, you can require the module with composer:
+Require the module with composer:
 ```bash
 composer require agencednd/dpd-france-orocommerce-bundle
 ```
@@ -38,14 +36,14 @@ bin/console assets:install
 Load the modified workflows and reload the translations:
 ```bash
 bin/console oro:workflow:definitions:load
-php bin/console oro:translation:load
+bin/console oro:translation:load
 ```
 
 ### Requirements:
 
-| OroCommerce           | PHP                               |
-| :---------------------| :--------------------------------:|
-|                       | \>= 7.1.3, >= 7.2, >= 7.3, >= 7.4 |
+| OroCommerce |   PHP   |
+|:------------|:-------:|
+| \>= 5.1     | \>= 8.2 |
 
 ### About us:
 

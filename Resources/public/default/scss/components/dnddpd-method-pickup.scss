@@ -87,6 +87,10 @@
                 color: $dnddpd-method-pickup-error-color;
             }
         }
+
+        ul {
+            list-style: none;
+        }
     }
 
     &__item {
@@ -99,11 +103,13 @@
         .custom-radio {
             width: 100%;
             position: relative;
+            display: flex;
 
             &__text {
                 display: flex;
                 align-items: center;
                 cursor: pointer;
+                flex: 1;
             }
         }
         .pickup {
@@ -151,5 +157,15 @@
 @include breakpoint('tablet-small') {
     .dnddpd-method-pickup {
         @include minimal-pickup-style;
+    }
+}
+
+@include breakpoint('desktop') {
+    .dnddpd-method-pickup {
+        &__item {
+            .custom-radio {
+                align-items: center;
+            }
+        }
     }
 }

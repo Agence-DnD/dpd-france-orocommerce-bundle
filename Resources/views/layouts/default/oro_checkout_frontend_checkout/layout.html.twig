@@ -1,8 +1,11 @@
 {% block _shipping_methods_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~data-page-component-options': {
-            view: 'dnddpdfranceshipping/js/app/views/shipping-methods-view'
-        },
+            view: 'dnddpdfranceshipping/js/app/views/shipping-methods-view',
+            options: {
+                selectedMethod: currentShippingMethodType
+            }
+        }
     }) %}
 
     {{ parent_block_widget(block, {attr: attr}) }}

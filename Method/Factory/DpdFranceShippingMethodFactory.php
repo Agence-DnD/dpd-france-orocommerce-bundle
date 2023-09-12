@@ -14,65 +14,22 @@ use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInt
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 
 /**
- * Class DpdFranceShippingMethodFactory
- *
- * @package   Dnd\Bundle\DpdFranceShippingBundle\Method\Factory
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class DpdFranceShippingMethodFactory implements IntegrationShippingMethodFactoryInterface
 {
-    /**
-     * Description $integrationIdentifierGenerator field
-     *
-     * @var IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator
-     */
     protected IntegrationIdentifierGeneratorInterface $integrationIdentifierGenerator;
-    /**
-     * Description $methodTypeFactory field
-     *
-     * @var DpdFranceShippingMethodTypeFactory $methodTypeFactory
-     */
-    protected DpdFranceShippingMethodTypeFactory $methodTypeFactory;
-    /**
-     * Description $methodIdentifierGenerator field
-     *
-     * @var IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator
-     */
-    private IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator;
-    /**
-     * Description $integrationIconProvider field
-     *
-     * @var IntegrationIconProviderInterface $integrationIconProvider
-     */
-    private IntegrationIconProviderInterface $integrationIconProvider;
 
-    /**
-     * DpdFranceShippingMethodFactory constructor
-     *
-     * @param IntegrationIconProviderInterface        $integrationIconProvider
-     * @param IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator
-     * @param DpdFranceShippingMethodTypeFactory      $methodTypeFactory
-     */
     public function __construct(
-        IntegrationIconProviderInterface $integrationIconProvider,
-        IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator,
-        DpdFranceShippingMethodTypeFactory $methodTypeFactory
+        private readonly IntegrationIconProviderInterface $integrationIconProvider,
+        private readonly IntegrationIdentifierGeneratorInterface $methodIdentifierGenerator,
+        private readonly DpdFranceShippingMethodTypeFactory $methodTypeFactory
     ) {
-        $this->methodIdentifierGenerator = $methodIdentifierGenerator;
-        $this->integrationIconProvider   = $integrationIconProvider;
-        $this->methodTypeFactory         = $methodTypeFactory;
     }
 
-    /**
-     * Description create function
-     *
-     * @param Channel $channel
-     *
-     * @return ShippingMethodInterface
-     */
     public function create(Channel $channel): ShippingMethodInterface
     {
         return new DpdFranceShippingMethod(
@@ -85,11 +42,6 @@ class DpdFranceShippingMethodFactory implements IntegrationShippingMethodFactory
         );
     }
 
-    /**
-     * @param Channel $channel
-     *
-     * @return array
-     */
     private function createTypes(Channel $channel): array
     {
         $applicableShippingServices = $this->getSettings($channel)->getShippingServices()->toArray();
@@ -99,41 +51,21 @@ class DpdFranceShippingMethodFactory implements IntegrationShippingMethodFactory
         }, $applicableShippingServices);
     }
 
-    /**
-     * @param Channel $channel
-     *
-     * @return DpdFranceTransportSettings
-     */
     private function getSettings(Channel $channel): DpdFranceTransportSettings
     {
         return $channel->getTransport();
     }
 
-    /**
-     * @param Channel $channel
-     *
-     * @return string
-     */
     private function getIdentifier(Channel $channel): string
     {
         return $this->methodIdentifierGenerator->generateIdentifier($channel);
     }
 
-    /**
-     * @param Channel $channel
-     *
-     * @return string|null
-     */
     private function getIcon(Channel $channel): ?string
     {
         return $this->integrationIconProvider->getIcon($channel);
     }
 
-    /**
-     * @param Channel $channel
-     *
-     * @return string
-     */
     private function getLabel(Channel $channel): string
     {
         return DpdFranceShippingMethod::LABEL;

@@ -11,56 +11,41 @@ use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 /**
- * Class DndDpdFranceShippingExtension
- *
- * @package   Dnd\Bundle\DpdFranceShippingBundle\DependencyInjection
  * @author    Agence Dn'D <contact@dnd.fr>
  * @copyright 2004-present Agence Dn'D
- * @license   https://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
 class DndDpdFranceShippingExtension extends Extension implements PrependExtensionInterface
 {
     /**
      * ALIAS constant for the extension
-     *
-     * @var string ALIAS
      */
     public const ALIAS = 'dnd_dpd_france_shipping';
     /**
      * Max amount of log files to keep
-     *
-     * @var int MAX_ROTATION_LOGFILES
      */
     public const MAX_ROTATION_LOGFILES = 5;
 
     /**
      * {@inheritDoc}
      *
-     * @param mixed[]          $configs
-     * @param ContainerBuilder $container
-     *
-     * @return void
      * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container): void
     {
-        /** @var YamlFileLoader $loader */
         $loader = new YamlFileLoader($container, new FileLocator([__DIR__ . '/../Resources/config']));
         $loader->load('commands.yml');
         $loader->load('controllers.yml');
         $loader->load('event_listeners.yml');
         $loader->load('form_types.yml');
         $loader->load('integration.yml');
+        $loader->load('mq_topics.yml');
         $loader->load('services.yml');
     }
 
     /**
      * Adds a monolog channel for the module
-     *
-     * @param ContainerBuilder $container
-     *
-     * @return void
      */
     public function prepend(ContainerBuilder $container): void
     {
@@ -68,10 +53,10 @@ class DndDpdFranceShippingExtension extends Extension implements PrependExtensio
             'channels' => [self::ALIAS],
             'handlers' => [
                 self::ALIAS => [
-                    'type'      => 'rotating_file',
+                    'type' => 'rotating_file',
                     'max_files' => self::MAX_ROTATION_LOGFILES,
-                    'path'      => "%kernel.logs_dir%/dpd-fr_%kernel.environment%.log",
-                    'channels'  => [self::ALIAS],
+                    'path' => "%kernel.logs_dir%/dpd-fr_%kernel.environment%.log",
+                    'channels' => [self::ALIAS],
                 ],
             ],
         ]);

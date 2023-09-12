@@ -37,7 +37,7 @@ const DndDpdMethodPredict = BaseView.extend({
         this.$deliveryPhone = $(this.options.phoneSelector);
         this.$error = $(this.options.errorSelector);
         this.$checkoutForm = $(this.options.formSelector);
-        this._afterRender();
+        this.triggerField();
         this.validateForm();
     },
 
@@ -45,20 +45,24 @@ const DndDpdMethodPredict = BaseView.extend({
      * Render method details
      */
     render: function() {
-        const savedPhone = this.$hiddenDeliveryPhone.val();
-        const phone = savedPhone ? savedPhone : $(this.options.filledInputs.addressPhone).val();
+        const savedPhone = this.$hiddenDeliveryPhone.val(),
+            phone = (savedPhone && (savedPhone != 0)) ? savedPhone : $(this.options.shippingAddress).data('phone');
 
         const $el = $(this.template({
             phone: phone
         }));
 
         this.$el.html($el);
+
+        (this.isCurrentMethod()) ?
+            this._setDeliveryPhone(phone) :
+            this._setDeliveryPhone(0);
     },
 
     /**
-     * trigger phone after render
+     * trigger phone
      */
-    _afterRender: function() {
+    triggerField: function() {
         this.$deliveryPhone.trigger('keyup');
     },
 
@@ -86,6 +90,10 @@ const DndDpdMethodPredict = BaseView.extend({
             this._setDeliveryPhone('');
         }
 
+        if (!this.isCurrentMethod()) {
+            this._setDeliveryPhone(0);
+        }
+
         this.validateForm();
     },
 
@@ -103,9 +111,17 @@ const DndDpdMethodPredict = BaseView.extend({
      * @param number
      * @private
      */
-    _setDeliveryPhone: function(number) {
+    _setDeliveryPhone: function (number) {
         this.$hiddenDeliveryPhone.val(number);
-    }
+        this.$hiddenDeliveryPhone.trigger('change');
+    },
+
+    /**
+     * Current method 
+     */
+    isCurrentMethod: function () {
+        return $('[name="shippingMethodType"]:checked')[0].getAttribute('data-shipping-type') === this.options.predictId;
+    },
 });
 
 export default DndDpdMethodPredict;

@@ -79,6 +79,9 @@
         margin: $dnddpd-method-predict-phone-margin;
 
         .input {
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+
             &.not-valid {
                 box-shadow: $dnddpd-method-predict-phone-input-error-box-shadow;
             }

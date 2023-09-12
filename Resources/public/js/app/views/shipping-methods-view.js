@@ -3,9 +3,10 @@ import _ from 'underscore';
 import $ from 'jquery';
 import NumberFormatter from 'orolocale/js/formatter/number';
 import mediator from 'oroui/js/mediator';
-import DndDpdMethodPickup from 'dnddpdfranceshipping/js/app/views/dnddpd-method-pickup';
-import DndDpdMethodPredict from 'dnddpdfranceshipping/js/app/views/dnddpd-method-predict';
-import validate from 'jquery.validate';
+import DndDpdMethodPickup
+    from 'dnddpdfranceshipping/js/app/views/dnddpd-method-pickup';
+import DndDpdMethodPredict
+    from 'dnddpdfranceshipping/js/app/views/dnddpd-method-predict';
 
 const ShippingMethodsView = BaseView.extend({
     autoRender: true,
@@ -17,13 +18,7 @@ const ShippingMethodsView = BaseView.extend({
 
         formSelector: 'form[name="oro_workflow_transition"]',
 
-        filledInputs: {
-            zipCode: '#dpd_fr_shipping_address_zipcode',
-            addressCity: '#dpd_fr_shipping_address_city',
-            addressStreet: '#dpd_fr_shipping_address_street',
-            addressPhone: '#dpd_fr_shipping_address_phone',
-            googleMapsApi: '#dpd_fr_google_maps_api_key'
-        },
+        shippingAddress: "#dpd_fr_shipping_address",
 
         hiddenInputs: {
             deliveryPhone: '[name*="delivery_phone"]',
@@ -96,17 +91,45 @@ const ShippingMethodsView = BaseView.extend({
     _methodDetails: function() {
         this.subview('checkoutShippingMethodPickup', new DndDpdMethodPickup({
             el: this.$el.find(`[data-method-detail="${this.options.pickupId}"]`),
-            filledInputs: this.options.filledInputs,
+            shippingAddress: this.options.shippingAddress,
             hiddenInputs: this.options.hiddenInputs,
-            formSelector: this.options.formSelector
+            formSelector: this.options.formSelector,
+            pickupId: this.options.pickupId
         }));
 
         this.subview('checkoutShippingMethodPredict', new DndDpdMethodPredict({
             el: this.$el.find(`[data-method-detail="${this.options.predictId}"]`),
-            filledInputs: this.options.filledInputs,
+            shippingAddress: this.options.shippingAddress,
             hiddenInputs: this.options.hiddenInputs,
-            formSelector: this.options.formSelector
+            formSelector: this.options.formSelector,
+            predictId: this.options.predictId
         }));
+    },
+
+    /**
+     * Update hidden fields (pickup and phone)
+     * 
+     * @param {String} method
+     */
+    _updateHiddenFields: function (method) {
+        const hiddenInputs = this.options.hiddenInputs,
+            $deliveryPhone = $(hiddenInputs.deliveryPhone),
+            $relayId = $(hiddenInputs.relayId),
+            selectedMethod = method || this.options.selectedMethod;
+
+        (selectedMethod === this.options.pickupId) &&
+            $deliveryPhone.val(0) &&
+            $relayId.val('') &&
+            this.subview('checkoutShippingMethodPickup').setSelectedMethod();
+
+        (selectedMethod === this.options.predictId) &&
+            $relayId.val(-1) &&
+            $deliveryPhone.val('') &&
+            this.subview('checkoutShippingMethodPredict').triggerField();
+
+        ((selectedMethod !== this.options.predictId) && (selectedMethod !== this.options.pickupId)) &&
+            $relayId.val(-1) &&
+            $deliveryPhone.val(0);
     },
 
     /**
@@ -122,6 +145,8 @@ const ShippingMethodsView = BaseView.extend({
         .addClass('active')
         .siblings()
         .removeClass('active');
+
+        this._updateHiddenFields($(e.target).data('shipping-type'));
 
         this.subview('checkoutShippingMethodPredict').validateForm();
         this.subview('checkoutShippingMethodPickup').validateForm();
