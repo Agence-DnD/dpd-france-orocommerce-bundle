@@ -8,7 +8,7 @@
 
 Also, it adds the possibility to export command to "DPD Station" service by FTP.
 
-See the full documentaton [here](doc/documentation.md).
+See the full documentation [here](doc/documentation.md).
 
 ### Installation:
 
