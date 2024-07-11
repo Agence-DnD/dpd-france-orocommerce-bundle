@@ -34,10 +34,10 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
  * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
  */
+#[\Symfony\Component\Console\Attribute\AsCommand('dnd:dpd:station-export:test', 'Helps debugging station export by outputing the export data for a given order.')]
 class StationExportCommand extends Command
 {
     protected ?ParameterBag $settings = null;
-    protected static $defaultName = 'dnd:dpd:station-export:test';
     protected StationExportProcessor $stationExportProcessor;
     /**
      * @var DpdShippingPackageOptionsInterface[]|null $packages
@@ -58,7 +58,7 @@ class StationExportCommand extends Command
     /** @noinspection PhpMissingParentCallCommonInspection */
     protected function configure(): void
     {
-        $this->setDescription('Helps debugging station export by outputing the export data for a given order.')
+        $this
             ->addArgument(
                 'id',
                 InputArgument::REQUIRED,
@@ -90,7 +90,7 @@ HELP
         if (!$order instanceof Order) {
             $output->writeln('Could not find requested order');
 
-            return 0;
+            return \Symfony\Component\Console\Command\Command::SUCCESS;
         }
         $shippingService = $this->shippingServiceProvider->getServiceForMethodTypeIdentifier(
             $order->getShippingMethodType()
@@ -106,7 +106,7 @@ HELP
             $output->writeln('Something wrong happened with the order.');
             $output->write($e->getMessage());
 
-            return 0;
+            return \Symfony\Component\Console\Command\Command::SUCCESS;
         }
 
         $output->writeln(
@@ -120,7 +120,7 @@ HELP
         $table->setHeaders(['code', 'position', 'length', 'value'])->setRows($data);
         $table->render();
 
-        return 0;
+        return \Symfony\Component\Console\Command\Command::SUCCESS;
     }
 
     /**

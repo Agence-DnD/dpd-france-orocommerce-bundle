@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 /**
@@ -17,15 +17,14 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
  * @copyright 2004-present Agence Dn'D
  * @license   https://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://www.dnd.fr/
- * @Route("/dpd_france")
  */
+#[\Symfony\Component\Routing\Attribute\Route(path: '/dpd_france')]
 class RelayController extends AbstractController
 {
     /**
      * Returns a list of nearby pudos
-     *
-     * @Route("/relays", name="dpd_france_relay_list", methods={"GET", "POST"})
      */
+    #[\Symfony\Component\Routing\Attribute\Route(path: '/relays', name: 'dpd_france_relay_list', methods: ['GET', 'POST'])]
     public function listAction(Request $request, PudoProvider $pudoProvider): JsonResponse
     {
         $checkoutId = $request->get('checkoutId');
@@ -59,9 +58,8 @@ class RelayController extends AbstractController
 
     /**
      * Returns all them details about a pudo
-     *
-     * @Route("/relay/{pudoId}", name="dpd_france_relay_details", methods={"GET"})
      */
+    #[\Symfony\Component\Routing\Attribute\Route(path: '/relay/{pudoId}', name: 'dpd_france_relay_details', methods: ['GET'])]
     public function detailsAction(string $pudoId, PudoProvider $pudoProvider): JsonResponse
     {
         try {

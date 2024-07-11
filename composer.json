@@ -13,10 +13,10 @@
         "Integration"
     ],
     "require": {
-        "php": ">=8.2",
-        "oro/platform": "5.1.*",
-        "oro/platform-serialised-fields": "5.1.*",
-        "oro/commerce": "5.1.*",
+        "php": "~8.3.0",
+        "oro/platform": "6.0.*",
+        "oro/platform-serialised-fields": "6.0.x-dev",
+        "oro/commerce": "6.0.*",
         "ext-simplexml": "*"
     },
     "version": "1.0.0",

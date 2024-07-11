@@ -71,7 +71,7 @@ class ShippingPackagesBuilder
      *
      * @throws PackageException
      */
-    public function addLineItem(ShippingLineItemInterface $lineItem): bool
+    public function addLineItem(\Oro\Bundle\ShippingBundle\Context\ShippingLineItem $lineItem): bool
     {
         if (!$lineItem->getWeight()) {
             $this->badItemException($lineItem, 'Unknown weight.');
@@ -140,7 +140,7 @@ class ShippingPackagesBuilder
      *
      * @throws PackageException
      */
-    private function badItemException(ShippingLineItemInterface $lineItem, ?string $message = ''): void
+    private function badItemException(\Oro\Bundle\ShippingBundle\Context\ShippingLineItem $lineItem, ?string $message = ''): void
     {
         throw new PackageException(
             sprintf(

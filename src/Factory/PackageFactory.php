@@ -30,7 +30,7 @@ class PackageFactory
      * @throws PackageException
      */
     public function create(
-        ShippingLineItemCollectionInterface $lineItemCollection,
+        \Doctrine\Common\Collections\Collection $lineItemCollection,
         ShippingService $shippingService,
         int $websiteId
     ): array {
